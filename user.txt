@@ -1,0 +1,2 @@
+Username: admin@tecdiary.com
+Password: 12345678
