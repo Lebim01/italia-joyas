@@ -130,7 +130,8 @@ class Pos extends MY_Controller
                 $total_cash -= ($expenses->total ? $expenses->total : 0);
             }
 
-            $data = ['closed_at'           => date('Y-m-d H:i:s'),
+            $data = [
+                'closed_at'           => date('Y-m-d H:i:s'),
                 'total_cash'               => $total_cash,
                 'total_cheques'            => $chsales->total_cheques,
                 'total_cc_slips'           => $ccsales->total_cc_slips,
@@ -143,7 +144,7 @@ class Pos extends MY_Controller
                 'closed_by'                => $this->session->userdata('user_id'),
             ];
 
-        // $this->tec->print_arrays($data);
+            // $this->tec->print_arrays($data);
         } elseif ($this->input->post('close_register')) {
             $this->session->set_flashdata('error', (validation_errors() ? validation_errors() : $this->session->flashdata('error')));
             redirect('pos');
@@ -362,7 +363,7 @@ class Pos extends MY_Controller
                         $dpos     = strpos($discount, $percentage);
                         if ($dpos !== false) {
                             $pds         = explode('%', $discount);
-                            $pr_discount = $this->tec->formatDecimal((($unit_price * (Float)($pds[0])) / 100), 4);
+                            $pr_discount = $this->tec->formatDecimal((($unit_price * (float)($pds[0])) / 100), 4);
                         } else {
                             $pr_discount = $this->tec->formatDecimal($discount);
                         }
@@ -422,7 +423,7 @@ class Pos extends MY_Controller
                 $opos              = strpos($order_discount_id, $percentage);
                 if ($opos !== false) {
                     $ods            = explode('%', $order_discount_id);
-                    $order_discount = $this->tec->formatDecimal(((($total + $product_tax) * (Float)($ods[0])) / 100), 4);
+                    $order_discount = $this->tec->formatDecimal(((($total + $product_tax) * (float)($ods[0])) / 100), 4);
                 } else {
                     $order_discount = $this->tec->formatDecimal($order_discount_id);
                 }
@@ -436,7 +437,7 @@ class Pos extends MY_Controller
                 $opos         = strpos($order_tax_id, $percentage);
                 if ($opos !== false) {
                     $ots       = explode('%', $order_tax_id);
-                    $order_tax = $this->tec->formatDecimal(((($total + $product_tax - $order_discount) * (Float)($ots[0])) / 100), 4);
+                    $order_tax = $this->tec->formatDecimal(((($total + $product_tax - $order_discount) * (float)($ots[0])) / 100), 4);
                 } else {
                     $order_tax = $this->tec->formatDecimal($order_tax_id);
                 }
@@ -463,7 +464,8 @@ class Pos extends MY_Controller
                 }
             }
 
-            $data = ['date'         => $date,
+            $data = [
+                'date'         => $date,
                 'customer_id'       => $customer_id,
                 'customer_name'     => $customer,
                 'total'             => $this->tec->formatDecimal($total, 4),
@@ -726,7 +728,8 @@ class Pos extends MY_Controller
         $this->form_validation->set_rules('cash_in_hand', lang('cash_in_hand'), 'trim|required|numeric');
 
         if ($this->form_validation->run() == true) {
-            $data = ['date'    => date('Y-m-d H:i:s'),
+            $data = [
+                'date'    => date('Y-m-d H:i:s'),
                 'cash_in_hand' => $this->input->post('cash_in_hand'),
                 'user_id'      => $this->session->userdata('user_id'),
                 'store_id'     => $this->session->userdata('store_id'),
@@ -812,7 +815,7 @@ class Pos extends MY_Controller
                     $dpos     = strpos($discount, $percentage);
                     if ($dpos !== false) {
                         $pds         = explode('%', $discount);
-                        $pr_discount = $this->tec->formatDecimal((($unit_price * (Float)($pds[0])) / 100), 4);
+                        $pr_discount = $this->tec->formatDecimal((($unit_price * (float)($pds[0])) / 100), 4);
                     } else {
                         $pr_discount = $this->tec->formatDecimal($discount);
                     }
@@ -873,7 +876,7 @@ class Pos extends MY_Controller
             $opos              = strpos($order_discount_id, $percentage);
             if ($opos !== false) {
                 $ods            = explode('%', $order_discount_id);
-                $order_discount = $this->tec->formatDecimal(((($total + $product_tax) * (Float)($ods[0])) / 100), 4);
+                $order_discount = $this->tec->formatDecimal(((($total + $product_tax) * (float)($ods[0])) / 100), 4);
             } else {
                 $order_discount = $this->tec->formatDecimal($order_discount_id);
             }
@@ -887,7 +890,7 @@ class Pos extends MY_Controller
             $opos         = strpos($order_tax_id, $percentage);
             if ($opos !== false) {
                 $ots       = explode('%', $order_tax_id);
-                $order_tax = $this->tec->formatDecimal(((($total + $product_tax - $order_discount) * (Float)($ots[0])) / 100), 4);
+                $order_tax = $this->tec->formatDecimal(((($total + $product_tax - $order_discount) * (float)($ots[0])) / 100), 4);
             } else {
                 $order_tax = $this->tec->formatDecimal($order_tax_id);
             }
@@ -902,7 +905,8 @@ class Pos extends MY_Controller
         $round_total = $this->tec->roundNumber($grand_total, $this->Settings->rounding);
         $rounding    = $this->tec->formatDecimal(($round_total - $grand_total));
 
-        $data = (object) ['date' => $date,
+        $data = (object) [
+            'date' => $date,
             'customer_id'        => $customer_id,
             'customer_name'      => $customer,
             'total'              => $this->tec->formatDecimal($total),
