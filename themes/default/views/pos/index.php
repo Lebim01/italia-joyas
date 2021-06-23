@@ -1338,7 +1338,7 @@
 
     <script src="<?= $assets ?>dist/js/libraries.min.js" type="text/javascript"></script>
     <script src="<?= $assets ?>dist/js/scripts.min.js" type="text/javascript"></script>
-    <script src="<?= $assets ?>dist/js/pos.min.js" type="text/javascript"></script>
+    <script src="<?= $assets ?>dev/js/pos.js" type="text/javascript"></script>
     <?php if ($Settings->remote_printing != 1 && $Settings->print_img) { ?>
         <script src="<?= $assets ?>dist/js/htmlimg.js"></script>
     <?php } ?>
