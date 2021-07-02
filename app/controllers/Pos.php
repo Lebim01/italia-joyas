@@ -248,7 +248,7 @@ class Pos extends MY_Controller
     }
 
     public function index($sid = null, $eid = null)
-    {
+    {   
         if (!$this->Settings->multi_store) {
             $this->session->set_userdata('store_id', 1);
         }
@@ -311,12 +311,20 @@ class Pos extends MY_Controller
             $order_discount   = 0;
             $percentage       = '%';
             $i                = isset($_POST['product_id']) ? sizeof($_POST['product_id']) : 0;
+            
             for ($r = 0; $r < $i; $r++) {
                 $item_id         = $_POST['product_id'][$r];
                 $real_unit_price = $this->tec->formatDecimal($_POST['real_unit_price'][$r]);
                 $item_quantity   = $_POST['quantity'][$r];
                 $item_comment    = $_POST['item_comment'][$r];
                 $item_discount   = $_POST['product_discount'][$r] ?? '0';
+
+                $stock = $this->site->getStockByID($item_id);
+
+                if(intval($stock->quantity - $stock->apart) < intval($item_quantity)){
+                    $this->session->set_flashdata('error', lang('No hay stock suficiente pata el producto '.$_POST['product_name'][$r]));
+                    redirect($_SERVER['HTTP_REFERER']);
+                }
 
                 if (isset($item_id) && isset($real_unit_price) && isset($item_quantity)) {
                     $product_details = $this->site->getProductByID($item_id);
@@ -447,13 +455,13 @@ class Pos extends MY_Controller
 
             $total_tax   = $this->tec->formatDecimal(($product_tax + $order_tax), 4);
             $grand_total = $this->tec->formatDecimal(($total + $total_tax - $order_discount), 4);
-            $paid        = $this->input->post('amount') ? $this->input->post('amount') : 0;
+            //$paid        = $this->input->post('amount') ? $this->input->post('amount') : 0;
             $round_total = $this->tec->roundNumber($grand_total, $this->Settings->rounding);
             $rounding    = $this->tec->formatDecimal(($round_total - $grand_total));
-            if (!$suspend && $customer_details->id == 1 && $this->tec->formatDecimal($paid) < $this->tec->formatDecimal($round_total)) {
+            /* if (!$suspend && $customer_details->id == 1 && $this->tec->formatDecimal($paid) < $this->tec->formatDecimal($round_total)) {
                 $this->session->set_flashdata('error', lang('select_customer_for_due'));
                 redirect($_SERVER['HTTP_REFERER']);
-            }
+            }*/
             if (!$eid) {
                 $status = 'due';
                 if ($this->tec->formatDecimal($round_total) <= $this->tec->formatDecimal($paid)) {
@@ -461,9 +469,17 @@ class Pos extends MY_Controller
                 } elseif ($this->tec->formatDecimal($round_total) > $this->tec->formatDecimal($paid) && $paid > 0) {
                     $status = 'partial';
                 }
-            }
+            } 
+            $datametodos = [
+                'metodos'           => $this->input->post('metodos'),
+                'cantidad'          => $this->input->post('cantidad'),
+                'bancos'            => $this->input->post('bancos')
+            ];
 
-            $data = ['date'         => $date,
+            $totalpagos = $this->input->post('total_pagos');
+
+            $data = [
+                'date'              => $date,
                 'customer_id'       => $customer_id,
                 'customer_name'     => $customer,
                 'total'             => $this->tec->formatDecimal($total, 4),
@@ -490,7 +506,8 @@ class Pos extends MY_Controller
                 $data['store_id'] = $this->session->userdata('store_id');
             }
 
-            if (!$eid && !$suspend && $paid) {
+            if (!$eid && !$suspend) {
+                
                 if ($this->input->post('paying_gift_card_no')) {
                     $gc = $this->pos_model->getGiftCardByNO($this->input->post('paying_gift_card_no'));
                     if (!$gc || $gc->balance < $amount) {
@@ -499,34 +516,68 @@ class Pos extends MY_Controller
                     }
                 }
                 $amount  = $this->tec->formatDecimal(($paid > $grand_total ? ($paid - $this->input->post('balance_amount')) : $paid), 4);
-                $payment = [
-                    'date'        => $date,
-                    'amount'      => $amount,
-                    'customer_id' => $customer_id,
-                    'paid_by'     => $this->input->post('paid_by'),
-                    'cheque_no'   => $this->input->post('cheque_no'),
-                    'cc_no'       => $this->input->post('cc_no'),
-                    'gc_no'       => $this->input->post('paying_gift_card_no'),
-                    'cc_holder'   => $this->input->post('cc_holder'),
-                    'cc_month'    => $this->input->post('cc_month'),
-                    'cc_year'     => $this->input->post('cc_year'),
-                    'cc_type'     => $this->input->post('cc_type'),
-                    'cc_cvv2'     => $this->input->post('cc_cvv2'),
-                    'created_by'  => $this->session->userdata('user_id'),
-                    'store_id'    => $this->session->userdata('store_id'),
-                    'note'        => $this->input->post('payment_note'),
-                    'pos_paid'    => $this->tec->formatDecimal($this->input->post('amount'), 4),
-                    'pos_balance' => $this->tec->formatDecimal($this->input->post('balance_amount'), 4),
-                ];
+
                 $data['paid'] = $amount;
+                $metodos = explode(",", $datametodos["metodos"]);
+                $cantidad = explode(",", $datametodos["cantidad"]);
+                $bancos = explode(",", $datametodos["bancos"]);
+                $payment = array();
+                for ($r = 0; $r < count($metodos); $r++) {
+                    /* var_dump($metodos[$r]);exit;
+                    if($metodos[$r] == "cash"){
+                        $payment [$r] = [
+                            'bancos'      => null,
+                        ];
+                    } else {
+                        $payment [$r] = [
+                            'bancos'      => $bancos[$r],
+                        ];
+                    } */
+
+                    $payment [$r] = [
+                        'date'        => $date,
+                        'amount'      => $cantidad[$r],
+                        'bancos'      => $bancos[$r],
+                        'customer_id' => $customer_id,
+                        'paid_by'     => $metodos[$r],
+                        'cheque_no'   => $this->input->post('cheque_no'),
+                        'cc_no'       => $this->input->post('cc_no'),
+                        'gc_no'       => $this->input->post('paying_gift_card_no'),
+                        'cc_holder'   => $this->input->post('cc_holder'),
+                        'cc_month'    => $this->input->post('cc_month'),
+                        'cc_year'     => $this->input->post('cc_year'),
+                        'cc_type'     => $this->input->post('cc_type'),
+                        'cc_cvv2'     => $this->input->post('cc_cvv2'),
+                        'created_by'  => $this->session->userdata('user_id'),
+                        'store_id'    => $this->session->userdata('store_id'),
+                        'note'        => $this->input->post('payment_note'),
+                        'pos_paid'    => $this->tec->formatDecimal($this->input->post('amount'), 4),
+                        'pos_balance' => $this->tec->formatDecimal($this->input->post('balance_amount'), 4),
+                    ];
+                    
+                }
+                /* echo "<pre><pre />";
+                print_r(count($payment));
+                echo "<pre><pre />";
+
+                exit; */
             } else {
                 $payment = [];
+                
             }
 
             // $this->tec->print_arrays($data, $products, $payment);
         }
 
+        /* echo "<pre><pre />";
+                print_r($payment);
+                echo "<pre><pre />";
+
+                exit; 
+ */
         if ($this->form_validation->run() == true && !empty($products)) {
+
+
             if ($suspend) {
                 unset($data['status'], $data['rounding']);
                 if ($this->pos_model->suspendSale($data, $products, $did)) {
@@ -553,6 +604,25 @@ class Pos extends MY_Controller
                     redirect('pos/?edit=' . $eid);
                 }
             } else {
+               
+                /* echo "<pre><pre />";
+                print_r($data);
+                echo "<pre><pre />"; */
+                /* echo "<pre><pre />";
+                print_r($products);
+                echo "<pre><pre />"; */
+                /* foreach ($payment as $item) {
+                    $item['sale_id'] = 1;
+                    echo "<pre><pre />";
+                    print_r($item);
+                    echo "<pre><pre />";
+                }
+                
+                exit; */
+
+                //var_dump($sale);exit;
+
+              
                 if ($sale = $this->pos_model->addSale($data, $products, $payment, $did)) {
                     $this->session->set_userdata('rmspos', 1);
                     $msg = lang('sale_added');
@@ -576,6 +646,7 @@ class Pos extends MY_Controller
                     redirect('pos');
                 }
             }
+
         } else {
             if (isset($sid) && !empty($sid)) {
                 $suspended_sale = $this->pos_model->getSuspendedSaleByID($sid);

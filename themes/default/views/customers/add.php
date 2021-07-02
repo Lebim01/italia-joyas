@@ -26,15 +26,7 @@
 							<?= form_input('phone', set_value('phone'), 'class="form-control input-sm" id="phone"');?>
 						</div>
 
-						<div class="form-group">
-							<label class="control-label" for="cf1"><?= $this->lang->line("ccf1"); ?></label>
-							<?= form_input('cf1', set_value('cf1'), 'class="form-control input-sm" id="cf1"'); ?>
-						</div>
-
-						<div class="form-group">
-							<label class="control-label" for="cf2"><?= $this->lang->line("ccf2"); ?></label>
-							<?= form_input('cf2', set_value('cf2'), 'class="form-control input-sm" id="cf2"');?>
-						</div>
+						
 
 
 						<div class="form-group">

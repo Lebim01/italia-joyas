@@ -547,7 +547,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        <?= lang('login_logo', 'logo'); ?>
+                                        Logo reportes 
                                         <input type="file" name="userfile" id="logo">
                                     </div>
                                 </div>

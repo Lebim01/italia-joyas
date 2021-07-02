@@ -551,7 +551,8 @@ class Settings extends MY_Controller
                     $config['max_size']      = '300';
                     $config['max_width']     = '300';
                     $config['max_height']    = '80';
-                    $config['overwrite']     = false;
+                    $config['overwrite']     = true;
+                    $config['file_name']     = "logo";
                     $this->upload->initialize($config);
 
                     if (!$this->upload->do_upload()) {
