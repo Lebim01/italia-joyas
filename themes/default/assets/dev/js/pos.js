@@ -1401,7 +1401,12 @@ $(document).ready(function () {
         if($('#metodo_'+i).val() == "cash"){
           bancos[i] = null
         } else {
-          bancos[i] = $('#banco_'+i).val()
+          if( $('#banco_'+i).val() != "seleccione"){
+            bancos[i] = $('#banco_'+i).val()
+          } else {
+            alert ("Por favor, seleccione un banco") 
+            return;
+          }
         }
       
        //bancos[i] = $('#banco_'+i).val()

@@ -454,6 +454,24 @@ class Pos extends MY_Controller
                 $order_tax    = 0;
             }
 
+            
+
+            $datametodos = [
+                'metodos'           => $this->input->post('metodos'),
+                'cantidad'          => $this->input->post('cantidad'),
+                'bancos'            => $this->input->post('bancos')
+            ];
+
+            $metodos = explode(",", $datametodos["metodos"]);
+            $cantidad = explode(",", $datametodos["cantidad"]);
+            $bancos = explode(",", $datametodos["bancos"]);
+            $payment = array();
+            $paid = 0.0;
+
+            for ($r = 0; $r < count($cantidad); $r++) {
+                $paid = $paid + $cantidad[$r];
+            }
+
             $total_tax   = $this->tec->formatDecimal(($product_tax + $order_tax), 4);
             $grand_total = $this->tec->formatDecimal(($total + $total_tax - $order_discount), 4);
             //$paid        = $this->input->post('amount') ? $this->input->post('amount') : 0;
@@ -471,11 +489,7 @@ class Pos extends MY_Controller
                     $status = 'partial';
                 }
             } 
-            $datametodos = [
-                'metodos'           => $this->input->post('metodos'),
-                'cantidad'          => $this->input->post('cantidad'),
-                'bancos'            => $this->input->post('bancos')
-            ];
+            
 
             $totalpagos = $this->input->post('total_pagos');
 
@@ -519,13 +533,10 @@ class Pos extends MY_Controller
                 $amount  = $this->tec->formatDecimal(($paid > $grand_total ? ($paid - $this->input->post('balance_amount')) : $paid), 4);
 
                 $data['paid'] = $amount;
-                $metodos = explode(",", $datametodos["metodos"]);
-                $cantidad = explode(",", $datametodos["cantidad"]);
-                $bancos = explode(",", $datametodos["bancos"]);
-                $payment = array();
+                
                 for ($r = 0; $r < count($metodos); $r++) {
-                    /* var_dump($metodos[$r]);exit;
-                    if($metodos[$r] == "cash"){
+                    #var_dump($metodos[$r]);exit;
+                    /* if($metodos[$r] == "cash"){
                         $payment [$r] = [
                             'bancos'      => null,
                         ];
@@ -538,7 +549,7 @@ class Pos extends MY_Controller
                     $payment [$r] = [
                         'date'        => $date,
                         'amount'      => $cantidad[$r],
-                        'bancos'      => $bancos[$r],
+                        'banks'      => $bancos[$r],
                         'customer_id' => $customer_id,
                         'paid_by'     => $metodos[$r],
                         'cheque_no'   => $this->input->post('cheque_no'),
@@ -641,6 +652,7 @@ class Pos extends MY_Controller
                             $redirect_to .= '?print=' . $sale['sale_id'];
                         }
                     }
+                    //var_dump($redirect_to); exit;
                     redirect($redirect_to);
                 } else {
                     $this->session->set_flashdata('error', lang('action_failed'));

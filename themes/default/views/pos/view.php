@@ -138,16 +138,16 @@ if ($modal) {
                                             </tr>
                                             <?php
                                         }
-                                        if ($inv->paid < $round_total) { ?>
+                                      ?>
                                         <tr>
                                             <th class="text-left" colspan="2"><?= lang('paid_amount'); ?></th>
                                             <th colspan="2" class="text-right"><?= $this->tec->formatMoney($inv->paid); ?></th>
                                         </tr>
                                         <tr>
-                                            <th class="text-left" colspan="2"><?= lang('due_amount'); ?></th>
+                                            <th class="text-left" colspan="2">Cambio</th>
                                             <th colspan="2" class="text-right"><?= $this->tec->formatMoney($inv->grand_total - $inv->paid); ?></th>
                                         </tr>
-                                        <?php } ?>
+                                        
                                     </tfoot>
                                 </table>
                                 <?php
