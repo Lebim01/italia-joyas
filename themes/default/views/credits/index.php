@@ -1,11 +1,5 @@
 <?php (defined('BASEPATH')) or exit('No direct script access allowed'); ?>
 
-<style>
-    .status-paid {
-        display: none;
-    }
-</style>
-
 <script type="text/javascript">
     $(document).ready(function() {
 
@@ -13,9 +7,8 @@
             var paid = '<?= lang('paid'); ?>';
             var partial = '<?= lang('partial'); ?>';
             var due = '<?= lang('due'); ?>';
-
             if (x == 'paid') {
-                return '<div class="text-center"><span class="label label-success">' + paid + '</span></div>';
+                return '<div class="text-center"><span class="sale_status label label-success">' + paid + '</span></div>';
             } else if (x == 'partial') {
                 return '<div class="text-center"><span class="sale_status label label-primary">' + partial + '</span></div>';
             } else if (x == 'due') {
@@ -25,26 +18,10 @@
             }
         }
 
-        function transactionType(x) {
-            let credit = '<?= lang('credit') ?>';
-            let apart = '<?= lang('apart') ?>';
-            let cash = '<?= lang('liquidate') ?>';
-
-            if (x == 'credit') {
-                return '<div class="text-center"><span class="label label-danger">' + credit + '</span></div>';
-            } else if (x == 'apart') {
-                return '<div class="text-center"><span class="label label-primary">' + apart + '</span></div>';
-            } else if (x == 'liquidate') {
-                return '<div class="text-center"><span class="label label-success">' + cash + '</span></div>';
-            } else {
-                return '<div class="text-center"><span class="label label-default">' + x + '</span></div>';
-            }
-        }
-
         var table = $('#SLData').DataTable({
 
             'ajax': {
-                url: '<?= site_url('sales/get_sales'); ?>',
+                url: '<?= site_url('credits/get_credits'); ?>',
                 type: 'POST',
                 "data": function(d) {
                     d.<?= $this->security->get_csrf_token_name(); ?> = "<?= $this->security->get_csrf_hash() ?>";
@@ -92,10 +69,6 @@
                 {
                     "data": "date",
                     "render": hrld
-                },
-                {
-                    "data": "transaction_type",
-                    "render": transactionType
                 },
                 {
                     "data": "customer_name"
@@ -187,7 +160,7 @@
         <div class="col-xs-12">
             <div class="box box-primary">
                 <div class="box-header">
-
+                    <h3 class="box-title"><?= lang('list_results'); ?></h3>
                 </div>
                 <div class="box-body">
                     <div class="table-responsive">
@@ -196,7 +169,6 @@
                                 <tr class="active">
                                     <th style="max-width:30px;"><?= lang("id"); ?></th>
                                     <th class="col-xs-2"><?= lang("date"); ?></th>
-                                    <th class="col-xs-1"><?= lang("transaction_type"); ?></th>
                                     <th><?= lang("customer"); ?></th>
                                     <th class="col-xs-1"><?= lang("total"); ?></th>
                                     <th class="col-xs-1"><?= lang("tax"); ?></th>
@@ -209,21 +181,13 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td colspan="11" class="dataTables_empty"><?= lang('loading_data_from_server'); ?></td>
+                                    <td colspan="10" class="dataTables_empty"><?= lang('loading_data_from_server'); ?></td>
                                 </tr>
                             </tbody>
                             <tfoot>
                                 <tr class="active">
                                     <th style="max-width:30px;"><input type="text" class="text_filter" placeholder="[<?= lang('id'); ?>]"></th>
                                     <th class="col-sm-2"><span class="datepickercon"><input type="text" class="text_filter datepicker" placeholder="[<?= lang('date'); ?>]"></span></th>
-                                    <th class="col-sm-1">
-                                        <select class="select2 select_filter">
-                                            <option value=""><?= lang("all"); ?></option>
-                                            <?php foreach ($transaction_types as $type) : ?>
-                                                <option value="<?= $type ?>"><?= lang($type) ?></option>
-                                            <?php endforeach; ?>
-                                        </select>
-                                    </th>
                                     <th class="col-sm-2"><input type="text" class="text_filter" placeholder="[<?= lang('customer'); ?>]"></th>
                                     <th class="col-sm-1"><?= lang("total"); ?></th>
                                     <th class="col-sm-1"><?= lang("tax"); ?></th>
@@ -241,7 +205,7 @@
                                     <th class="col-sm-1"><?= lang("actions"); ?></th>
                                 </tr>
                                 <tr>
-                                    <td colspan="11" class="p0"><input type="text" class="form-control b0" name="search_table" id="search_table" placeholder="<?= lang('type_hit_enter'); ?>" style="width:100%;"></td>
+                                    <td colspan="10" class="p0"><input type="text" class="form-control b0" name="search_table" id="search_table" placeholder="<?= lang('type_hit_enter'); ?>" style="width:100%;"></td>
                                 </tr>
                             </tfoot>
                         </table>

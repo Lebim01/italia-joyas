@@ -47,7 +47,9 @@
                             <?php if ($this->db->dbdriver != 'sqlite3') { ?>
                             <li><a href="<?= site_url('pos/view_bill'); ?>" target="_blank"><i class="fa fa-desktop"></i></a></li>
                             <?php } ?>
+                            <?php if ($Admin) { ?>
                             <li class="hidden-xs hidden-sm"><a href="<?= site_url('pos/shortcuts'); ?>" data-toggle="ajax"><i class="fa fa-key"></i></a></li>
+                            <?php } ?>
                             <li><a href="<?= site_url('pos/register_details'); ?>" data-toggle="ajax"><?= lang('register_details'); ?></a></li>
                             <?php if ($Admin) { ?>
                             <li><a href="<?= site_url('pos/today_sale'); ?>" data-toggle="ajax"><?= lang('today_sale'); ?></a></li>
@@ -416,7 +418,7 @@
                                             </table>
                                         </div>
                                     </div>
-                                    <div id="botbuttons" class="col-xs-12 text-center">
+                                    <div id="botbuttons" class="col-xs-  text-center">
                                         <div class="row">
                                             <div class="col-xs-4" style="padding: 0;">
                                                 <div class="btn-group-vertical btn-block">
@@ -458,6 +460,10 @@
                                         <input type="hidden" name="cc_cvv2" id="cc_cvv2_val" value=""/>
                                         <input type="hidden" name="balance" id="balance_v" value=""/>
                                         <input type="hidden" name="payment_note" id="payment_note_val" value=""/>
+                                        <input type="hidden" name="metodos" id="metodos" value="0" />
+                                        <input type="hidden" name="total_pagos" id="total_pagos" value="0" />
+                                        <input type="hidden" name="bancos" id="bancos" value="" />
+                                        <input type="hidden" name="cantidad" id="cantidad" value="0" />
                                     </div>
                                     <input type="hidden" name="customer" id="customer" value="<?=$Settings->default_customer?>" />
                                     <input type="hidden" name="order_tax" id="tax_val" value="" />
@@ -467,6 +473,7 @@
                                     <input type="hidden" name="eid" id="eid_delete" value="<?=$eid;?>" />
                                     <input type="hidden" name="total_items" id="total_items" value="0" />
                                     <input type="hidden" name="total_quantity" id="total_quantity" value="0" />
+                                    
                                     <input type="submit" id="submit" value="Submit Sale" style="display: none;" />
                                 </div>
                                 <?=form_close();?>
@@ -475,7 +482,19 @@
                         </td>
                         <td>
                             <div class="contents" id="right-col">
-                                <div id="item-list">
+                                <div class="col-sm-3">
+                                    <select id="categorias_filter" class="form-control paid_by select2" style="width:100%;">
+                                        <option value="">Seleccione una categoría</option>
+                                        <?php
+                                            foreach ($categories as $category) {
+                                                echo '<option value="'.$category->id.'">'.$category->name.'</option>">';
+
+                                            }
+                                        ?>
+                                    </select>
+                                </div>
+                                <br><br>
+                                <div id="item-list" class="col-sm-12">
                                     <div class="items">
                                         <?php echo $products; ?>
                                     </div>
@@ -485,9 +504,9 @@
                                         <div class="btn-group">
                                             <button style="z-index:10002;" class="btn btn-warning pos-tip btn-flat" type="button" id="previous"><i class="fa fa-chevron-left"></i></button>
                                         </div>
-                                        <div class="btn-group">
+                                        <!-- <div class="btn-group">
                                             <button style="z-index:10003;" class="btn btn-success pos-tip btn-flat" type="button" id="sellGiftCard"><i class="fa fa-credit-card" id="addIcon"></i> <?= lang('sell_gift_card') ?></button>
-                                        </div>
+                                        </div> -->
                                         <div class="btn-group">
                                             <button style="z-index:10004;" class="btn btn-warning pos-tip btn-flat" type="button" id="next"><i class="fa fa-chevron-right"></i></button>
                                         </div>
@@ -753,7 +772,7 @@
             </div>
             <div class="modal-body">
                 <div class="row">
-                    <div class="col-xs-9">
+                    <div class="col-xs-12">
                         <div class="font16">
                             <table class="table table-bordered table-condensed" style="margin-bottom: 0;">
                                 <tbody>
@@ -763,132 +782,144 @@
                                         <td width="25%" style="border-right-color: #FFF !important;"><?= lang('total_payable'); ?></td>
                                         <td width="25%" class="text-right"><span id="twt">0.00</span></td>
                                     </tr>
-                                    <tr>
+                                   <!--  <tr>
                                         <td style="border-right-color: #FFF !important;"><?= lang('total_paying'); ?></td>
                                         <td class="text-right"><span id="total_paying">0.00</span></td>
                                         <td style="border-right-color: #FFF !important;"><?= lang('balance'); ?></td>
                                         <td class="text-right"><span id="balance">0.00</span></td>
-                                    </tr>
+                                    </tr> -->
                                 </tbody>
                             </table>
                             <div class="clearfix"></div>
                         </div>
-                        <div class="row">
+                        <!-- <div class="row">
                             <div class="col-xs-12">
                                 <div class="form-group">
-                                    <?= lang('note', 'note'); ?>
+                                    <?= lang('  ', 'note'); ?>
                                     <textarea name="note" id="note" class="pa form-control kb-text"></textarea>
                                 </div>
                             </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-6">
-                                <div class="form-group">
-                                    <?= lang('amount', 'amount'); ?>
-                                    <input name="amount" type="text" id="amount"
-                                    class="pa form-control kb-pad amount"/>
-                                </div>
-                            </div>
-                            <div class="col-xs-6">
-                                <div class="form-group">
-                                    <?= lang('paying_by', 'paid_by'); ?>
-                                    <select id="paid_by" class="form-control paid_by select2" style="width:100%;">
-                                        <option value="cash"><?= lang('cash'); ?></option>
-                                        <option value="CC"><?= lang('cc'); ?></option>
-                                        <option value="cheque"><?= lang('cheque'); ?></option>
-                                        <option value="gift_card"><?= lang('gift_card'); ?></option>
-                                        <?= isset($Settings->stripe) ? '<option value="stripe">' . lang('stripe') . '</option>' : ''; ?>
-                                        <option value="other"><?= lang('other'); ?></option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <div class="form-group gc" style="display: none;">
-                                    <?= lang('gift_card_no', 'gift_card_no'); ?>
-                                    <input type="text" id="gift_card_no"
-                                    class="pa form-control kb-pad gift_card_no gift_card_input"/>
-
-                                    <div id="gc_details"></div>
-                                </div>
-                                <div class="pcc" style="display:none;">
+                        </div> -->
+                        <div style="border: white 1px solid; border-radius:5px; padding:10px;">
+                            <!-- <div class="row">
+                                <div class="col-xs-12">
                                     <div class="form-group">
-                                        <input type="text" id="swipe" class="form-control swipe swipe_input"
-                                        placeholder="<?= lang('focus_swipe_here') ?>"/>
+                                        <?= lang('amount', 'amount'); ?>
+                                        <input name="amount" type="text" id="amount"
+                                        class="pa form-control kb-pad amount"/>
                                     </div>
-                                    <div class="row">
-                                        <div class="col-xs-6">
-                                            <div class="form-group">
-                                                <input type="text" id="pcc_no"
-                                                class="form-control kb-pad"
-                                                placeholder="<?= lang('cc_no') ?>"/>
-                                            </div>
-                                        </div>
-                                        <div class="col-xs-6">
-                                            <div class="form-group">
+                                </div>
+                            </div> -->
+                            <div class="row">
+                                <div class="col-xs-6">
+                                    <div class="form-group">
+                                        <!-- <select id="paid_by" class="form-control paid_by select2" style="width:100%;">
+                                            <option value="seleccione">Seleccione una opción</option>
+                                            <option value="cash"><?= lang('cash'); ?></option>
+                                            <option value="CC"><?= lang('cc'); ?></option>
+                                            <option value="cheque"><?= lang('cheque'); ?></option>
+                                            <option value="gift_card"><?= lang('gift_card'); ?></option>
+                                            <?= isset($Settings->stripe) ? '<option value="stripe">' . lang('stripe') . '</option>' : ''; ?>
+                                            <option value="other"><?= lang('other'); ?></option>
+                                        </select> -->
+                                        <button type="button" class="btn btn-primary" id="add_payment"><i class='fa fa-plus'></i> Agregar método de pago</button>
+                                        
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row" >
+                                <!-- <div class="col-xs-12">
+                                    <div class="form-group gc" style="display: none;">
+                                        <?= lang('gift_card_no', 'gift_card_no'); ?>
+                                        <input type="text" id="gift_card_no"
+                                        class="pa form-control kb-pad gift_card_no gift_card_input"/>
 
-                                                <input type="text" id="pcc_holder"
-                                                class="form-control kb-text"
-                                                placeholder="<?= lang('cc_holder') ?>"/>
+                                        <div id="gc_details"></div>
+                                    </div>
+                                    <div class="pcc" style="display:none;">
+                                        <div class="form-group">
+                                            <input type="text" id="swipe" class="form-control swipe swipe_input"
+                                            placeholder="<?= lang('focus_swipe_here') ?>"/>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-xs-6">
+                                                <div class="form-group">
+                                                    <input type="text" id="pcc_no"
+                                                    class="form-control kb-pad"
+                                                    placeholder="<?= lang('cc_no') ?>"/>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-6">
+                                                <div class="form-group">
+
+                                                    <input type="text" id="pcc_holder"
+                                                    class="form-control kb-text"
+                                                    placeholder="<?= lang('cc_holder') ?>"/>
+                                                </div>
+                                            </div>
+                                            <div class="col-xs-3">
+                                                <div class="form-group">
+                                                    <select id="pcc_type"
+                                                    class="form-control pcc_type select2"
+                                                    placeholder="<?= lang('card_type') ?>">
+                                                    <option value="Visa"><?= lang('Visa'); ?></option>
+                                                    <option
+                                                    value="MasterCard"><?= lang('MasterCard'); ?></option>
+                                                    <option value="Amex"><?= lang('Amex'); ?></option>
+                                                    <option
+                                                    value="Discover"><?= lang('Discover'); ?></option>
+                                                </select>
                                             </div>
                                         </div>
                                         <div class="col-xs-3">
                                             <div class="form-group">
-                                                <select id="pcc_type"
-                                                class="form-control pcc_type select2"
-                                                placeholder="<?= lang('card_type') ?>">
-                                                <option value="Visa"><?= lang('Visa'); ?></option>
-                                                <option
-                                                value="MasterCard"><?= lang('MasterCard'); ?></option>
-                                                <option value="Amex"><?= lang('Amex'); ?></option>
-                                                <option
-                                                value="Discover"><?= lang('Discover'); ?></option>
-                                            </select>
+                                                <input type="text" id="pcc_month"
+                                                class="form-control kb-pad"
+                                                placeholder="<?= lang('month') ?>"/>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-xs-3">
-                                        <div class="form-group">
-                                            <input type="text" id="pcc_month"
-                                            class="form-control kb-pad"
-                                            placeholder="<?= lang('month') ?>"/>
-                                        </div>
-                                    </div>
-                                    <div class="col-xs-3">
-                                        <div class="form-group">
+                                        <div class="col-xs-3">
+                                            <div class="form-group">
 
-                                            <input type="text" id="pcc_year"
-                                            class="form-control kb-pad"
-                                            placeholder="<?= lang('year') ?>"/>
+                                                <input type="text" id="pcc_year"
+                                                class="form-control kb-pad"
+                                                placeholder="<?= lang('year') ?>"/>
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div class="col-xs-3">
-                                        <div class="form-group">
+                                        <div class="col-xs-3">
+                                            <div class="form-group">
 
-                                            <input type="text" id="pcc_cvv2"
-                                            class="form-control kb-pad"
-                                            placeholder="<?= lang('cvv2') ?>"/>
+                                                <input type="text" id="pcc_cvv2"
+                                                class="form-control kb-pad"
+                                                placeholder="<?= lang('cvv2') ?>"/>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="pcheque" style="display:none;">
-                                <div class="form-group"><?= lang('cheque_no', 'cheque_no'); ?>
-                                    <input type="text" id="cheque_no"
-                                    class="form-control cheque_no kb-text"/>
+                                <div class="pcheque" style="display:none;">
+                                    <div class="form-group"><?= lang('cheque_no', 'cheque_no'); ?>
+                                        <input type="text" id="cheque_no"
+                                        class="form-control cheque_no kb-text"/>
+                                    </div>
+                                </div>
+                                <div class="pcash">
+                                    <div class="form-group"><?= lang('payment_note', 'payment_note'); ?>
+                                        <input type="text" id="payment_note"
+                                        class="form-control payment_note kb-text"/>
+                                    </div>
+                                </div> -->
+                                <div>
+                                    <div id="campos" class="form-group">
+
+                                    </div>
+                                    <button type="button" class="btn btn-danger" id="remove_payment" style="margin-left:15px;display:none"><i class='fa fa-minus'></i> Eliminar método de pago</button>
                                 </div>
                             </div>
-                            <div class="pcash">
-                                <div class="form-group"><?= lang('payment_note', 'payment_note'); ?>
-                                    <input type="text" id="payment_note"
-                                    class="form-control payment_note kb-text"/>
-                                </div>
-                            </div>
-                        </div>
+                        </div>                          
                     </div>
                 </div>
-                <div class="col-xs-3 text-center">
-                    <!-- <span style="font-size: 1.2em; font-weight: bold;"><?= lang('quick_cash'); ?></span> -->
+                <!-- <div class="col-xs-3 text-center">
+                    <span style="font-size: 1.2em; font-weight: bold;"><?= lang('quick_cash'); ?></span>
 
                     <div class="btn-group btn-group-vertical" style="width:100%;">
                         <button type="button" class="btn btn-info btn-block quick-cash" id="quick-payable">0.00
@@ -901,7 +932,7 @@
                         <button type="button" class="btn btn-block btn-danger"
                         id="clear-cash-notes"><?= lang('clear'); ?></button>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
         <div class="modal-footer">
@@ -949,24 +980,6 @@
                                 <?= lang('phone'); ?>
                             </label>
                             <?= form_input('phone', '', 'class="form-control input-sm kb-pad" id="cphone"');?>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-xs-6">
-                        <div class="form-group">
-                            <label class="control-label" for="cf1">
-                                <?= lang('cf1'); ?>
-                            </label>
-                            <?= form_input('cf1', '', 'class="form-control input-sm kb-text" id="cf1"'); ?>
-                        </div>
-                    </div>
-                    <div class="col-xs-6">
-                        <div class="form-group">
-                            <label class="control-label" for="cf2">
-                                <?= lang('cf2'); ?>
-                            </label>
-                            <?= form_input('cf2', '', 'class="form-control input-sm kb-text" id="cf2"');?>
                         </div>
                     </div>
                 </div>
@@ -1275,7 +1288,8 @@
 
                     <script src="<?= $assets ?>dist/js/libraries.min.js" type="text/javascript"></script>
                     <script src="<?= $assets ?>dist/js/scripts.min.js" type="text/javascript"></script>
-                    <script src="<?= $assets ?>dist/js/pos.min.js" type="text/javascript"></script>
+                    <!-- <script src="<?= $assets ?>dist/js/pos.min.js" type="text/javascript"></script> -->
+                    <script src="<?= $assets ?>dev/js/pos.js" type="text/javascript"></script>
                     <?php if ($Settings->remote_printing != 1 && $Settings->print_img) { ?>
                     <script src="<?= $assets ?>dist/js/htmlimg.js"></script>
                     <?php } ?>

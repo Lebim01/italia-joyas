@@ -781,6 +781,27 @@ $(document).ready(function () {
     }
     return false;
   });
+
+  $('#categorias_filter').change(function (e) {
+    var cid = $(this).val();
+      cat_id = cid;
+      $.ajax({
+        type: 'get',
+        url: base_url + 'pos/ajaxproducts',
+        data: { category_id: cat_id, tcp: 1 },
+        dataType: 'json',
+        success: function (data) {
+          p_page = 'n';
+
+          tcp = data.tcp;
+          $('.items').html(data.products);
+
+        },
+      });
+    
+    return false;
+  });
+
   $('#category-' + cat_id).addClass('active');
 
   $('#next').click(function () {
@@ -1108,6 +1129,77 @@ $(document).ready(function () {
     }
   });
 
+  var nextinput = 0;
+  var total_cantidad = 0.0;
+  var metodos = [];
+  var cantidad = [];
+  var bancos = [];
+
+  const multiply = function() {
+    console.log("sdsd");
+  }
+
+  $( "body" ).delegate( ".pago", "change", function(e) {
+    id=e.target.id
+    var idd = id.split('_');
+    if(e.target.value == "CC"){
+      $("#banco_"+idd[1]).css({ "visibility": ""});
+    } else {
+      $("#banco_"+idd[1]).css({ "visibility": "hidden "});
+    }
+    
+  });
+
+/*   $( "body" ).delegate( ".bank", "change", function(e) {
+    id=e.target.id
+    console.log(id)
+      $(id).css({ "visibility": ""});
+      $(id).css( "visibility:visible");
+      console.log(e.target)
+    
+    
+  }); */
+
+  $('#payModal').on('click', '#add_payment', function () {      
+      $("#remove_payment").css("display", "block");
+      campo = `
+          <li style="margin-top:5px; list-style-type: none; margin-left:20px">
+            <select id="metodo_${nextinput}" class="form-control paid_by select2 pago" style="width:35%; display:inline-block">
+                <option value="seleccione">Seleccione una opción</option>
+                <option value="cash">Efectivo</option>
+                <option value="CC">Tarjeta de crédito o débito</option>
+            </select>
+            <input placeholder="Cantidad" style="margin-left:3px;width:25%; display:inline-block" class="form-control" type="text" size="20" id="cantidad_${nextinput}" name="campo_' + ${nextinput} + '"; />
+            <select id="banco_${nextinput}" class="form-control paid_by select2 bank" style="width:35%; display:inline-block;visibility:hidden">
+                <option value="seleccione">Seleccione una opción</option>
+                <option value="BBVA">BBVA</option>
+                <option value="Santander">Santander</option>
+                <option value="Banamex">Banamex</option>
+                <option value="Banregio">Banregio</option>
+                <option value="Bancoppel">Bancoppel</option>
+                <option value="otros">Otros</option>
+            </select>
+          </li>
+      `;
+      $("#campos").append(campo);
+      nextinput++;
+  });
+
+  $("#remove_payment").click(function () {
+    let remover = nextinput-1
+    console.log("#metodo_" + remover)
+    $("#metodo_" + remover).remove();
+    $("#cantidad_" + remover).remove();
+    $("#banco_" + remover).remove();
+    nextinput--;
+
+    if(nextinput==0){
+      $("#remove_payment").css("display", "none");
+        return false;
+     }   
+
+  });
+
   $('#payModal').on('change', '#paid_by', function () {
     $('#clear-cash-notes').click();
     $('#amount').val(grand_total);
@@ -1134,9 +1226,14 @@ $(document).ready(function () {
       $('#amount').attr('readonly', false);
     }
     if (p_val == 'cash' || p_val == 'other') {
-      $('.pcash').slideDown();
+      var nextinput = 0;
+      nextinput++;
+      campo = '<li id="rut'+nextinput+'">Campo:<input type="text" size="20" id="campo' + nextinput + '"&nbsp; name="campo' + nextinput + '"&nbsp; /></li>';
+      $("#campos").append(campo);
+
+      /* $('.pcash').slideDown();
       $('.pcheque').slideUp('fast');
-      $('.pcc').slideUp('fast');
+      $('.pcc').slideUp('fast'); */
       setTimeout(function () {
         $('#amount').focus();
       }, 10);
@@ -1296,10 +1393,47 @@ $(document).ready(function () {
     }
   });
 
+  //pagar
   $('#submit-sale').click(function () {
+    console.log($('banco_0').val())
+    for (i = 0; i < nextinput; i++) {
+      if( ($('#metodo_'+i).val() == "cash" || $('#metodo_'+i).val() == "CC" ) && parseFloat($("#cantidad_"+i).val()) > 0){
+        if($('#metodo_'+i).val() == "cash"){
+          bancos[i] = null
+        } else {
+          if( $('#banco_'+i).val() != "seleccione"){
+            bancos[i] = $('#banco_'+i).val()
+          } else {
+            alert ("Por favor, seleccione un banco") 
+            return;
+          }
+        }
+      
+       //bancos[i] = $('#banco_'+i).val()
+        metodos[i] = $('#metodo_'+i).val()
+        cantidad[i] = $("#cantidad_"+i).val()
+        total_cantidad = total_cantidad + parseFloat(cantidad[i]);
+      } else {
+        alert ("Llene correctamente los campos", metodos[i],cantidad[i])
+        return;
+      }
+    }
+
+    if(total_cantidad < grand_total){
+      alert("El total de pagos debe ser mayor al monto a pagar");
+      return;
+    }
+
     $('#total_items').val(an - 1);
     $('#total_quantity').val(quantityFormat(count - 1));
+    $('#total_pagos').val(quantityFormat(total_cantidad - 1));
+    $('#metodos').val(metodos);
+    $('#cantidad').val(cantidad);
+    $('#bancos').val(bancos);
     $('#submit').click();
+    total_cantidad=0
+
+    
   });
 
   var hold_ref = $('#hold_ref').val();

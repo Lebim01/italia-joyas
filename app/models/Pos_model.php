@@ -3,6 +3,7 @@
      exit('No direct script access allowed');
  }
 
+
 class Pos_model extends CI_Model
 {
     public function __construct()
@@ -12,9 +13,10 @@ class Pos_model extends CI_Model
 
     public function addSale($data, $items, $payment = [], $did = null)
     {
+        
+
         if ($this->db->insert('sales', $data)) {
             $sale_id = $this->db->insert_id();
-
             foreach ($items as $item) {
                 $item['sale_id'] = $sale_id;
                 if ($this->db->insert('sale_items', $item)) {
@@ -41,7 +43,7 @@ class Pos_model extends CI_Model
             }
             $msg = [];
             if (!empty($payment)) {
-                if ($payment['paid_by'] == 'stripe') {
+                 /* if ($payment['paid_by'] == 'stripe') {
                     $card_info = ['number' => $payment['cc_no'], 'exp_month' => $payment['cc_month'], 'exp_year' => $payment['cc_year'], 'cvc' => $payment['cc_cvv2'], 'type' => $payment['cc_type']];
                     $result    = $this->stripe($payment['amount'], $card_info);
                     if (!isset($result['error']) && !empty($result['transaction_id'])) {
@@ -59,18 +61,37 @@ class Pos_model extends CI_Model
                     }
                 } else {
                     if ($payment['paid_by'] == 'gift_card') {
-                        $gc = $this->getGiftCardByNO($payment['gc_no']);
-                        $this->db->update('gift_cards', ['balance' => ($gc->balance - $payment['amount'])], ['card_no' => $payment['gc_no']]);
+                        
+                        
                     }
                     unset($payment['cc_cvv2']);
-                    $payment['sale_id'] = $sale_id;
-                    $this->db->insert('payments', $payment);
-                }
-            }
+                    for ($r = 0; $r < count($payment); $r++) {
+                        $payment[$r]["sale_id"] = $sale_id;
+                        $this->db->insert('payments', $payment[$r]);
+                    }
+                    foreach ($payment as $item) {
+                        $item['sale_id'] = $sale_id;
+                        $this->db->insert('payments', $item)
+                    } 
+                    
+                }  */
+/* 
+                echo "<pre>";
+                print_r($payment);
+                echo "</pre>"; */
 
+                foreach ($payment as $item) {
+                    unset($item['cc_cvv2']);
+                    $item['sale_id'] = $sale_id; 
+                    $this->db->insert('payments', $item);
+                   /*  print_r($this->db->error()); */
+                }
+
+                
+
+            }
             return ['sale_id' => $sale_id, 'message' => $msg];
         }
-
         return false;
     }
 

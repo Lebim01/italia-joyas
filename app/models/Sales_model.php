@@ -1,9 +1,9 @@
 <?php
- if (!defined('BASEPATH')) {
-     exit('No direct script access allowed');
- }
+if (!defined('BASEPATH')) {
+    exit('No direct script access allowed');
+}
 
-class Sales_model extends CI_Model
+class Sales_model extends MY_Model
 {
     public function __construct()
     {
@@ -77,8 +77,8 @@ class Sales_model extends CI_Model
             (CASE WHEN {$this->db->dbprefix('sale_items')}.product_code IS NULL THEN {$this->db->dbprefix('products')}.code ELSE {$this->db->dbprefix('sale_items')}.product_code END) as product_code,
             (CASE WHEN {$this->db->dbprefix('sale_items')}.product_name IS NULL THEN {$this->db->dbprefix('products')}.name ELSE {$this->db->dbprefix('sale_items')}.product_name END) as product_name,
             {$this->db->dbprefix('products')}.tax_method as tax_method", false)
-        ->join('products', 'products.id=sale_items.product_id', 'left outer')
-        ->order_by('sale_items.id');
+            ->join('products', 'products.id=sale_items.product_id', 'left outer')
+            ->order_by('sale_items.id');
         $q = $this->db->get_where('sale_items', ['sale_id' => $sale_id]);
         if ($q->num_rows() > 0) {
             foreach (($q->result()) as $row) {
@@ -104,8 +104,8 @@ class Sales_model extends CI_Model
     public function getComboItemsByPID($product_id)
     {
         $this->db->select($this->db->dbprefix('products') . '.id as id, ' . $this->db->dbprefix('products') . '.code as code, ' . $this->db->dbprefix('combo_items') . '.quantity as qty, ' . $this->db->dbprefix('products') . '.name as name, ' . $this->db->dbprefix('products') . '.quantity as quantity')
-        ->join('products', 'products.code=combo_items.item_code', 'left')
-        ->group_by('combo_items.id');
+            ->join('products', 'products.code=combo_items.item_code', 'left')
+            ->group_by('combo_items.id');
         $q = $this->db->get_where('combo_items', ['product_id' => $product_id]);
         if ($q->num_rows() > 0) {
             foreach (($q->result()) as $row) {

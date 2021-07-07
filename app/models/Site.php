@@ -155,6 +155,15 @@ class Site extends CI_Model
         return false;
     }
 
+    public function getStockByID($id)
+    {
+        $stock = $this->db->get_where('tec_product_store_qty', ['product_id' => $id], $id);
+        if ($stock->num_rows() > 0) {
+            return $stock->row();
+        }
+        return false;
+    }
+
     public function getQtyAlerts()
     {
         if (!$this->session->userdata('store_id')) {

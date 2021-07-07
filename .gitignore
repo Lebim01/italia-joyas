@@ -4,3 +4,4 @@ app/config/config.php
 app/config/database.php
 uploads/
 uploads/thumbs/
+node_modules
