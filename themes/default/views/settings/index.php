@@ -547,7 +547,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <div class="form-group">
-                                        Logo reportes 
+                                        Logo reportes (Tamaño máximo 80x300)
                                         <input type="file" name="userfile" id="logo">
                                     </div>
                                 </div>

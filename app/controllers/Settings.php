@@ -557,7 +557,7 @@ class Settings extends MY_Controller
 
                     if (!$this->upload->do_upload()) {
                         $error = $this->upload->display_errors();
-                        $this->session->set_flashdata('message', $error);
+                        $this->session->set_flashdata('error', $error);
                         redirect('settings');
                     }
 
