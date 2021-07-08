@@ -17,12 +17,10 @@ class Pos extends MY_Controller
         $this->load->library('form_validation');
     }
 
-    public function ajaxproducts($category_id = null, $return = null)
+    public function ajaxproducts($category_id = null, $return = null, $in_stock = null)
     {
-        if ($this->input->get('category_id')) {
+        if ($this->input->get('category_id') !== null) {
             $category_id = $this->input->get('category_id');
-        } elseif (!$category_id) {
-            $category_id = $this->Settings->default_category;
         }
         if ($this->input->get('per_page') == 'n') {
             $page = 0;
@@ -34,8 +32,11 @@ class Pos extends MY_Controller
         } else {
             $tcp = false;
         }
+        if ($this->input->get('in_stock') !== null) {
+            $in_stock = $this->input->get('in_stock');
+        }
 
-        $products = $this->pos_model->fetch_products($category_id, $this->Settings->pro_limit, $page);
+        $products = $this->pos_model->fetch_products($category_id, $this->Settings->pro_limit, $page, $in_stock);
         $pro      = 1;
         $prods    = '<div>';
         if ($products) {
@@ -86,7 +87,7 @@ class Pos extends MY_Controller
             if (!$tcp) {
                 echo $prods;
             } else {
-                $category_products = $this->pos_model->products_count($category_id);
+                $category_products = $this->pos_model->products_count($category_id, $in_stock);
                 header('Content-Type: application/json');
                 echo json_encode(['products' => $prods, 'tcp' => $category_products]);
             }
@@ -249,7 +250,7 @@ class Pos extends MY_Controller
     }
 
     public function index($sid = null, $eid = null)
-    {   
+    {
         if (!$this->Settings->multi_store) {
             $this->session->set_userdata('store_id', 1);
         }
@@ -312,7 +313,7 @@ class Pos extends MY_Controller
             $order_discount   = 0;
             $percentage       = '%';
             $i                = isset($_POST['product_id']) ? sizeof($_POST['product_id']) : 0;
-            
+
             for ($r = 0; $r < $i; $r++) {
                 $item_id         = $_POST['product_id'][$r];
                 $real_unit_price = $this->tec->formatDecimal($_POST['real_unit_price'][$r]);
@@ -322,8 +323,8 @@ class Pos extends MY_Controller
 
                 $stock = $this->site->getStockByID($item_id);
 
-                if(intval($stock->quantity - $stock->apart) < intval($item_quantity)){
-                    $this->session->set_flashdata('error', lang('No hay stock suficiente pata el producto '.$_POST['product_name'][$r]));
+                if (intval($stock->quantity - $stock->apart) < intval($item_quantity)) {
+                    $this->session->set_flashdata('error', lang('No hay stock suficiente pata el producto ' . $_POST['product_name'][$r]));
                     redirect($_SERVER['HTTP_REFERER']);
                 }
 
@@ -454,7 +455,7 @@ class Pos extends MY_Controller
                 $order_tax    = 0;
             }
 
-            
+
 
             $datametodos = [
                 'metodos'           => $this->input->post('metodos'),
@@ -488,8 +489,8 @@ class Pos extends MY_Controller
                 } elseif ($this->tec->formatDecimal($round_total) > $this->tec->formatDecimal($paid) && $paid > 0) {
                     $status = 'partial';
                 }
-            } 
-            
+            }
+
 
             $totalpagos = $this->input->post('total_pagos');
 
@@ -522,7 +523,7 @@ class Pos extends MY_Controller
             }
 
             if (!$eid && !$suspend) {
-                
+
                 if ($this->input->post('paying_gift_card_no')) {
                     $gc = $this->pos_model->getGiftCardByNO($this->input->post('paying_gift_card_no'));
                     if (!$gc || $gc->balance < $amount) {
@@ -533,7 +534,7 @@ class Pos extends MY_Controller
                 $amount  = $this->tec->formatDecimal(($paid > $grand_total ? ($paid - $this->input->post('balance_amount')) : $paid), 4);
 
                 $data['paid'] = $amount;
-                
+
                 for ($r = 0; $r < count($metodos); $r++) {
                     #var_dump($metodos[$r]);exit;
                     /* if($metodos[$r] == "cash"){
@@ -546,7 +547,7 @@ class Pos extends MY_Controller
                         ];
                     } */
 
-                    $payment [$r] = [
+                    $payment[$r] = [
                         'date'        => $date,
                         'amount'      => $cantidad[$r],
                         'banks'      => $bancos[$r],
@@ -566,27 +567,13 @@ class Pos extends MY_Controller
                         'pos_paid'    => $this->tec->formatDecimal($this->input->post('amount'), 4),
                         'pos_balance' => $this->tec->formatDecimal($this->input->post('balance_amount'), 4),
                     ];
-                    
                 }
-                /* echo "<pre><pre />";
-                print_r(count($payment));
-                echo "<pre><pre />";
-
-                exit; */
             } else {
                 $payment = [];
-                
             }
 
             // $this->tec->print_arrays($data, $products, $payment);
         }
-
-        /* echo "<pre><pre />";
-                print_r($payment);
-                echo "<pre><pre />";
-
-                exit; 
- */
         if ($this->form_validation->run() == true && !empty($products)) {
 
 
@@ -616,25 +603,7 @@ class Pos extends MY_Controller
                     redirect('pos/?edit=' . $eid);
                 }
             } else {
-               
-                /* echo "<pre><pre />";
-                print_r($data);
-                echo "<pre><pre />"; */
-                /* echo "<pre><pre />";
-                print_r($products);
-                echo "<pre><pre />"; */
-                /* foreach ($payment as $item) {
-                    $item['sale_id'] = 1;
-                    echo "<pre><pre />";
-                    print_r($item);
-                    echo "<pre><pre />";
-                }
-                
-                exit; */
 
-                //var_dump($sale);exit;
-
-              
                 if ($sale = $this->pos_model->addSale($data, $products, $payment, $did)) {
                     $this->session->set_userdata('rmspos', 1);
                     $msg = lang('sale_added');
@@ -652,14 +621,12 @@ class Pos extends MY_Controller
                             $redirect_to .= '?print=' . $sale['sale_id'];
                         }
                     }
-                    //var_dump($redirect_to); exit;
                     redirect($redirect_to);
                 } else {
                     $this->session->set_flashdata('error', lang('action_failed'));
                     redirect('pos');
                 }
             }
-
         } else {
             if (isset($sid) && !empty($sid)) {
                 $suspended_sale = $this->pos_model->getSuspendedSaleByID($sid);
@@ -731,11 +698,12 @@ class Pos extends MY_Controller
             $this->data['sid']             = isset($sid) && !empty($sid) ? $sid : 0;
             $this->data['eid']             = isset($eid) && !empty($eid) ? $eid : 0;
             $this->data['customers']       = $this->site->getAllCustomers();
-            $this->data['tcp']             = $this->pos_model->products_count($this->Settings->default_category);
-            $this->data['products']        = $this->ajaxproducts($this->Settings->default_category, 1);
+            $this->data['tcp']             = $this->pos_model->products_count($this->Settings->default_category, $this->Settings->default_in_stock);
+            $this->data['products']        = $this->ajaxproducts($this->Settings->default_category, 1, $this->Settings->default_in_stock);
             $this->data['categories']      = $this->site->getAllCategories();
             $this->data['message']         = $this->session->flashdata('message');
             $this->data['suspended_sales'] = $this->site->getUserSuspenedSales();
+            $this->data['default_in_stock'] = $this->Settings->default_in_stock;
 
             $this->data['printer'] = $this->site->getPrinterByID($this->Settings->printer);
             $printers              = [];

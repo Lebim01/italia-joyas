@@ -1,7 +1,7 @@
 <?php
- if (!defined('BASEPATH')) {
-     exit('No direct script access allowed');
- }
+if (!defined('BASEPATH')) {
+    exit('No direct script access allowed');
+}
 
 
 class Pos_model extends CI_Model
@@ -13,7 +13,7 @@ class Pos_model extends CI_Model
 
     public function addSale($data, $items, $payment = [], $did = null)
     {
-        
+
 
         if ($this->db->insert('sales', $data)) {
             $sale_id = $this->db->insert_id();
@@ -43,52 +43,11 @@ class Pos_model extends CI_Model
             }
             $msg = [];
             if (!empty($payment)) {
-                 /* if ($payment['paid_by'] == 'stripe') {
-                    $card_info = ['number' => $payment['cc_no'], 'exp_month' => $payment['cc_month'], 'exp_year' => $payment['cc_year'], 'cvc' => $payment['cc_cvv2'], 'type' => $payment['cc_type']];
-                    $result    = $this->stripe($payment['amount'], $card_info);
-                    if (!isset($result['error']) && !empty($result['transaction_id'])) {
-                        $payment['transaction_id'] = $result['transaction_id'];
-                        $payment['date']           = $result['created_at'];
-                        $payment['amount']         = $result['amount'];
-                        $payment['currency']       = $result['currency'];
-                        unset($payment['cc_cvv2']);
-                        $payment['sale_id'] = $sale_id;
-                        $this->db->insert('payments', $payment);
-                    } else {
-                        $this->db->update('sales', ['paid' => 0, 'status' => 'due'], ['id' => $sale_id]);
-                        $msg[] = lang('payment_failed');
-                        $msg[] = '<p class="text-danger">' . $result['code'] . ': ' . $result['message'] . '</p>';
-                    }
-                } else {
-                    if ($payment['paid_by'] == 'gift_card') {
-                        
-                        
-                    }
-                    unset($payment['cc_cvv2']);
-                    for ($r = 0; $r < count($payment); $r++) {
-                        $payment[$r]["sale_id"] = $sale_id;
-                        $this->db->insert('payments', $payment[$r]);
-                    }
-                    foreach ($payment as $item) {
-                        $item['sale_id'] = $sale_id;
-                        $this->db->insert('payments', $item)
-                    } 
-                    
-                }  */
-/* 
-                echo "<pre>";
-                print_r($payment);
-                echo "</pre>"; */
-
                 foreach ($payment as $item) {
                     unset($item['cc_cvv2']);
-                    $item['sale_id'] = $sale_id; 
+                    $item['sale_id'] = $sale_id;
                     $this->db->insert('payments', $item);
-                   /*  print_r($this->db->error()); */
                 }
-
-                
-
             }
             return ['sale_id' => $sale_id, 'message' => $msg];
         }
@@ -114,22 +73,20 @@ class Pos_model extends CI_Model
         return false;
     }
 
-    public function fetch_products($category_id, $limit, $start)
+    public function fetch_products($category_id, $limit, $start, $in_stock = false)
     {
+        $this->db->save_queries = TRUE;
         $this->db->limit($limit, $start);
         if ($category_id) {
             $this->db->where('category_id', $category_id);
         }
+        if ($in_stock) {
+            $this->db->join('product_store_qty', 'product_id = products.id');
+        }
         $this->db->order_by('code', 'asc');
         $query = $this->db->get('products');
 
-        if ($query->num_rows() > 0) {
-            foreach ($query->result() as $row) {
-                $data[] = $row;
-            }
-            return $data;
-        }
-        return false;
+        return $query->result();
     }
 
     public function getAllSaleItems($sale_id)
@@ -139,8 +96,8 @@ class Pos_model extends CI_Model
             (CASE WHEN {$this->db->dbprefix('sale_items')}.product_code IS NULL THEN {$this->db->dbprefix('products')}.code ELSE {$this->db->dbprefix('sale_items')}.product_code END) as product_code,
             (CASE WHEN {$this->db->dbprefix('sale_items')}.product_name IS NULL THEN {$this->db->dbprefix('products')}.name ELSE {$this->db->dbprefix('sale_items')}.product_name END) as product_name,
             {$this->db->dbprefix('products')}.tax_method as tax_method", false)
-        ->join('products', 'products.id=sale_items.product_id', 'left outer')
-        ->order_by('sale_items.id');
+            ->join('products', 'products.id=sale_items.product_id', 'left outer')
+            ->order_by('sale_items.id');
         $q = $this->db->get_where('sale_items', ['sale_id' => $sale_id]);
         if ($q->num_rows() > 0) {
             foreach (($q->result()) as $row) {
@@ -166,8 +123,8 @@ class Pos_model extends CI_Model
     public function getComboItemsByPID($product_id)
     {
         $this->db->select($this->db->dbprefix('products') . '.id as id, ' . $this->db->dbprefix('products') . '.code as code, ' . $this->db->dbprefix('combo_items') . '.quantity as qty, ' . $this->db->dbprefix('products') . '.name as name, ' . $this->db->dbprefix('products') . '.quantity as quantity')
-        ->join('products', 'products.code=combo_items.item_code', 'left')
-        ->group_by('combo_items.id');
+            ->join('products', 'products.code=combo_items.item_code', 'left')
+            ->group_by('combo_items.id');
         $q = $this->db->get_where('combo_items', ['product_id' => $product_id]);
         if ($q->num_rows() > 0) {
             foreach (($q->result()) as $row) {
@@ -214,7 +171,7 @@ class Pos_model extends CI_Model
     {
         $jpsq = "( SELECT product_id, quantity, price from {$this->db->dbprefix('product_store_qty')} WHERE store_id = {$this->session->userdata('store_id')} ) AS PSQ";
         $this->db->select("{$this->db->dbprefix('products')}.*, COALESCE(PSQ.quantity, 0) as quantity, COALESCE(PSQ.price, {$this->db->dbprefix('products')}.price) as store_price", false)
-        ->join($jpsq, 'PSQ.product_id=products.id', 'left');
+            ->join($jpsq, 'PSQ.product_id=products.id', 'left');
         $q = $this->db->get_where('products', ['code' => $code], 1);
         if ($q->num_rows() > 0) {
             return $q->row();
@@ -226,7 +183,7 @@ class Pos_model extends CI_Model
     {
         $store_id = $this->session->userdata('store_id');
         $this->db->select("{$this->db->dbprefix('products')}.*, COALESCE(psq.quantity, 0) as quantity, COALESCE(psq.price, 0) as store_price")
-        ->join("( SELECT * from {$this->db->dbprefix('product_store_qty')} WHERE store_id = {$store_id}) psq", 'products.id=psq.product_id', 'left');
+            ->join("( SELECT * from {$this->db->dbprefix('product_store_qty')} WHERE store_id = {$store_id}) psq", 'products.id=psq.product_id', 'left');
         if ($strict) {
             $this->db->where('code', $term);
         } else {
@@ -641,10 +598,13 @@ class Pos_model extends CI_Model
         return false;
     }
 
-    public function products_count($category_id)
+    public function products_count($category_id = false, $in_stock = false)
     {
-        if ($category_id) {
+        if ($category_id > 0) {
             $this->db->where('category_id', $category_id);
+        }
+        if ($in_stock) {
+            $this->db->join('product_store_qty', 'product_id = products.id');
         }
         return $this->db->count_all_results('products');
     }
@@ -673,7 +633,8 @@ class Pos_model extends CI_Model
                 $token = $token_info->id;
                 $data  = $this->stripe_payments->insert($token, $desc, $amount, $this->Settings->currency_prefix);
                 if (!isset($data['error'])) {
-                    $result = ['transaction_id' => $data->id,
+                    $result = [
+                        'transaction_id' => $data->id,
                         'created_at'            => date('Y-m-d H:i:s', $data->created),
                         'amount'                => ($data->amount / 100),
                         'currency'              => strtoupper($data->currency),

@@ -1,3 +1,5 @@
+var in_stock = true
+
 function add_invoice_item(item) {
   if (count == 1) {
     spositems = {};
@@ -758,49 +760,54 @@ $(document).ready(function () {
     });
   });
 
+  const execAjaxProducts = (reset = false) => {
+    let data = { 
+      category_id: cat_id, 
+      in_stock: in_stock ? 1 : 0, 
+      per_page: p_page,
+      tcp: 1
+    }
+
+    if(reset){
+      delete data.per_page
+      p_page = 'n'
+    }
+
+    $.ajax({
+      type: 'get',
+      url: base_url + 'pos/ajaxproducts',
+      data,
+      dataType: 'json',
+      success: function (data) {
+        tcp = data.tcp;
+        $('.items').html(data.products);
+        nav_pointer();
+      },
+    });
+  }
+
   $(document).on('click', '.category', function () {
     var cid = $(this).attr('id');
     if (cat_id != cid) {
       cat_id = cid;
-      $.ajax({
-        type: 'get',
-        url: base_url + 'pos/ajaxproducts',
-        data: { category_id: cat_id, tcp: 1 },
-        dataType: 'json',
-        success: function (data) {
-          p_page = 'n';
-          // $('#categories-list').addClass('control-sidebar-open');
-          //ocat_id = cat_id;
-          tcp = data.tcp;
-          $('.items').html(data.products);
-          $('.category').removeClass('active');
-          $('#' + cat_id).addClass('active');
-          nav_pointer();
-        },
-      });
+      $('.category').removeClass('active');
+      $('#' + cat_id).addClass('active');
+
+      execAjaxProducts(true)
     }
     return false;
   });
 
   $('#categorias_filter').change(function (e) {
     var cid = $(this).val();
-      cat_id = cid;
-      $.ajax({
-        type: 'get',
-        url: base_url + 'pos/ajaxproducts',
-        data: { category_id: cat_id, tcp: 1 },
-        dataType: 'json',
-        success: function (data) {
-          p_page = 'n';
+    cat_id = cid;
+    execAjaxProducts(true)
+  })
 
-          tcp = data.tcp;
-          $('.items').html(data.products);
-
-        },
-      });
-    
-    return false;
-  });
+  $('#existing').change(function(e){
+    in_stock = $(this).prop('checked')
+    execAjaxProducts(true)
+  })
 
   $('#category-' + cat_id).addClass('active');
 
@@ -810,16 +817,7 @@ $(document).ready(function () {
     }
     p_page += pro_limit;
     if (tcp >= pro_limit && p_page < tcp) {
-      $.ajax({
-        type: 'get',
-        url: base_url + 'pos/ajaxproducts',
-        data: { category_id: cat_id, per_page: p_page },
-        dataType: 'html',
-        success: function (data) {
-          $('.items').html(data);
-          nav_pointer();
-        },
-      });
+      execAjaxProducts()
     } else {
       p_page -= pro_limit;
     }
@@ -834,16 +832,7 @@ $(document).ready(function () {
       if (p_page == 0) {
         p_page = 'n';
       }
-      $.ajax({
-        type: 'get',
-        url: base_url + 'pos/ajaxproducts',
-        data: { category_id: cat_id, per_page: p_page },
-        dataType: 'html',
-        success: function (data) {
-          $('.items').html(data);
-          nav_pointer();
-        },
-      });
+      execAjaxProducts()
     }
   });
 
@@ -1562,6 +1551,7 @@ function calTax() {
 }
 
 function nav_pointer() {
+  console.log(pro_limit, tcp)
   var pp = p_page == 'n' ? 0 : p_page;
   pp == 0 ? $('#previous').attr('disabled', true) : $('#previous').attr('disabled', false);
   pp + pro_limit > tcp ? $('#next').attr('disabled', true) : $('#next').attr('disabled', false);

@@ -314,11 +314,11 @@ class Products extends MY_Controller
         }
 
         $this->datatables->from('products')
-        ->join('categories', 'categories.id=products.category_id', 'left')
-        // ->join('product_store_qty', 'product_store_qty.product_id=products.id', 'left')
-        ->join("( SELECT * from {$this->db->dbprefix('product_store_qty')} WHERE store_id = {$store_id}) psq", 'products.id=psq.product_id', 'left')
-        // ->where('product_store_qty.store_id', $store_id)
-        ->group_by('products.id');
+            ->join('categories', 'categories.id=products.category_id', 'left')
+            // ->join('product_store_qty', 'product_store_qty.product_id=products.id', 'left')
+            ->join("( SELECT * from {$this->db->dbprefix('product_store_qty')} WHERE store_id = {$store_id}) psq", 'products.id=psq.product_id', 'left')
+            // ->where('product_store_qty.store_id', $store_id)
+            ->group_by('products.id');
 
         $this->datatables->add_column('Actions', "<div class='text-center'><div class='btn-group'><a href='" . site_url('products/view/$1') . "' title='" . lang('view') . "' class='tip btn btn-primary btn-xs' data-toggle='ajax'><i class='fa fa-file-text-o'></i></a><a href='" . site_url('products/single_barcode/$1') . "' title='" . lang('print_barcodes') . "' class='tip btn btn-default btn-xs' data-toggle='ajax-modal'><i class='fa fa-print'></i></a> <a href='" . site_url('products/single_label/$1') . "' title='" . lang('print_labels') . "' class='tip btn btn-default btn-xs' data-toggle='ajax-modal'><i class='fa fa-print'></i></a> <a class='tip image btn btn-primary btn-xs' id='$4 ($3)' href='" . base_url('uploads/$2') . "' title='" . lang('view_image') . "'><i class='fa fa-picture-o'></i></a> <a href='" . site_url('products/edit/$1') . "' title='" . lang('edit_product') . "' class='tip btn btn-warning btn-xs'><i class='fa fa-edit'></i></a> <a href='" . site_url('products/delete/$1') . "' onClick=\"return confirm('" . lang('alert_x_product') . "')\" title='" . lang('delete_product') . "' class='tip btn btn-danger btn-xs'><i class='fa fa-trash-o'></i></a></div></div>", 'pid, image, code, pname, barcode_symbology');
 
@@ -404,7 +404,6 @@ class Products extends MY_Controller
                         'category_id' => $category->id,
                     ];
                 }
-                //print_r($data); die();
             }
         }
 

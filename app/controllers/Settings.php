@@ -469,6 +469,7 @@ class Settings extends MY_Controller
                 'pro_limit'         => $this->input->post('pro_limit'),
                 'display_kb'        => $this->input->post('display_kb'),
                 'default_category'  => $this->input->post('default_category'),
+                'default_in_stock'  => $this->input->post('default_in_stock'),
                 'default_customer'  => $this->input->post('default_customer'),
                 'barcode_symbology' => $this->input->post('barcode_symbology'),
                 'dateformat'        => DEMO ? 'jS F Y' : $this->input->post('dateformat'),
