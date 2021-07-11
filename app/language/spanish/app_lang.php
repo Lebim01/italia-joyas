@@ -304,6 +304,7 @@ $lang['display_product']                      = 'Mostrar Producto';
 $lang['pro_limit']                            = 'Limite para Mostrar Producto';
 $lang['display_kb']                           = 'Mostrar Teclado';
 $lang['default_category']                     = 'Categoria por Defecto';
+$lang['default_in_stock']                     = 'Mostrar en existencia por Defecto';
 $lang['default_customer']                     = 'Cliente por Defecto';
 $lang['item_addition']                        = 'Agregar Articulo';
 $lang['bill_header']                          = 'Encabezado de Cuenta';

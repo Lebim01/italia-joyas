@@ -768,6 +768,10 @@ $(document).ready(function () {
       tcp: 1
     }
 
+    if(!data.category_id){
+      delete data.category_id
+    }
+
     if(reset){
       delete data.per_page
       p_page = 'n'
