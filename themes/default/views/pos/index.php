@@ -483,7 +483,9 @@
                     <td>
                         <div class="contents" id="right-col">
                             <div class="col-sm-12">
-                                Listado de productos (limite <?= $Settings->pro_limit ?> por página)
+                                <span title="Configurable en ajustes">
+                                    Listado de productos (limite <?= $Settings->pro_limit ?> por página)
+                                </span>
                             </div>
                             <div class="col-sm-3">
                                 <select id="categorias_filter" class="form-control paid_by select2" style="width:100%;">
@@ -500,6 +502,9 @@
                                     <input type="checkbox" name="existing" value="1" id="existing" <?= $default_in_stock == 1 ? 'checked="checked"' : "" ?> />
                                     Mostrar solo en existencia
                                 </label>
+                            </div>
+                            <div class="col-sm-12">
+                                <b><?= $tcp ?> Productos</b>
                             </div>
                             <br><br>
                             <div id="item-list" class="col-sm-12">

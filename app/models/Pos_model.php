@@ -80,7 +80,7 @@ class Pos_model extends CI_Model
         if ($in_stock) {
             $this->db->join('product_store_qty', 'product_id = products.id AND product_store_qty.quantity > 0');
         }
-        $this->db->order_by('code', 'asc');
+        $this->db->order_by('name', 'asc');
         $query = $this->db->get('products');
 
         return $query->result();
