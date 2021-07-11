@@ -482,6 +482,9 @@
                     </td>
                     <td>
                         <div class="contents" id="right-col">
+                            <div class="col-sm-12">
+                                Listado de productos (limite <?= $Settings->pro_limit ?> por página)
+                            </div>
                             <div class="col-sm-3">
                                 <select id="categorias_filter" class="form-control paid_by select2" style="width:100%;">
                                     <option value="">Seleccione una categoría</option>
@@ -1376,6 +1379,30 @@
     <?php if ($Settings->remote_printing != 1 && $Settings->print_img) { ?>
         <script src="<?= $assets ?>dist/js/htmlimg.js"></script>
     <?php } ?>
+
+    <style>
+        .items-grid {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .pos .contents #item-list .btn-both,
+        .pos .contents #item-list .btn-img {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .pos .contents #item-list .btn-both div {
+            background-color: #e5e5e5;
+            flex: 1;
+            padding: 2px;
+        }
+
+        .pos .contents #item-list .btn-both span {
+            overflow: unset;
+            height: unset;
+        }
+    </style>
 </body>
 
 </html>

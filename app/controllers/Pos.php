@@ -38,7 +38,7 @@ class Pos extends MY_Controller
 
         $products = $this->pos_model->fetch_products($category_id, $this->Settings->pro_limit, $page, $in_stock);
         $pro      = 1;
-        $prods    = '<div>';
+        $prods    = '<div class="items-grid">';
         if ($products) {
             if ($this->Settings->bsty == 1) {
                 foreach ($products as $product) {
@@ -73,7 +73,7 @@ class Pos extends MY_Controller
                     if ($category_id < 10) {
                         $category_id = '0' . ($category_id / 100) * 100;
                     }
-                    $prods .= '<button type="button" data-name="' . $product->name . '" id="product-' . $category_id . $count . "\" type=\"button\" value='" . $product->code . "' class=\"btn btn-both btn-flat product\"><span class=\"bg-img\"><img src=\"" . base_url() . 'uploads/thumbs/' . $product->image . '" alt="' . $product->name . '" style="width: 100px; height: 100px;"></span><span><span>' . $product->name . '</span></span></button>';
+                    $prods .= '<button type="button" data-name="' . $product->name . '" id="product-' . $category_id . $count . "\" type=\"button\" value='" . $product->code . "' class=\"btn btn-both btn-flat product\"><span class=\"bg-img\"><img src=\"" . base_url() . 'uploads/thumbs/' . $product->image . '" alt="' . $product->name . '" style="width: 100px; height: 100px;"></span><div><span>' . $product->name . '</span></div></button>';
                     $pro++;
                 }
             }
