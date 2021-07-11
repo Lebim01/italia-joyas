@@ -1,4 +1,4 @@
-<?php (defined('BASEPATH')) OR exit('No direct script access allowed'); ?>
+<?php (defined('BASEPATH')) or exit('No direct script access allowed'); ?>
 
 <?php
 $v = "?v=1";
@@ -29,7 +29,7 @@ if ($this->input->post('end_date')) {
 <script type="text/javascript">
     $(document).ready(function() {
 
-        var pb = ['<?=lang('cash')?>', '<?=lang('CC')?>', '<?=lang('Cheque')?>', '<?=lang('stripe')?>', '<?=lang('gift_card')?>'];
+        var pb = ['<?= lang('cash') ?>', '<?= lang('CC') ?>', '<?= lang('Cheque') ?>', '<?= lang('stripe') ?>', '<?= lang('gift_card') ?>'];
 
         function paid_by(x) {
             if (x == 'cash') {
@@ -49,52 +49,101 @@ if ($this->input->post('end_date')) {
 
         var table = $('#PayRData').DataTable({
 
-            'ajax' : { url: '<?=site_url('reports/get_payments/'. $v);?>', type: 'POST', "data": function ( d ) {
-                d.<?=$this->security->get_csrf_token_name();?> = "<?=$this->security->get_csrf_hash()?>";
-            }},
-            "buttons": [
-            { extend: 'copyHtml5', 'footer': true, exportOptions: { columns: [ 0, 1, 2, 3, 4, 5 ] } },
-            { extend: 'excelHtml5', 'footer': true, exportOptions: { columns: [ 0, 1, 2, 3, 4, 5 ] } },
-            { extend: 'csvHtml5', 'footer': true, exportOptions: { columns: [ 0, 1, 2, 3, 4, 5 ] } },
-            { extend: 'pdfHtml5', orientation: 'landscape', pageSize: 'A4', 'footer': true,
-            exportOptions: { columns: [ 0, 1, 2, 3, 4, 5 ] } },
-            { extend: 'colvis', text: 'Columns'},
+            'ajax': {
+                url: '<?= site_url('reports/get_payments/' . $v); ?>',
+                type: 'POST',
+                "data": function(d) {
+                    d.<?= $this->security->get_csrf_token_name(); ?> = "<?= $this->security->get_csrf_hash() ?>";
+                }
+            },
+            "buttons": [{
+                    extend: 'copyHtml5',
+                    'footer': true,
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5]
+                    }
+                },
+                {
+                    extend: 'excelHtml5',
+                    'footer': true,
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5]
+                    }
+                },
+                {
+                    extend: 'csvHtml5',
+                    'footer': true,
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5]
+                    }
+                },
+                {
+                    extend: 'pdfHtml5',
+                    orientation: 'landscape',
+                    pageSize: 'A4',
+                    'footer': true,
+                    exportOptions: {
+                        columns: [0, 1, 2, 3, 4, 5]
+                    }
+                },
+                {
+                    extend: 'colvis',
+                    text: 'Columns'
+                },
             ],
-            "columns": [
-            { "data": "id", "visible": false },
-            { "data": "date", "render": hrld },
-            { "data": "ref" },
-            { "data": "sale_no" },
-            { "data": "paid_by", "render": paid_by },
-            { "data": "amount", "render": currencyFormat }
+            "columns": [{
+                    "data": "id",
+                    "visible": false
+                },
+                {
+                    "data": "date",
+                    "render": hrld
+                },
+                {
+                    "data": "ref"
+                },
+                {
+                    "data": "sale_no"
+                },
+                {
+                    "data": "paid_by",
+                    "render": paid_by
+                },
+                {
+                    "data": "amount",
+                    "render": currencyFormat
+                }
             ],
-            "footerCallback": function (  tfoot, data, start, end, display ) {
-                var api = this.api(), data;
-                $(api.column(5).footer()).html( cf(api.column(5).data().reduce( function (a, b) { return pf(a) + pf(b); }, 0)) );
+            "footerCallback": function(tfoot, data, start, end, display) {
+                var api = this.api(),
+                    data;
+                $(api.column(5).footer()).html(cf(api.column(5).data().reduce(function(a, b) {
+                    return pf(a) + pf(b);
+                }, 0)));
             }
 
         });
 
-        $('#search_table').on( 'keyup change', function (e) {
+        $('#search_table').on('keyup change', function(e) {
             var code = (e.keyCode ? e.keyCode : e.which);
             if (((code == 13 && table.search() !== this.value) || (table.search() !== '' && this.value === ''))) {
-                table.search( this.value ).draw();
+                table.search(this.value).draw();
             }
         });
 
-        table.columns().every(function () {
+        table.columns().every(function() {
             var self = this;
-            $( 'input.datepicker', this.footer() ).on('dp.change', function (e) {
-                self.search( this.value ).draw();
+            $('input.datepicker', this.footer()).on('dp.change', function(e) {
+                self.search(this.value).draw();
             });
-            $( 'input:not(.datepicker)', this.footer() ).on('keyup change', function (e) {
+            $('input:not(.datepicker)', this.footer()).on('keyup change', function(e) {
                 var code = (e.keyCode ? e.keyCode : e.which);
                 if (((code == 13 && self.search() !== this.value) || (self.search() !== '' && this.value === ''))) {
-                    self.search( this.value ).draw();
+                    self.search(this.value).draw();
                 }
             });
-            $( 'select', this.footer() ).on('change', function (e) {
-                self.search( this.value ).draw();
+            $('select', this.footer()).on('change', function(e) {
+                self.search(this.value).draw();
             });
         });
 
@@ -102,16 +151,18 @@ if ($this->input->post('end_date')) {
 </script>
 
 <script type="text/javascript">
-    $(document).ready(function(){
+    $(document).ready(function() {
         $('#form').hide();
-        $('.toggle_form').click(function(){
+        $('.toggle_form').click(function() {
             $("#form").slideToggle();
             return false;
         });
     });
 </script>
 <style type="text/css">
-    .table td:nth-child(3) { text-align: center; }
+    .table td:nth-child(3) {
+        text-align: center;
+    }
 </style>
 <section class="content">
     <div class="row">
@@ -120,61 +171,60 @@ if ($this->input->post('end_date')) {
                 <div class="box-header">
                     <a href="#" class="btn btn-default btn-sm toggle_form pull-right"><?= lang("show_hide"); ?></a>
                     <h3 class="box-title"><?= lang('customize_report'); ?><?php
-                        if ($this->input->post('start_date')) {
-                            echo "From " . $this->input->post('start_date') . " to " . $this->input->post('end_date');
-                        }
-                        ?></h3>
-                    </div>
-                    <div class="box-body">
-                        <div id="form" class="panel panel-warning">
-                            <div class="panel-body">
+                                                                            if ($this->input->post('start_date')) {
+                                                                                echo "From " . $this->input->post('start_date') . " to " . $this->input->post('end_date');
+                                                                            }
+                                                                            ?></h3>
+                </div>
+                <div class="box-body">
+                    <div id="form" class="panel panel-warning">
+                        <div class="panel-body">
 
-                                <?= form_open("reports/payments"); ?>
-                                <div class="row">
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <?= lang("payment_ref", "payment_ref"); ?>
-                                            <?= form_input('payment_ref', (isset($_POST['payment_ref']) ? $_POST['payment_ref'] : ""), 'class="form-control tip" id="payment_ref"'); ?>
+                            <?= form_open("reports/payments"); ?>
+                            <div class="row">
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <?= lang("payment_ref", "payment_ref"); ?>
+                                        <?= form_input('payment_ref', (isset($_POST['payment_ref']) ? $_POST['payment_ref'] : ""), 'class="form-control tip" id="payment_ref"'); ?>
 
-                                        </div>
                                     </div>
+                                </div>
 
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <?= lang("sale_no", "sale_no"); ?>
-                                            <?= form_input('sale_no', (isset($_POST['sale_no']) ? $_POST['sale_no'] : ""), 'class="form-control tip" id="sale_no"'); ?>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <?= lang("sale_no", "sale_no"); ?>
+                                        <?= form_input('sale_no', (isset($_POST['sale_no']) ? $_POST['sale_no'] : ""), 'class="form-control tip" id="sale_no"'); ?>
 
-                                        </div>
                                     </div>
+                                </div>
 
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label class="control-label" for="customer"><?= lang("customer"); ?></label>
-                                            <?php
-                                            $cu[0] = lang("select")." ".lang("customer");
-                                            foreach($customers as $customer){
-                                                $cu[$customer->id] = $customer->name;
-                                            }
-                                            echo form_dropdown('customer', $cu, set_value('customer'), 'class="form-control select2" style="width:100%" id="customer"'); ?>
-                                        </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label" for="customer"><?= lang("customer"); ?></label>
+                                        <?php
+                                        $cu[0] = lang("select") . " " . lang("customer");
+                                        foreach ($customers as $customer) {
+                                            $cu[$customer->id] = $customer->name;
+                                        }
+                                        echo form_dropdown('customer', $cu, set_value('customer'), 'class="form-control select2" style="width:100%" id="customer"'); ?>
                                     </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <label class="control-label" for="user"><?= lang("created_by"); ?></label>
-                                            <?php
-                                            $us[""] = "";
-                                            foreach ($users as $user) {
-                                                $us[$user->id] = $user->first_name . " " . $user->last_name;
-                                            }
-                                            echo form_dropdown('user', $us, (isset($_POST['user']) ? $_POST['user'] : ""), 'class="form-control select2" id="user" data-placeholder="' . lang("select") . " " . lang("user") . '" style="width:100%;"');
-                                            ?>
-                                        </div>
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <label class="control-label" for="user"><?= lang("created_by"); ?></label>
+                                        <?php
+                                        $us[""] = "";
+                                        foreach ($users as $user) {
+                                            $us[$user->id] = $user->first_name . " " . $user->last_name;
+                                        }
+                                        echo form_dropdown('user', $us, (isset($_POST['user']) ? $_POST['user'] : ""), 'class="form-control select2" id="user" data-placeholder="' . lang("select") . " " . lang("user") . '" style="width:100%;"');
+                                        ?>
                                     </div>
-                                    <div class="col-sm-4">
-                                        <div class="form-group">
-                                            <?= lang("paid_by", "paid_by"); ?>
-                                            <select name="paid_by" id="paid_by" class="form-control paid_by select2" style="width:100%"
-                                            required="required">
+                                </div>
+                                <div class="col-sm-4">
+                                    <div class="form-group">
+                                        <?= lang("paid_by", "paid_by"); ?>
+                                        <select name="paid_by" id="paid_by" class="form-control paid_by select2" style="width:100%" required="required">
                                             <option value="cash"><?= lang("cash"); ?></option>
                                             <option value="CC"><?= lang("cc"); ?></option>
                                             <option value="Cheque"><?= lang("cheque"); ?></option>
@@ -240,48 +290,58 @@ if ($this->input->post('end_date')) {
                         </table>
                     </div>
                     <?php if ($this->input->post('customer')) { ?>
-                    <div class="row">
-                        <div class="col-md-3">
-                            <button class="btn bg-purple btn-lg btn-block" style="cursor:default;">
-                                <strong><?= $this->tec->formatMoney($total_sales->number, 0); ?></strong>
-                                <?= lang("sales"); ?>
-                            </button>
+                        <div class="row">
+                            <div class="col-md-3">
+                                <button class="btn bg-purple btn-lg btn-block" style="cursor:default;">
+                                    <strong><?= $this->tec->formatMoney($total_sales->number, 0); ?></strong>
+                                    <?= lang("sales"); ?>
+                                </button>
+                            </div>
+                            <div class="col-md-3">
+                                <button class="btn btn-primary btn-lg btn-block" style="cursor:default;">
+                                    <strong><?= $this->tec->formatMoney($total_sales->amount); ?></strong>
+                                    <?= lang("amount"); ?>
+                                </button>
+                            </div>
+                            <div class="col-md-3">
+                                <button class="btn btn-success btn-lg btn-block" style="cursor:default;">
+                                    <strong><?= $this->tec->formatMoney($total_sales->paid); ?></strong>
+                                    <?= lang("paid"); ?>
+                                </button>
+                            </div>
+                            <div class="col-md-3">
+                                <button class="btn btn-warning btn-lg btn-block" style="cursor:default;">
+                                    <strong><?= $this->tec->formatMoney($total_sales->amount - $total_sales->paid); ?></strong>
+                                    <?= lang("due"); ?>
+                                </button>
+                            </div>
                         </div>
-                        <div class="col-md-3">
-                            <button class="btn btn-primary btn-lg btn-block" style="cursor:default;">
-                                <strong><?= $this->tec->formatMoney($total_sales->amount); ?></strong>
-                                <?= lang("amount"); ?>
-                            </button>
-                        </div>
-                        <div class="col-md-3">
-                            <button class="btn btn-success btn-lg btn-block" style="cursor:default;">
-                                <strong><?= $this->tec->formatMoney($total_sales->paid); ?></strong>
-                                <?= lang("paid"); ?>
-                            </button>
-                        </div>
-                        <div class="col-md-3">
-                            <button class="btn btn-warning btn-lg btn-block" style="cursor:default;">
-                                <strong><?= $this->tec->formatMoney($total_sales->amount-$total_sales->paid); ?></strong>
-                                <?= lang("due"); ?>
-                            </button>
-                        </div>
-                    </div>
                     <?php } ?>
                 </div>
             </div>
         </div>
     </div>
-</div>
-</div>
+    </div>
+    </div>
 </section>
 
 <script src="<?= $assets ?>plugins/bootstrap-datetimepicker/js/moment.min.js" type="text/javascript"></script>
 <script src="<?= $assets ?>plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
 <script type="text/javascript">
-    $(function () {
+    $(function() {
         $('.datetimepicker').datetimepicker({
             format: 'YYYY-MM-DD HH:mm'
         });
-        $('.datepicker').datetimepicker({format: 'YYYY-MM-DD', showClear: true, showClose: true, useCurrent: false, widgetPositioning: {horizontal: 'auto', vertical: 'bottom'}, widgetParent: $('.dataTable tfoot')});
+        $('.datepicker').datetimepicker({
+            format: 'YYYY-MM-DD',
+            showClear: true,
+            showClose: true,
+            useCurrent: false,
+            widgetPositioning: {
+                horizontal: 'auto',
+                vertical: 'bottom'
+            },
+            widgetParent: $('.dataTable tfoot')
+        });
     });
 </script>

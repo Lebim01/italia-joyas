@@ -1,17 +1,18 @@
-<?php defined('BASEPATH') OR exit('No direct script access allowed');
+<?php defined('BASEPATH') or exit('No direct script access allowed');
 
 class Reports extends MY_Controller
 {
 
-    function __construct() {
+    function __construct()
+    {
         parent::__construct();
 
 
-        if ( ! $this->loggedIn) {
+        if (!$this->loggedIn) {
             redirect('login');
         }
 
-        if ( ! $this->Admin) {
+        if (!$this->Admin) {
             $this->session->set_flashdata('error', lang('access_denied'));
             redirect('pos');
         }
@@ -19,9 +20,14 @@ class Reports extends MY_Controller
         $this->load->model('reports_model');
     }
 
-    function daily_sales($year = NULL, $month = NULL) {
-        if (!$year) { $year = date('Y'); }
-        if (!$month) { $month = date('m'); }
+    function daily_sales($year = NULL, $month = NULL)
+    {
+        if (!$year) {
+            $year = date('Y');
+        }
+        if (!$month) {
+            $month = date('m');
+        }
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
         $this->lang->load('calendar');
         $config = array(
@@ -29,7 +35,7 @@ class Reports extends MY_Controller
             'next_prev_url' => site_url('reports/daily_sales'),
             'month_type' => 'long',
             'day_type' => 'long'
-            );
+        );
         $config['template'] = '
 
         {table_open}<table border="0" cellpadding="0" cellspacing="0" class="table table-bordered table-calendar" style="min-width:522px;">{/table_open}
@@ -70,13 +76,13 @@ class Reports extends MY_Controller
         if (!empty($sales)) {
             foreach ($sales as $sale) {
                 $sale->date = intval($sale->date);
-                $daily_sale[$sale->date] = "<table class='table table-condensed table-striped' style='margin-bottom:0;'><tr><td>".lang('total').
-                "</td><td style='text-align:right;'>{$this->tec->formatMoney($sale->total)}</td></tr><tr><td><span style='font-weight:normal;'>".lang('product_tax')."<br>".lang('order_tax')."</span><br>".lang('tax').
-                "</td><td style='text-align:right;'><span style='font-weight:normal;'>{$this->tec->formatMoney($sale->product_tax)}<br>{$this->tec->formatMoney($sale->order_tax)}</span><br>{$this->tec->formatMoney($sale->total_tax)}</td></tr><tr><td class='violet'>".lang('discount').
-                "</td><td style='text-align:right;'>{$this->tec->formatMoney($sale->discount)}</td></tr><tr><td class='violet'>".lang('grand_total').
-                "</td><td style='text-align:right;' class='violet'>{$this->tec->formatMoney($sale->grand_total)}</td></tr><tr><td class='green'>".lang('paid').
-                "</td><td style='text-align:right;' class='green'>{$this->tec->formatMoney($sale->paid)}</td></tr><tr><td class='orange'>".lang('balance').
-                "</td><td style='text-align:right;' class='orange'>{$this->tec->formatMoney(($sale->grand_total+$sale->rounding) - $sale->paid)}</td></tr></table>";
+                $daily_sale[$sale->date] = "<table class='table table-condensed table-striped' style='margin-bottom:0;'><tr><td>" . lang('total') .
+                    "</td><td style='text-align:right;'>{$this->tec->formatMoney($sale->total)}</td></tr><tr><td><span style='font-weight:normal;'>" . lang('product_tax') . "<br>" . lang('order_tax') . "</span><br>" . lang('tax') .
+                    "</td><td style='text-align:right;'><span style='font-weight:normal;'>{$this->tec->formatMoney($sale->product_tax)}<br>{$this->tec->formatMoney($sale->order_tax)}</span><br>{$this->tec->formatMoney($sale->total_tax)}</td></tr><tr><td class='violet'>" . lang('discount') .
+                    "</td><td style='text-align:right;'>{$this->tec->formatMoney($sale->discount)}</td></tr><tr><td class='violet'>" . lang('grand_total') .
+                    "</td><td style='text-align:right;' class='violet'>{$this->tec->formatMoney($sale->grand_total)}</td></tr><tr><td class='green'>" . lang('paid') .
+                    "</td><td style='text-align:right;' class='green'>{$this->tec->formatMoney($sale->paid)}</td></tr><tr><td class='orange'>" . lang('balance') .
+                    "</td><td style='text-align:right;' class='orange'>{$this->tec->formatMoney(($sale->grand_total +$sale->rounding) -$sale->paid)}</td></tr></table>";
             }
         } else {
             $daily_sale = array();
@@ -85,8 +91,8 @@ class Reports extends MY_Controller
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
         $this->data['calender'] = $this->calendar->generate($year, $month, $daily_sale);
 
-        $start = $year.'-'.$month.'-01 00:00:00';
-        $end = $year.'-'.$month.'-'.days_in_month($month, $year).' 23:59:59';
+        $start = $year . '-' . $month . '-01 00:00:00';
+        $end = $year . '-' . $month . '-' . days_in_month($month, $year) . ' 23:59:59';
         $this->data['total_purchases'] = $this->reports_model->getTotalPurchases($start, $end);
         $this->data['total_sales'] = $this->reports_model->getTotalSales($start, $end);
         $this->data['total_expenses'] = $this->reports_model->getTotalExpenses($start, $end);
@@ -95,17 +101,19 @@ class Reports extends MY_Controller
         $bc = array(array('link' => '#', 'page' => lang('reports')), array('link' => '#', 'page' => lang('daily_sales')));
         $meta = array('page_title' => lang('daily_sales'), 'bc' => $bc);
         $this->page_construct('reports/daily', $this->data, $meta);
-
     }
 
 
-    function monthly_sales($year = NULL) {
-        if(!$year) { $year = date('Y'); }
+    function monthly_sales($year = NULL)
+    {
+        if (!$year) {
+            $year = date('Y');
+        }
         $this->load->language('calendar');
         $this->lang->load('calendar');
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
-        $start = $year.'-01-01 00:00:00';
-        $end = $year.'-12-31 23:59:59';
+        $start = $year . '-01-01 00:00:00';
+        $end = $year . '-12-31 23:59:59';
         $this->data['total_purchases'] = $this->reports_model->getTotalPurchases($start, $end);
         $this->data['total_sales'] = $this->reports_model->getTotalSales($start, $end);
         $this->data['total_expenses'] = $this->reports_model->getTotalExpenses($start, $end);
@@ -117,7 +125,8 @@ class Reports extends MY_Controller
         $this->page_construct('reports/monthly', $this->data, $meta);
     }
 
-    function index() {
+    function index()
+    {
         if ($this->input->post('customer')) {
             $start_date = $this->input->post('start_date') ? $this->input->post('start_date') : NULL;
             $end_date = $this->input->post('end_date') ? $this->input->post('end_date') : NULL;
@@ -133,7 +142,8 @@ class Reports extends MY_Controller
         $this->page_construct('reports/sales', $this->data, $meta);
     }
 
-    function get_sales() {
+    function get_sales()
+    {
         $customer = $this->input->get('customer') ? $this->input->get('customer') : NULL;
         $start_date = $this->input->get('start_date') ? $this->input->get('start_date') : NULL;
         $end_date = $this->input->get('end_date') ? $this->input->get('end_date') : NULL;
@@ -141,21 +151,30 @@ class Reports extends MY_Controller
 
         $this->load->library('datatables');
         $this->datatables
-        ->select("id, date, customer_name, total, total_tax, total_discount, grand_total, paid, (grand_total-paid) as balance, status")
-        ->from('sales');
+            ->select("id, date, customer_name, total, total_tax, total_discount, grand_total, paid, (grand_total-paid) as balance, status")
+            ->from('sales');
         if ($this->session->userdata('store_id')) {
             $this->datatables->where('store_id', $this->session->userdata('store_id'));
         }
         $this->datatables->unset_column('id');
-        if($customer) { $this->datatables->where('customer_id', $customer); }
-        if($user) { $this->datatables->where('created_by', $user); }
-        if($start_date) { $this->datatables->where('date >=', $start_date); }
-        if($end_date) { $this->datatables->where('date <=', $end_date); }
+        if ($customer) {
+            $this->datatables->where('customer_id', $customer);
+        }
+        if ($user) {
+            $this->datatables->where('created_by', $user);
+        }
+        if ($start_date) {
+            $this->datatables->where('date >=', $start_date);
+        }
+        if ($end_date) {
+            $this->datatables->where('date <=', $end_date);
+        }
 
         echo $this->datatables->generate();
     }
 
-    function products() {
+    function products()
+    {
         $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
         $this->data['products'] = $this->reports_model->getAllProducts();
         $this->data['page_title'] = $this->lang->line("products_report");
@@ -165,34 +184,43 @@ class Reports extends MY_Controller
         $this->page_construct('reports/products', $this->data, $meta);
     }
 
-    function get_products() {
+    function get_products()
+    {
         $product = $this->input->get('product') ? $this->input->get('product') : NULL;
         $start_date = $this->input->get('start_date') ? $this->input->get('start_date') : NULL;
         $end_date = $this->input->get('end_date') ? $this->input->get('end_date') : NULL;
         //COALESCE(sum(".$this->db->dbprefix('sale_items').".quantity)*".$this->db->dbprefix('products').".cost, 0) as cost,
         $this->load->library('datatables');
         $this->datatables
-        ->select($this->db->dbprefix('products').".id as id, ".$this->db->dbprefix('products').".name, ".$this->db->dbprefix('products').".code, COALESCE(sum(".$this->db->dbprefix('sale_items').".quantity), 0) as sold, ROUND(COALESCE(((sum(".$this->db->dbprefix('sale_items').".subtotal)*".$this->db->dbprefix('products').".tax)/100), 0), 2) as tax, COALESCE(sum(".$this->db->dbprefix('sale_items').".quantity)*".$this->db->dbprefix('sale_items').".cost, 0) as cost, COALESCE(sum(".$this->db->dbprefix('sale_items').".subtotal), 0) as income, ROUND((COALESCE(sum(".$this->db->dbprefix('sale_items').".subtotal), 0)) - COALESCE(sum(".$this->db->dbprefix('sale_items').".quantity)*".$this->db->dbprefix('sale_items').".cost, 0) -COALESCE(((sum(".$this->db->dbprefix('sale_items').".subtotal)*".$this->db->dbprefix('products').".tax)/100), 0), 2)
+            ->select($this->db->dbprefix('products') . ".id as id, " . $this->db->dbprefix('products') . ".name, " . $this->db->dbprefix('products') . ".code, COALESCE(sum(" . $this->db->dbprefix('sale_items') . ".quantity), 0) as sold, ROUND(COALESCE(((sum(" . $this->db->dbprefix('sale_items') . ".subtotal)*" . $this->db->dbprefix('products') . ".tax)/100), 0), 2) as tax, COALESCE(sum(" . $this->db->dbprefix('sale_items') . ".quantity)*" . $this->db->dbprefix('sale_items') . ".cost, 0) as cost, COALESCE(sum(" . $this->db->dbprefix('sale_items') . ".subtotal), 0) as income, ROUND((COALESCE(sum(" . $this->db->dbprefix('sale_items') . ".subtotal), 0)) - COALESCE(sum(" . $this->db->dbprefix('sale_items') . ".quantity)*" . $this->db->dbprefix('sale_items') . ".cost, 0) -COALESCE(((sum(" . $this->db->dbprefix('sale_items') . ".subtotal)*" . $this->db->dbprefix('products') . ".tax)/100), 0), 2)
             as profit", FALSE)
-        ->from('sale_items')
-        ->join('products', 'sale_items.product_id=products.id', 'left')
-        ->join('sales', 'sale_items.sale_id=sales.id', 'left');
+            ->from('sale_items')
+            ->join('products', 'sale_items.product_id=products.id', 'left')
+            ->join('sales', 'sale_items.sale_id=sales.id', 'left');
         if ($this->session->userdata('store_id')) {
             $this->datatables->where('sales.store_id', $this->session->userdata('store_id'));
         }
         $this->datatables->group_by('products.id');
 
-        if($product) { $this->datatables->where('products.id', $product); }
-        if($start_date) { $this->datatables->where('date >=', $start_date); }
-        if($end_date) { $this->datatables->where('date <=', $end_date); }
+        if ($product) {
+            $this->datatables->where('products.id', $product);
+        }
+        if ($start_date) {
+            $this->datatables->where('date >=', $start_date);
+        }
+        if ($end_date) {
+            $this->datatables->where('date <=', $end_date);
+        }
         echo $this->datatables->generate();
     }
 
-    function profit( $income, $cost, $tax) {
-        return floatval($income)." - ".floatval($cost)." - ".floatval($tax);
+    function profit($income, $cost, $tax)
+    {
+        return floatval($income) . " - " . floatval($cost) . " - " . floatval($tax);
     }
 
-    function top_products() {
+    function top_products()
+    {
         $this->data['topProducts'] = $this->reports_model->topProducts();
         $this->data['topProducts1'] = $this->reports_model->topProducts1();
         $this->data['topProducts3'] = $this->reports_model->topProducts3();
@@ -203,7 +231,8 @@ class Reports extends MY_Controller
         $this->page_construct('reports/top', $this->data, $meta);
     }
 
-    function registers() {
+    function registers()
+    {
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
         $this->data['users'] = $this->reports_model->getAllStaff();
         $bc = array(array('link' => '#', 'page' => lang('reports')), array('link' => '#', 'page' => lang('registers_report')));
@@ -211,7 +240,8 @@ class Reports extends MY_Controller
         $this->page_construct('reports/registers', $this->data, $meta);
     }
 
-    function get_register_logs() {
+    function get_register_logs()
+    {
         $user = $this->input->get('user') ? $this->input->get('user') : NULL;
         $start_date = $this->input->get('start_date') ? $this->input->get('start_date') : NULL;
         $end_date = $this->input->get('end_date') ? $this->input->get('end_date') : NULL;
@@ -223,7 +253,7 @@ class Reports extends MY_Controller
             $this->datatables->select("{$this->db->dbprefix('registers')}.id as id, date, closed_at, CONCAT(" . $this->db->dbprefix('users') . ".first_name, ' ', " . $this->db->dbprefix('users') . ".last_name, '<br>', " . $this->db->dbprefix('users') . ".email) as user, cash_in_hand, CONCAT(total_cc_slips, ' (', total_cc_slips_submitted, ')') as cc_slips, CONCAT(total_cheques, ' (', total_cheques_submitted, ')') as total_cheques, CONCAT(total_cash, ' (', total_cash_submitted, ')') as total_cash, note", FALSE);
         }
         $this->datatables->from("registers")
-        ->join('users', 'users.id=registers.user_id', 'left');
+            ->join('users', 'users.id=registers.user_id', 'left');
 
         if ($user) {
             $this->datatables->where('registers.user_id', $user);
@@ -236,11 +266,10 @@ class Reports extends MY_Controller
         }
 
         echo $this->datatables->generate();
-
-
     }
 
-    function payments() {
+    function payments()
+    {
         if ($this->input->post('customer')) {
             $start_date = $this->input->post('start_date') ? $this->input->post('start_date') : NULL;
             $end_date = $this->input->post('end_date') ? $this->input->post('end_date') : NULL;
@@ -255,7 +284,8 @@ class Reports extends MY_Controller
         $this->page_construct('reports/payments', $this->data, $meta);
     }
 
-    function get_payments() {
+    function get_payments()
+    {
         $user = $this->input->get('user') ? $this->input->get('user') : NULL;
         $ref = $this->input->get('payment_ref') ? $this->input->get('payment_ref') : NULL;
         $sale_id = $this->input->get('sale_no') ? $this->input->get('sale_no') : NULL;
@@ -266,10 +296,10 @@ class Reports extends MY_Controller
 
         $this->load->library('datatables');
         $this->datatables
-        ->select("{$this->db->dbprefix('payments')}.id as id, {$this->db->dbprefix('payments')}.date, {$this->db->dbprefix('payments')}.reference as ref, {$this->db->dbprefix('sales')}.id as sale_no, paid_by, amount")
-        ->from('payments')
-        ->join('sales', 'payments.sale_id=sales.id', 'left')
-        ->group_by('payments.id');
+            ->select("{$this->db->dbprefix('payments')}.id as id, {$this->db->dbprefix('payments')}.date, {$this->db->dbprefix('payments')}.reference as ref, {$this->db->dbprefix('sales')}.id as sale_no, paid_by, amount")
+            ->from('payments')
+            ->join('sales', 'payments.sale_id=sales.id', 'left')
+            ->group_by('payments.id');
 
         if ($this->session->userdata('store_id')) {
             $this->datatables->where('payments.store_id', $this->session->userdata('store_id'));
@@ -295,29 +325,28 @@ class Reports extends MY_Controller
         }
 
         echo $this->datatables->generate();
-
     }
 
-    function alerts() {
+    function alerts()
+    {
         $data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
         $this->data['page_title'] = lang('stock_alert');
         $bc = array(array('link' => '#', 'page' => lang('stock_alert')));
         $meta = array('page_title' => lang('stock_alert'), 'bc' => $bc);
         $this->page_construct('reports/alerts', $this->data, $meta);
-
     }
 
-    function get_alerts() {
+    function get_alerts()
+    {
         $this->load->library('datatables');
-        $this->datatables->select($this->db->dbprefix('products').".id as id, ".$this->db->dbprefix('products').".image as image, ".$this->db->dbprefix('products').".code as code, ".$this->db->dbprefix('products').".name as pname, type, ".$this->db->dbprefix('categories').".name as cname, (CASE WHEN psq.quantity IS NULL THEN 0 ELSE psq.quantity END) as quantity, alert_quantity, tax, tax_method, cost, (CASE WHEN psq.price > 0 THEN psq.price ELSE {$this->db->dbprefix('products')}.price END) as price", FALSE)
-        ->from('products')
-        ->join('categories', 'categories.id=products.category_id')
-        ->join("( SELECT * from {$this->db->dbprefix('product_store_qty')} WHERE store_id = {$this->session->userdata('store_id')}) psq", 'products.id=psq.product_id', 'left')
-        ->where("(CASE WHEN psq.quantity IS NULL THEN 0 ELSE psq.quantity END) < {$this->db->dbprefix('products')}.alert_quantity", NULL, FALSE)
-        ->group_by('products.id');
-        $this->datatables->add_column("Actions", "<div class='text-center'><a href='#' class='btn btn-xs btn-primary ap tip' data-id='$1' title='".lang('add_to_purcahse_order')."'><i class='fa fa-plus'></i></a></div>", "id");
+        $this->datatables->select($this->db->dbprefix('products') . ".id as id, " . $this->db->dbprefix('products') . ".image as image, " . $this->db->dbprefix('products') . ".code as code, " . $this->db->dbprefix('products') . ".name as pname, type, " . $this->db->dbprefix('categories') . ".name as cname, (CASE WHEN psq.quantity IS NULL THEN 0 ELSE psq.quantity END) as quantity, alert_quantity, tax, tax_method, cost, (CASE WHEN psq.price > 0 THEN psq.price ELSE {$this->db->dbprefix('products')}.price END) as price", FALSE)
+            ->from('products')
+            ->join('categories', 'categories.id=products.category_id')
+            ->join("( SELECT * from {$this->db->dbprefix('product_store_qty')} WHERE store_id = {$this->session->userdata('store_id')}) psq", 'products.id=psq.product_id', 'left')
+            ->where("(CASE WHEN psq.quantity IS NULL THEN 0 ELSE psq.quantity END) < {$this->db->dbprefix('products')}.alert_quantity", NULL, FALSE)
+            ->group_by('products.id');
+        $this->datatables->add_column("Actions", "<div class='text-center'><a href='#' class='btn btn-xs btn-primary ap tip' data-id='$1' title='" . lang('add_to_purcahse_order') . "'><i class='fa fa-plus'></i></a></div>", "id");
         // $this->datatables->unset_column('id');
         echo $this->datatables->generate();
     }
-
 }
