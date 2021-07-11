@@ -61,15 +61,15 @@ class Tec
     {
         if ($this->Settings->sac) {
             return ($this->Settings->display_symbol == 1 ? $this->Settings->symbol : '') .
-            $this->formatSAC($this->formatDecimal($number)) .
-            ($this->Settings->display_symbol == 2 ? $this->Settings->symbol : '');
+                $this->formatSAC($this->formatDecimal($number)) .
+                ($this->Settings->display_symbol == 2 ? $this->Settings->symbol : '');
         }
         $decimals = $decimal !== false ? $decimal : $this->Settings->decimals;
         $ts       = $this->Settings->thousands_sep == '0' ? ' ' : $this->Settings->thousands_sep;
         $ds       = $this->Settings->decimals_sep;
         return ($this->Settings->display_symbol == 1 ? $this->Settings->symbol : '') .
-        number_format($number, $decimals, $ds, $ts) .
-        ($this->Settings->display_symbol == 2 ? $this->Settings->symbol : '');
+            number_format($number, $decimals, $ds, $ts) .
+            ($this->Settings->display_symbol == 2 ? $this->Settings->symbol : '');
     }
 
     public function formatNumber($number, $decimals = null)

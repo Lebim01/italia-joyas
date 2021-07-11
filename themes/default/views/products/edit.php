@@ -1,4 +1,4 @@
-<?php (defined('BASEPATH')) OR exit('No direct script access allowed'); ?>
+<?php (defined('BASEPATH')) or exit('No direct script access allowed'); ?>
 
 <section class="content">
     <div class="row">
@@ -9,17 +9,21 @@
                 </div>
                 <div class="box-body">
                     <div class="col-lg-12">
-                        <?= form_open_multipart("products/edit/".$product->id, 'class="validation"');?>
+                        <?= form_open_multipart("products/edit/" . $product->id, 'class="validation"'); ?>
                         <div class="row">
                             <div class="col-md-6">
-                            <div class="form-group">
-                                <?= lang('type', 'type'); ?>
-                                <?php $opts = array('standard' => lang('standard'), 'combo' => lang('combo'), 'service' => lang('service')); ?>
-                                <?= form_dropdown('type', $opts, set_value('type', $product->type), 'class="form-control tip select2" id="type"  required="required" style="width:100%;"'); ?>
-                            </div>
+                                <div class="form-group">
+                                    <?= lang('type', 'type'); ?>
+                                    <?php $opts = array('standard' => lang('standard'), 'combo' => lang('combo'), 'service' => lang('service')); ?>
+                                    <?= form_dropdown('type', $opts, set_value('type', $product->type), 'class="form-control tip select2" id="type"  required="required" style="width:100%;"'); ?>
+                                </div>
                                 <div class="form-group">
                                     <?= lang('name', 'name'); ?>
                                     <?= form_input('name', $product->name, 'class="form-control tip" id="name"  required="required"'); ?>
+                                </div>
+                                <div class="form-group">
+                                    <?= lang('model', 'model'); ?>
+                                    <?= form_input('model', $product->model, 'class="form-control tip" id="model"'); ?>
                                 </div>
                                 <div class="form-group">
                                     <?= lang('code', 'code'); ?> <?= lang('can_use_barcode'); ?>
@@ -36,8 +40,8 @@
                                 <div class="form-group">
                                     <?= lang('category', 'category'); ?>
                                     <?php
-                                    $cat[''] = lang("select")." ".lang("category");
-                                    foreach($categories as $category) {
+                                    $cat[''] = lang("select") . " " . lang("category");
+                                    foreach ($categories as $category) {
                                         $cat[$category->id] = $category->name;
                                     }
                                     ?>
@@ -69,7 +73,7 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <?= lang('image', 'image'); ?>
+                                    <?= lang('image', 'image'); ?> (máximo 800x800)
                                     <input type="file" name="userfile" id="image">
                                 </div>
                             </div>
@@ -83,14 +87,13 @@
                                         <label class="table-label" for="combo"><?= lang("combo_products"); ?></label>
 
                                         <div class="controls table-controls">
-                                            <table id="prTable"
-                                                   class="table items table-striped table-bordered table-condensed table-hover">
+                                            <table id="prTable" class="table items table-striped table-bordered table-condensed table-hover">
                                                 <thead>
-                                                <tr>
-                                                    <th class="col-xs-9"><?= lang("product_name") . " (" . $this->lang->line("product_code") . ")"; ?></th>
-                                                    <th class="col-xs-2"><?= lang("quantity"); ?></th>
-                                                    <th class=" col-xs-1 text-center"><i class="fa fa-trash-o trash-opacity-50"></i></th>
-                                                </tr>
+                                                    <tr>
+                                                        <th class="col-xs-9"><?= lang("product_name") . " (" . $this->lang->line("product_code") . ")"; ?></th>
+                                                        <th class="col-xs-2"><?= lang("quantity"); ?></th>
+                                                        <th class=" col-xs-1 text-center"><i class="fa fa-trash-o trash-opacity-50"></i></th>
+                                                    </tr>
                                                 </thead>
                                                 <tbody></tbody>
                                                 <tfoot></tfoot>
@@ -98,36 +101,38 @@
                                         </div>
                                     </div>
                                 </div>
-                                <?php if ($Settings->multi_store) { foreach ($stores as $store) { ?>
-                                <div class="">
-                                    <div class="well well-sm">
-                                        <h3><?= $store->name.' ('.$store->code.')'; ?></h3>
-                                        <div class="form-group st">
-                                            <?php
-                                            $quantity = 0;
-                                            foreach ($stores_quantities as $sq) {
-                                                if ($sq->store_id == $store->id) {
-                                                    $quantity = $sq->quantity;
-                                                    $price = $sq->price > 0 ? $this->tec->formatDecimal($sq->price) : '';
-                                                }
-                                            }
-                                            ?>
-                                            <?= lang('quantity', 'quantity'.$store->id); ?>
-                                            <?= form_input('quantity'.$store->id, set_value('quantity', $this->tec->formatDecimal($quantity)), 'class="form-control tip" id="quantity'.$store->id.'"'); ?>
+                                <?php if ($Settings->multi_store) {
+                                    foreach ($stores as $store) { ?>
+                                        <div class="">
+                                            <div class="well well-sm">
+                                                <h3><?= $store->name . ' (' . $store->code . ')'; ?></h3>
+                                                <div class="form-group st">
+                                                    <?php
+                                                    $quantity = 0;
+                                                    foreach ($stores_quantities as $sq) {
+                                                        if ($sq->store_id == $store->id) {
+                                                            $quantity = $sq->quantity;
+                                                            $price = $sq->price > 0 ? $this->tec->formatDecimal($sq->price) : '';
+                                                        }
+                                                    }
+                                                    ?>
+                                                    <?= lang('quantity', 'quantity' . $store->id); ?>
+                                                    <?= form_input('quantity' . $store->id, set_value('quantity', $this->tec->formatDecimal($quantity)), 'class="form-control tip" id="quantity' . $store->id . '"'); ?>
+                                                </div>
+                                                <div class="form-group" style="margin-bottom:0;">
+                                                    <?= lang('price', 'price' . $store->id); ?>
+                                                    <?= form_input('price' . $store->id, set_value('price' . $store->id, $price), 'class="form-control tip" id="price' . $store->id . '" placeholder="' . lang('optional') . '"'); ?>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div class="form-group" style="margin-bottom:0;">
-                                            <?= lang('price', 'price'.$store->id); ?>
-                                            <?= form_input('price'.$store->id, set_value('price'.$store->id, $price), 'class="form-control tip" id="price'.$store->id.'" placeholder="'.lang('optional').'"'); ?>
+                                    <?php }
+                                } else { ?>
+                                    <div class="st">
+                                        <div class="form-group">
+                                            <?= lang('quantity', 'quantity'); ?>
+                                            <?= form_input('quantity', set_value('quantity', $this->tec->formatDecimal($stores_quantities->quantity)), 'class="form-control tip" id="quantity"'); ?>
                                         </div>
                                     </div>
-                                </div>
-                                <?php } } else { ?>
-                                <div class="st">
-                                    <div class="form-group">
-                                        <?= lang('quantity', 'quantity'); ?>
-                                        <?= form_input('quantity', set_value('quantity', $this->tec->formatDecimal($stores_quantities->quantity)), 'class="form-control tip" id="quantity"'); ?>
-                                    </div>
-                                </div>
                                 <?php } ?>
                             </div>
                         </div>
@@ -138,7 +143,7 @@
                         <div class="form-group">
                             <?= form_submit('edit_product', lang('edit_product'), 'class="btn btn-primary"'); ?>
                         </div>
-                        <?= form_close();?>
+                        <?= form_close(); ?>
                     </div>
                     <div class="clearfix"></div>
                 </div>
@@ -148,7 +153,9 @@
 </section>
 
 <script type="text/javascript" charset="utf-8">
-    var price = 0; cost = 0; items = {};
+    var price = 0;
+    cost = 0;
+    items = {};
     $(document).ready(function() {
         $('#type').change(function(e) {
             var type = $(this).val();
@@ -172,28 +179,26 @@
             minLength: 1,
             autoFocus: false,
             delay: 200,
-            response: function (event, ui) {
+            response: function(event, ui) {
                 if ($(this).val().length >= 16 && ui.content[0].id == 0) {
-                    bootbox.alert('<?= lang('no_product_found') ?>', function () {
+                    bootbox.alert('<?= lang('no_product_found') ?>', function() {
                         $('#add_item').focus();
                     });
                     $(this).val('');
-                }
-                else if (ui.content.length == 1 && ui.content[0].id != 0) {
+                } else if (ui.content.length == 1 && ui.content[0].id != 0) {
                     ui.item = ui.content[0];
                     $(this).data('ui-autocomplete')._trigger('select', 'autocompleteselect', ui);
                     $(this).autocomplete('close');
                     $(this).removeClass('ui-autocomplete-loading');
-                }
-                else if (ui.content.length == 1 && ui.content[0].id == 0) {
-                    bootbox.alert('<?= lang('no_product_found') ?>', function () {
+                } else if (ui.content.length == 1 && ui.content[0].id == 0) {
+                    bootbox.alert('<?= lang('no_product_found') ?>', function() {
                         $('#add_item').focus();
                     });
                     $(this).val('');
 
                 }
             },
-            select: function (event, ui) {
+            select: function(event, ui) {
                 event.preventDefault();
                 if (ui.item.id !== 0) {
                     var row = add_product_item(ui.item);
@@ -205,27 +210,27 @@
                 }
             }
         });
-        $('#add_item').bind('keypress', function (e) {
+        $('#add_item').bind('keypress', function(e) {
             if (e.keyCode == 13) {
                 e.preventDefault();
                 $(this).autocomplete("search");
             }
         });
 
-        $(document).on('click', '.del', function () {
+        $(document).on('click', '.del', function() {
             var id = $(this).attr('id');
             delete items[id];
             $(this).closest('#row_' + id).remove();
         });
 
 
-        $(document).on('change', '.rqty', function () {
+        $(document).on('change', '.rqty', function() {
             var item_id = $(this).attr('data-item');
             items[item_id].row.qty = (parseFloat($(this).val())).toFixed(2);
             add_product_item(null, 1);
         });
 
-        $(document).on('change', '.rprice', function () {
+        $(document).on('change', '.rprice', function() {
             var item_id = $(this).attr('data-item');
             items[item_id].row.price = (parseFloat($(this).val())).toFixed(2);
             add_product_item(null, 1);
@@ -247,7 +252,7 @@
             cost = 0;
 
             $("#prTable tbody").empty();
-            $.each(items, function () {
+            $.each(items, function() {
                 var item = this.row;
                 var row_no = item.id;
                 var newTr = $('<tr id="row_' + row_no + '" class="item_' + item.id + '"></tr>');
@@ -258,7 +263,7 @@
                 newTr.html(tr_html);
                 newTr.prependTo("#prTable");
                 //price += formatDecimal(item.price*item.qty);
-                cost += formatDecimal(item.cost*item.qty);
+                cost += formatDecimal(item.cost * item.qty);
             });
             $('#cost').val(cost);
             return true;
@@ -287,19 +292,15 @@
                 }
             }
             echo '
-            var ci = '.json_encode($items).';
+            var ci = ' . json_encode($items) . ';
             $.each(ci, function() { add_product_item(this); });
             ';
         } elseif (!empty($items)) {
             echo '
-            var ci = '.json_encode($items).';
+            var ci = ' . json_encode($items) . ';
             $.each(ci, function() { add_product_item(this); });
             ';
         }
         ?>
     });
-
-
-
-
 </script>

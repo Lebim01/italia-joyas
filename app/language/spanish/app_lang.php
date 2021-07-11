@@ -243,6 +243,7 @@ $lang['inclusive']                            = 'Inclusivo';
 $lang['exclusive']                            = 'Exclusivo';
 $lang['image']                                = 'Imagen';
 $lang['code']                                 = 'Codigo';
+$lang['model']                                 = 'Modelo';
 $lang['category']                             = 'Categoría';
 $lang['method']                               = 'Metodo';
 $lang['cost']                                 = 'Costo';

@@ -36,6 +36,7 @@ class Products extends MY_Controller
             $data = [
                 'type'              => $this->input->post('type'),
                 'code'              => $this->input->post('code'),
+                'model'              => $this->input->post('model'),
                 'name'              => $this->input->post('name'),
                 'category_id'       => $this->input->post('category'),
                 'price'             => $this->input->post('price'),
@@ -190,6 +191,7 @@ class Products extends MY_Controller
             $data = [
                 'type'              => $this->input->post('type'),
                 'code'              => $this->input->post('code'),
+                'model'              => $this->input->post('model'),
                 'name'              => $this->input->post('name'),
                 'category_id'       => $this->input->post('category'),
                 'price'             => $this->input->post('price'),
