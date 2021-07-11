@@ -499,7 +499,7 @@
                             </div>
                             <div class="col-sm-3">
                                 <label class="checkbox" for="existing">
-                                    <input type="checkbox" name="existing" value="1" id="existing" <?= $default_in_stock == 1 ? 'checked="checked"' : "" ?> />
+                                    <input type="checkbox" name="existing" value="1" id="existing" <?= $Settings->default_in_stock == 1 ? 'checked="checked"' : "" ?> />
                                     Mostrar solo en existencia
                                 </label>
                             </div>
