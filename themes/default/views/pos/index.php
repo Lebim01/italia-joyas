@@ -104,9 +104,9 @@
                                 </li>
                             </ul>
                         </li>
-                        <li>
+                        <!--<li>
                             <a href="#" data-toggle="control-sidebar" class="sidebar-icon"><i class="fa fa-folder sidebar-icon"></i></a>
-                        </li>
+                        </li>-->
                     </ul>
                 </div>
             </nav>
