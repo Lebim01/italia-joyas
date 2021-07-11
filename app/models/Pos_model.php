@@ -13,8 +13,6 @@ class Pos_model extends CI_Model
 
     public function addSale($data, $items, $payment = [], $did = null)
     {
-
-
         if ($this->db->insert('sales', $data)) {
             $sale_id = $this->db->insert_id();
             foreach ($items as $item) {
@@ -75,13 +73,12 @@ class Pos_model extends CI_Model
 
     public function fetch_products($category_id, $limit, $start, $in_stock = false)
     {
-        $this->db->save_queries = TRUE;
         $this->db->limit($limit, $start);
         if ($category_id) {
             $this->db->where('category_id', $category_id);
         }
         if ($in_stock) {
-            $this->db->join('product_store_qty', 'product_id = products.id');
+            $this->db->join('product_store_qty', 'product_id = products.id AND product_store_qty.quantity > 0');
         }
         $this->db->order_by('code', 'asc');
         $query = $this->db->get('products');
@@ -604,7 +601,7 @@ class Pos_model extends CI_Model
             $this->db->where('category_id', $category_id);
         }
         if ($in_stock) {
-            $this->db->join('product_store_qty', 'product_id = products.id');
+            $this->db->join('product_store_qty', 'product_id = products.id AND product_store_qty.quantity > 0');
         }
         return $this->db->count_all_results('products');
     }
