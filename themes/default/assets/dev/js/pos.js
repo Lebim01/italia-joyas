@@ -266,7 +266,7 @@ function loadItems() {
       order_tax = ((total - order_discount) * parseFloat(pts[0])) / 100;
     }
 
-    var g_total = total - parseFloat(order_discount) + parseFloat(order_tax);
+    g_total = total - parseFloat(order_discount) + parseFloat(order_tax);
     grand_total = formatMoney(g_total);
     $('#ds_con').text('(' + formatMoney(product_discount) + ') ' + formatMoney(order_discount));
     $('#ts_con').text(formatMoney(order_tax));
@@ -1143,16 +1143,6 @@ $(document).ready(function () {
     
   });
 
-/*   $( "body" ).delegate( ".bank", "change", function(e) {
-    id=e.target.id
-    console.log(id)
-      $(id).css({ "visibility": ""});
-      $(id).css( "visibility:visible");
-      console.log(e.target)
-    
-    
-  }); */
-
   $('#payModal').on('click', '#add_payment', function () {      
       $("#remove_payment").css("display", "block");
       campo = `
@@ -1180,7 +1170,6 @@ $(document).ready(function () {
 
   $("#remove_payment").click(function () {
     let remover = nextinput-1
-    console.log("#metodo_" + remover)
     $("#metodo_" + remover).remove();
     $("#cantidad_" + remover).remove();
     $("#banco_" + remover).remove();
@@ -1388,7 +1377,6 @@ $(document).ready(function () {
 
   //pagar
   $('#submit-sale').click(function () {
-    console.log($('banco_0').val())
     for (i = 0; i < nextinput; i++) {
       if( ($('#metodo_'+i).val() == "cash" || $('#metodo_'+i).val() == "CC" ) && parseFloat($("#cantidad_"+i).val()) > 0){
         if($('#metodo_'+i).val() == "cash"){
@@ -1412,7 +1400,8 @@ $(document).ready(function () {
       }
     }
 
-    if(total_cantidad < grand_total){
+    console.log(`${total_cantidad} < ${g_total}`)
+    if(total_cantidad < g_total){
       alert("El total de pagos debe ser mayor al monto a pagar");
       return;
     }
@@ -1555,7 +1544,6 @@ function calTax() {
 }
 
 function nav_pointer() {
-  console.log(pro_limit, tcp)
   var pp = p_page == 'n' ? 0 : p_page;
   pp == 0 ? $('#previous').attr('disabled', true) : $('#previous').attr('disabled', false);
   pp + pro_limit > tcp ? $('#next').attr('disabled', true) : $('#next').attr('disabled', false);
