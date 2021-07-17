@@ -504,7 +504,7 @@
                                 </label>
                             </div>
                             <div class="col-sm-12">
-                                <b><?= $tcp ?> Productos</b>
+
                             </div>
                             <br><br>
                             <div id="item-list" class="col-sm-12">
