@@ -583,7 +583,8 @@ class Products extends MY_Controller
     {
         $products = $this->products_model->getAllProducts();
         foreach ($products as $prod) {
-            if (file_exists(APPPATH . 'uploads/' . $prod->code . '.JPG')) {
+            $path = APPPATH . '../uploads/' . $prod->code . '.JPG';
+            if (file_exists($path)) {
                 echo "existe imagen";
             }
         }
