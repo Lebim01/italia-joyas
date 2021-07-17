@@ -578,4 +578,14 @@ class Products extends MY_Controller
         $this->data['combo_items'] = $product->type == 'combo' ? $this->products_model->getComboItemsByPID($id) : null;
         $this->load->view($this->theme . 'products/view', $this->data);
     }
+
+    public function set_images()
+    {
+        $products = $this->products_model->getAllProducts();
+        foreach ($products as $prod) {
+            if (file_exists(APPPATH . 'uploads/' . $prod->code . '.JPG')) {
+                echo "existe imagen";
+            }
+        }
+    }
 }
