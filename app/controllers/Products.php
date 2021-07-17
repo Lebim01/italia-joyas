@@ -585,7 +585,7 @@ class Products extends MY_Controller
         foreach ($products as $prod) {
             $path = APPPATH . '../uploads/fotos/' . $prod->code . '.JPG';
             if (file_exists($path)) {
-                echo "existe imagen";
+                $this->products_model->updateProduct($prod->id, $prod, [], [], 'fotos/' . $prod->code . '.JPG');
             }
         }
     }
