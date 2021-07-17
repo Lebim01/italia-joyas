@@ -589,4 +589,27 @@ class Products extends MY_Controller
             }
         }
     }
+
+    public function resize_images()
+    {
+        $products = $this->products_model->getAllProducts();
+        foreach ($products as $prod) {
+            if ($prod->image != 'no_image.png') {
+                copy('uploads/thumbs/' . $prod->image, 'uploads/thumbs');
+
+                /*$this->load->library('image_lib');
+                $config['image_library']  = 'gd2';
+                $config['source_image']   = 'uploads/' . $prod->image;
+                $config['new_image']      = 'uploads/thumbs/' . $prod->image;
+                $config['maintain_ratio'] = true;
+                $config['width']          = 110;
+                $config['height']         = 110;
+
+                $this->image_lib->clear();
+                $this->image_lib->initialize($config);
+
+                $this->image_lib->resize();*/
+            }
+        }
+    }
 }
