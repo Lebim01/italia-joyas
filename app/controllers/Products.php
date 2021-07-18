@@ -329,7 +329,7 @@ class Products extends MY_Controller
             ->where($where)
             ->group_by('products.id');
 
-        $this->datatables->add_column('Actions', "<div class='text-center'><div class='btn-group'><a href='" . site_url('products/view/$1') . "' title='" . lang('view') . "' class='tip btn btn-primary btn-xs' data-toggle='ajax'><i class='fa fa-file-text-o'></i></a><a href='" . site_url('products/single_barcode/$1') . "' title='" . lang('print_barcodes') . "' class='tip btn btn-default btn-xs' data-toggle='ajax-modal'><i class='fa fa-print'></i></a> <a href='" . site_url('products/single_label/$1') . "' title='" . lang('print_labels') . "' class='tip btn btn-default btn-xs' data-toggle='ajax-modal'><i class='fa fa-print'></i></a> <a class='tip image btn btn-primary btn-xs' id='$4 ($3)' href='" . base_url('uploads/$2') . "' title='" . lang('view_image') . "'><i class='fa fa-picture-o'></i></a> <a href='" . site_url('products/edit/$1') . "' title='" . lang('edit_product') . "' class='tip btn btn-warning btn-xs'><i class='fa fa-edit'></i></a> <a href='" . site_url('products/delete/$1') . "' onClick=\"return confirm('" . lang('alert_x_product') . "')\" title='" . lang('delete_product') . "' class='tip btn btn-danger btn-xs'><i class='fa fa-trash-o'></i></a></div></div>", 'pid, image, code, pname, barcode_symbology');
+        $this->datatables->add_column('Actions', "<div class='text-center'><div class='btn-group'><a href='" . site_url('products/view/$1') . "' title='" . lang('view') . "' class='tip btn btn-primary btn-xs' data-toggle='ajax'><i class='fa fa-file-text-o'></i></a><a href='" . site_url('products/single_barcode/$1') . "' title='" . lang('print_barcodes') . "' class='tip btn btn-default btn-xs' data-toggle='ajax-modal'><i class='fa fa-print'></i></a> <a href='" . site_url('products/single_label/$1') . "' title='" . lang('print_labels') . "' class='tip btn btn-default btn-xs' data-toggle='ajax-modal'><i class='fa fa-print'></i></a> <a class='tip image btn btn-primary btn-xs' id='$4 ($3)' pid='$1' href='" . base_url('uploads/$2') . "' title='" . lang('view_image') . "'><i class='fa fa-picture-o'></i></a> <a href='" . site_url('products/edit/$1') . "' title='" . lang('edit_product') . "' class='tip btn btn-warning btn-xs'><i class='fa fa-edit'></i></a> <a href='" . site_url('products/delete/$1') . "' onClick=\"return confirm('" . lang('alert_x_product') . "')\" title='" . lang('delete_product') . "' class='tip btn btn-danger btn-xs'><i class='fa fa-trash-o'></i></a></div></div>", 'pid, image, code, pname, barcode_symbology');
 
         $this->datatables->unset_column('pid')->unset_column('barcode_symbology');
         echo $this->datatables->generate();
@@ -579,6 +579,34 @@ class Products extends MY_Controller
         $this->load->view($this->theme . 'products/view', $this->data);
     }
 
+    public function update_picture($id = null){
+        $base64 = $this->input->post('base64');
+        $product = $this->products_model->getProductById($id);
+        $photo = $product->code.'.jpg';
+        $base64 = str_replace('[removed]', "", $base64);
+        $data = base64_decode($base64);
+
+        file_put_contents('uploads/'.$photo, $data);
+
+        $this->load->helper('file');
+        $this->load->library('image_lib');
+        $config['image_library']  = 'gd2';
+        $config['source_image']   = 'uploads/' . $photo;
+        $config['new_image']      = 'uploads/thumbs/' . $photo;
+        $config['maintain_ratio'] = true;
+        $config['width']          = 110;
+        $config['height']         = 110;
+
+        $this->image_lib->clear();
+        $this->image_lib->initialize($config);
+
+        if (!$this->image_lib->resize()) {
+            $this->session->set_flashdata('error', $this->image_lib->display_errors());
+        }
+
+        $this->products_model->updateProduct($product->id, (array) $product, [], [], $photo);
+    }
+
     public function set_images()
     {
         $products = $this->products_model->getAllProducts();
@@ -592,12 +620,11 @@ class Products extends MY_Controller
 
     public function resize_images()
     {
+        set_time_limit(1000);
         $products = $this->products_model->getAllProducts();
         foreach ($products as $prod) {
             if ($prod->image != 'no_image.png') {
-                copy('uploads/thumbs/' . $prod->image, 'uploads/thumbs');
-
-                /*$this->load->library('image_lib');
+                $this->load->library('image_lib');
                 $config['image_library']  = 'gd2';
                 $config['source_image']   = 'uploads/' . $prod->image;
                 $config['new_image']      = 'uploads/thumbs/' . $prod->image;
@@ -608,7 +635,8 @@ class Products extends MY_Controller
                 $this->image_lib->clear();
                 $this->image_lib->initialize($config);
 
-                $this->image_lib->resize();*/
+                $this->image_lib->resize();
+                echo "Resized <br />";
             }
         }
     }
