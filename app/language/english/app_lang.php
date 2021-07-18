@@ -405,6 +405,7 @@ $lang['install']                              = 'Install';
 $lang['changelog']                            = 'Change Log';
 $lang['disabled_in_demo']                     = 'We are sorry but this feature is disabled in demo.';
 $lang['payments_report']                      = 'Payments Report';
+$lang['inventory_report']                     = 'Invetory Report';
 $lang['top_products_heading']                 = 'Please review the top products charts below';
 $lang['sale']                                 = 'Sale';
 $lang['sale_no']                              = 'Sale No';

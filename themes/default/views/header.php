@@ -250,6 +250,8 @@
                                 <li id="reports_monthly_sales"><a href="<?= site_url('reports/monthly_sales'); ?>"><i class="fa fa-circle-o"></i> <?= lang('monthly_sales'); ?></a></li>
                                 <li id="reports_index"><a href="<?= site_url('reports'); ?>"><i class="fa fa-circle-o"></i> <?= lang('sales_report'); ?></a></li>
                                 <li class="divider"></li>
+                                <li id="reports_inventory"><a href="<?= site_url('reports/inventory'); ?>"><i class="fa fa-circle-o"></i> <?= lang('inventory_report'); ?></a></li>
+                                <li class="divider"></li>
                                 <li id="reports_payments"><a href="<?= site_url('reports/payments'); ?>"><i class="fa fa-circle-o"></i> <?= lang('payments_report'); ?></a></li>
                                 <li class="divider"></li>
                                 <li id="reports_registers"><a href="<?= site_url('reports/registers'); ?>"><i class="fa fa-circle-o"></i> <?= lang('registers_report'); ?></a></li>

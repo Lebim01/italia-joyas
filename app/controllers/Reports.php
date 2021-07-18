@@ -284,6 +284,43 @@ class Reports extends MY_Controller
         $this->page_construct('reports/payments', $this->data, $meta);
     }
 
+    function inventory()
+    {
+        if ($this->input->post('customer')) {
+            $start_date = $this->input->post('start_date') ? $this->input->post('start_date') : NULL;
+            $end_date = $this->input->post('end_date') ? $this->input->post('end_date') : NULL;
+            $user = $this->input->post('user') ? $this->input->post('user') : NULL;
+            $this->data['total_sales'] = $this->reports_model->getTotalCustomerSales($this->input->post('customer'), $user, $start_date, $end_date);
+        }
+        $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
+        $this->data['users'] = $this->reports_model->getAllStaff();
+        $this->data['customers'] = $this->reports_model->getAllCustomers();
+        $bc = array(array('link' => '#', 'page' => lang('reports')), array('link' => '#', 'page' => lang('payments_report')));
+        $meta = array('page_title' => lang('inventory_report'), 'bc' => $bc);
+        $this->page_construct('reports/inventory', $this->data, $meta);
+    }
+
+    function get_inventory(){
+        $start_date = $this->input->get('start_date') ? $this->input->get('start_date') : NULL;
+        $end_date = $this->input->get('end_date') ? $this->input->get('end_date') : NULL;
+
+        $this->load->library('datatables');
+        $this->datatables
+            ->select("{$this->db->dbprefix('products')}.id as id, {$this->db->dbprefix('products')}.name, {$this->db->dbprefix('inventory')}.available, {$this->db->dbprefix('inventory')}.quantity, {$this->db->dbprefix('inventory')}.apart")
+            ->from('inventory')
+            ->join('products', 'inventory.product_id=products.id', 'left');
+
+        if ($this->session->userdata('store_id')) {
+            $this->datatables->where('inventory.store_id', $this->session->userdata('store_id'));
+        }
+        if ($start_date) {
+            $this->datatables->where("{$this->db->dbprefix('payments')}.date  >=", $start_date)
+                ->where("{$this->db->dbprefix('payments')}.date <=", $end_date);
+        }
+
+        echo $this->datatables->generate();
+    }
+
     function get_payments()
     {
         $user = $this->input->get('user') ? $this->input->get('user') : NULL;

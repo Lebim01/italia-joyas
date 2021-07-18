@@ -87,7 +87,6 @@
             ],
             "columns": [{
                     "data": "id",
-                    "visible": false
                 },
                 {
                     "data": "date",

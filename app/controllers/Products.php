@@ -335,11 +335,11 @@ class Products extends MY_Controller
         }
 
         $where = '1=1';
-        if ($in_stock == 1) $where .= ' AND product_store_qty.quantity > 0';
+        if ($in_stock == 1) $where .= ' AND INV.available > 0';
 
         $this->datatables->from('products')
             ->join('categories', 'categories.id=products.category_id', 'left')
-            ->join('product_store_qty', 'product_store_qty.product_id = products.id', 'left')
+            ->join("{$this->db->dbprefix('inventory')} INV", 'INV.product_id = products.id', 'left')
             ->join("( SELECT * from {$this->db->dbprefix('product_store_qty')} WHERE store_id = {$store_id}) psq", 'products.id=psq.product_id', 'left')
             // ->where('product_store_qty.store_id', $store_id)
             ->where($where)

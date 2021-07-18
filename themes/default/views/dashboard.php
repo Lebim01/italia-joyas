@@ -19,7 +19,6 @@ if ($chartData) {
 ?>
 
 <script type="text/javascript">
-
     $(document).ready(function () {
         Highcharts.getOptions().colors = Highcharts.map(Highcharts.getOptions().colors, function (color) {
             return {
@@ -28,14 +27,14 @@ if ($chartData) {
             };
         });
         <?php if ($chartData) { ?>
-        $('#chart').highcharts({
+        /*const options = {
             chart: { },
             credits: { enabled: false },
             exporting: { enabled: false },
             title: { text: '' },
             xAxis: { categories: [<?php foreach ($months as $month) {
-    echo "'" . $month . "', ";
-} ?>] },
+                echo "'" . $month . "', ";
+        } ?>] },
             yAxis: { min: 0, title: "" },
             tooltip: {
                 shared: true,
@@ -70,47 +69,49 @@ if ($chartData) {
                 data: [<?= implode(', ', $sales); ?>]
             }
             ]
-        });
+        }
+        $('#chart').highcharts(options);*/
         <?php } ?>
         <?php if ($topProducts) { ?>
-$('#chart2').highcharts({
-    chart: { },
-    title: { text: '' },
-    credits: { enabled: false },
-    exporting: { enabled: false },
-    tooltip: {
-        shared: true,
-        followPointer: true,
-        headerFormat: '<div class="well well-sm" style="margin-bottom:0;"><span style="font-size:12px">{point.key}</span><table class="table table-striped" style="margin-bottom:0;">',
-        pointFormat: '<tr><td style="color:{series.color};padding:4px">{series.name}: </td>' +
-        '<td style="color:{series.color};padding:4px;text-align:right;"> <b>{point.y}</b></td></tr>',
-        footerFormat: '</table></div>',
-        useHTML: true, borderWidth: 0, shadow: false,
-        style: {fontSize: '14px', padding: '0', color: '#000000'}
-    },
-    plotOptions: {
-        pie: {
-            allowPointSelect: true,
-            cursor: 'pointer',
-            dataLabels: {
-                enabled: false
+        /*const options2 = {
+            chart: { },
+            title: { text: '' },
+            credits: { enabled: false },
+            exporting: { enabled: false },
+            tooltip: {
+                shared: true,
+                followPointer: true,
+                headerFormat: '<div class="well well-sm" style="margin-bottom:0;"><span style="font-size:12px">{point.key}</span><table class="table table-striped" style="margin-bottom:0;">',
+                pointFormat: '<tr><td style="color:{series.color};padding:4px">{series.name}: </td>' +
+                '<td style="color:{series.color};padding:4px;text-align:right;"> <b>{point.y}</b></td></tr>',
+                footerFormat: '</table></div>',
+                useHTML: true, borderWidth: 0, shadow: false,
+                style: {fontSize: '14px', padding: '0', color: '#000000'}
             },
-            showInLegend: false
-        }
-    },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: false
+                    },
+                    showInLegend: false
+                }
+            },
 
-    series: [{
-        type: 'pie',
-        name: '<?=$this->lang->line('total_sold')?>',
-        data: [
-        <?php
-        foreach ($topProducts as $tp) {
-            echo "['" . $tp->product_name . ' (' . $tp->product_code . ")', " . $tp->quantity . '],';
-        } ?>
-        ]
-    }]
-});
-<?php } ?>
+            series: [{
+                type: 'pie',
+                name: '<?=$this->lang->line('total_sold')?>',
+                data: [
+                <?php
+                foreach ($topProducts as $tp) {
+                    echo "['" . $tp->product_name . ' (' . $tp->product_code . ")', " . $tp->quantity . '],';
+                } ?>
+                ]
+            }]
+        }
+        $('#chart2').highcharts(options2);*/
+        <?php } ?>
 });
 
 </script>

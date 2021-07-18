@@ -465,6 +465,7 @@
                                     <input type="hidden" name="total_pagos" id="total_pagos" value="0" />
                                     <input type="hidden" name="bancos" id="bancos" value="" />
                                     <input type="hidden" name="cantidad" id="cantidad" value="0" />
+                                    <input type="hidden" name="transaction_type" id="transaction_type" value="liquidate" />
                                 </div>
                                 <input type="hidden" name="customer" id="customer" value="<?= $Settings->default_customer ?>" />
                                 <input type="hidden" name="order_tax" id="tax_val" value="" />

@@ -1084,6 +1084,9 @@ $(document).ready(function () {
       $('#payModal').modal({ backdrop: 'static' });
     }
   });
+  $("#payModal").delegate('#transaction_type', 'change', function () {
+    $("input#transaction_type").val($(this).val())
+  })
   $('#payModal').on('shown.bs.modal', function (e) {
     $('#amount').focus().val(0);
     $('#quick-payable').click();
@@ -1562,7 +1565,7 @@ function calTax() {
 function nav_pointer() {
   var pp = p_page == 'n' ? 0 : p_page;
   pp == 0 ? $('#previous').attr('disabled', true) : $('#previous').attr('disabled', false);
-  pp + pro_limit > tcp ? $('#next').attr('disabled', true) : $('#next').attr('disabled', false);
+  pp + pro_limit >= tcp ? $('#next').attr('disabled', true) : $('#next').attr('disabled', false);
 }
 
 $(document).ready(function () {

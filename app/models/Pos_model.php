@@ -14,16 +14,16 @@ class Pos_model extends CI_Model
     public function addSale($data, $items, $payment = [], $did = null)
     {
         // boolean flag
-        $discountInvetory = in_array($data['status'], ['liquidate', 'credit']);
+        $discountInvetory = in_array($data['transaction_type'], ['liquidate', 'credit']);
         // add items apart
-        $isApart = in_array($data['status'], ['apart']);
+        $isApart = in_array($data['transaction_type'], ['apart']);
 
         if ($this->db->insert('sales', $data)) {
             $sale_id = $this->db->insert_id();
             foreach ($items as $item) {
                 $item['sale_id'] = $sale_id;
                 if ($this->db->insert('sale_items', $item)) {
-                    if ($item['product_id'] > 0 && $product = $this->site->getProductByID($item['product_id']) && ($discountInvetory || $isApart)) {
+                    if ($item['product_id'] > 0 && $product = $this->site->getProductByID($item['product_id'])) {
                         if ($product->type == 'standard') {
                             $dataUpdate = [];
                             if($discountInvetory){
@@ -90,9 +90,9 @@ class Pos_model extends CI_Model
             $this->db->where('category_id', $category_id);
         }
         if ($in_stock) {
-            $this->db->join('product_store_qty', 'product_id = products.id AND product_store_qty.quantity > 0');
+            $this->db->join('inventory', 'inventory.product_id = products.id AND inventory.available > 0');
         }
-        $this->db->order_by('name', 'asc');
+        $this->db->order_by('products.name', 'asc');
         $query = $this->db->get('products');
 
         return $query->result();
@@ -613,7 +613,7 @@ class Pos_model extends CI_Model
             $this->db->where('category_id', $category_id);
         }
         if ($in_stock) {
-            $this->db->join('product_store_qty', 'product_id = products.id AND product_store_qty.quantity > 0');
+            $this->db->join('inventory', 'inventory.product_id = products.id AND inventory.available > 0');
         }
         return $this->db->count_all_results('products');
     }
