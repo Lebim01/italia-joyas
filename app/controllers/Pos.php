@@ -455,8 +455,6 @@ class Pos extends MY_Controller
                 $order_tax    = 0;
             }
 
-
-
             $datametodos = [
                 'metodos'           => $this->input->post('metodos'),
                 'cantidad'          => $this->input->post('cantidad'),
@@ -478,10 +476,7 @@ class Pos extends MY_Controller
             //$paid        = $this->input->post('amount') ? $this->input->post('amount') : 0;
             $round_total = $this->tec->roundNumber($grand_total, $this->Settings->rounding);
             $rounding    = $this->tec->formatDecimal(($round_total - $grand_total));
-            /* if (!$suspend && $customer_details->id == 1 && $this->tec->formatDecimal($paid) < $this->tec->formatDecimal($round_total)) {
-                $this->session->set_flashdata('error', lang('select_customer_for_due'));
-                redirect($_SERVER['HTTP_REFERER']);
-            }*/
+            
             if (!$eid) {
                 $status = 'due';
                 if ($this->tec->formatDecimal($round_total) <= $this->tec->formatDecimal($paid)) {
@@ -495,7 +490,7 @@ class Pos extends MY_Controller
             $totalpagos = $this->input->post('total_pagos');
 
             $data = [
-                'date'         => $date,
+                'date'              => $date,
                 'customer_id'       => $customer_id,
                 'customer_name'     => $customer,
                 'total'             => $this->tec->formatDecimal($total, 4),
@@ -516,6 +511,7 @@ class Pos extends MY_Controller
                 'created_by'        => $this->session->userdata('user_id'),
                 'note'              => $note,
                 'hold_ref'          => $this->input->post('hold_ref'),
+                'transaction_type'  => $this->input->post('transaction_type')
             ];
 
             if (!$eid) {
@@ -536,17 +532,6 @@ class Pos extends MY_Controller
                 $data['paid'] = $amount;
 
                 for ($r = 0; $r < count($metodos); $r++) {
-                    #var_dump($metodos[$r]);exit;
-                    /* if($metodos[$r] == "cash"){
-                        $payment [$r] = [
-                            'bancos'      => null,
-                        ];
-                    } else {
-                        $payment [$r] = [
-                            'bancos'      => $bancos[$r],
-                        ];
-                    } */
-
                     $payment[$r] = [
                         'date'        => $date,
                         'amount'      => $cantidad[$r],
@@ -574,9 +559,8 @@ class Pos extends MY_Controller
 
             // $this->tec->print_arrays($data, $products, $payment);
         }
+        
         if ($this->form_validation->run() == true && !empty($products)) {
-
-
             if ($suspend) {
                 unset($data['status'], $data['rounding']);
                 if ($this->pos_model->suspendSale($data, $products, $did)) {

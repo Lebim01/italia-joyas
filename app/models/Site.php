@@ -145,7 +145,7 @@ class Site extends CI_Model
         if (!$store_id) {
             $store_id = $this->session->userdata('store_id');
         }
-        $jpsq = "( SELECT product_id, quantity, price from {$this->db->dbprefix('product_store_qty')} WHERE store_id = " . ($store_id ? $store_id : "''") . ' ) AS PSQ';
+        $jpsq = "( SELECT product_id, apart, quantity, price from {$this->db->dbprefix('product_store_qty')} WHERE store_id = " . ($store_id ? $store_id : "''") . ' ) AS PSQ';
         $this->db->select("{$this->db->dbprefix('products')}.*, COALESCE(PSQ.quantity, 0) as quantity, COALESCE(PSQ.price, {$this->db->dbprefix('products')}.price) as store_price", false)
         ->join($jpsq, 'PSQ.product_id=products.id', 'left');
         $q = $this->db->get_where('products', ['products.id' => $id], 1);

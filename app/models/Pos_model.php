@@ -13,14 +13,26 @@ class Pos_model extends CI_Model
 
     public function addSale($data, $items, $payment = [], $did = null)
     {
+        // boolean flag
+        $discountInvetory = in_array($data['status'], ['liquidate', 'credit']);
+        // add items apart
+        $isApart = in_array($data['status'], ['apart']);
+
         if ($this->db->insert('sales', $data)) {
             $sale_id = $this->db->insert_id();
             foreach ($items as $item) {
                 $item['sale_id'] = $sale_id;
                 if ($this->db->insert('sale_items', $item)) {
-                    if ($item['product_id'] > 0 && $product = $this->site->getProductByID($item['product_id'])) {
+                    if ($item['product_id'] > 0 && $product = $this->site->getProductByID($item['product_id']) && ($discountInvetory || $isApart)) {
                         if ($product->type == 'standard') {
-                            $this->db->update('product_store_qty', ['quantity' => ($product->quantity - $item['quantity'])], ['product_id' => $product->id, 'store_id' => $data['store_id']]);
+                            $dataUpdate = [];
+                            if($discountInvetory){
+                                $dataUpdate = ['quantity' => ($product->quantity - $item['quantity'])];
+                            }
+                            if($isApart){
+                                $dataUpdate = ['apart' => ($product->apart + $item['quantity'])];
+                            }
+                            $this->db->update('product_store_qty', $dataUpdate, ['product_id' => $product->id, 'store_id' => $data['store_id']]);
                         } elseif ($product->type == 'combo') {
                             $combo_items = $this->getComboItemsByPID($product->id);
                             foreach ($combo_items as $combo_item) {

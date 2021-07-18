@@ -379,7 +379,7 @@
                                     <h4 class="modal-title" id="myModalLabel">title</h4>
                                 </div>
                                 <div class="modal-body text-center">
-                                    <img id="product_image" src="" alt="" />
+                                    <img id="product_image" src="" alt="" style="max-width: 100%;" />
                                     <div id="camera_capture" style="display: flex; flex-direction: column; align-items: center;">
                                         <div id="camera_video"></div>
                                         <button class="btn btn-primary" id="take_picture">Capturar imagen</button>
