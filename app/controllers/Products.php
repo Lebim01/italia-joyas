@@ -1,5 +1,8 @@
 <?php
 defined('BASEPATH') or exit('No direct script access allowed');
+require "vendor/autoload.php";
+
+use Dompdf\Dompdf;
 
 class Products extends MY_Controller
 {
@@ -577,5 +580,64 @@ class Products extends MY_Controller
         $this->data['category']    = $this->site->getCategoryByID($product->category_id);
         $this->data['combo_items'] = $product->type == 'combo' ? $this->products_model->getComboItemsByPID($id) : null;
         $this->load->view($this->theme . 'products/view', $this->data);
+    }
+
+    public function reports()
+    {
+        $filtros = $_GET['filtros'];
+        $arrayfiltros = explode(",", $filtros);
+        $productos = [];
+        $header = "";
+        $footer = "";
+        $table = "";
+
+        if($arrayfiltros[0] == "Reporte de existencia de productos"){
+            $productos = $this->products_model->getProducts($arrayfiltros);
+            //echo $productos;exit;
+            $header = '
+                    <tr class="header" >
+                        <td style="">Clave</td>
+                        <td style="">Nombre</td>
+                        <td style="">Precio P</td>
+                        <td style="">Unidades</td>
+                        <td style="">Importe</td>
+                    </tr>
+            ';
+            for($i=0;$i<=count($productos)-1;$i++){
+                $table.='
+                    <tr>
+                        <td style="text-align:center;">'.$productos[$i]->code.'</td>
+                        <td style="text-align:center;">'.$productos[$i]->name.'</td>
+                        <td style="text-align:center;">'.$this->tec->formatMoney($productos[$i]->price).'</td>
+                        <td style="text-align:center;">'.$this->tec->formatMoney($productos[$i]->cantidad).'</td>
+                        <td style="text-align:center;">'.$this->tec->formatMoney($productos[$i]->importe).'</td>
+                    </tr>
+                ';
+            }
+        }
+
+
+        $html='
+            <p>"ITALIA JOYAS"</p> 
+            <p>Reporte de Ventas por producto</p>
+            
+            <hr style="text-align:left;margin-left:0">
+            <hr style="text-align:left;margin-left:0">
+            
+            <table class="blueTable" style="width:100%;text-align:center;">
+                <tbody>
+                    '.$header.'
+                    '.$table.'
+                    '.$footer.'
+                </tbody>
+            </table>
+            
+        ';
+        $dompdf = new DOMPDF();
+        $dompdf->loadHtml($html);
+        $dompdf->render();
+        $dompdf->stream($arrayfiltros[0].".pdf", array("Attachment"=>0));
+
+        
     }
 }

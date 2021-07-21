@@ -195,6 +195,15 @@ class Site extends CI_Model
         }
         return false;
     }
+    
+    public function getStore()
+    {
+        $q = $this->db->get_where('stores');
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return false;
+    }
 
     public function getUpcomingEvents()
     {

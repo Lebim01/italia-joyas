@@ -2,6 +2,9 @@
 if (!defined('BASEPATH')) {
     exit('No direct script access allowed');
 }
+require "vendor/autoload.php";
+
+use Dompdf\Dompdf;
 
 class Sales extends MY_Controller
 {
@@ -343,5 +346,67 @@ class Sales extends MY_Controller
             $this->session->set_flashdata('error', validation_errors());
             redirect('sales');
         }
+    }
+
+    public function reports()
+    {
+        $filtros = $_GET['filtros'];
+        $arrayfiltros = explode(",", $filtros);
+        $cantidad = 0;
+        $importe = 0;
+        $sales = [];
+        $header = "";
+        $table = "";
+
+        if($arrayfiltros[0] == "Reporte de existencia de productos"){
+            $sales = $this->sales_model->getProducts($arrayfiltros);
+            $header = '
+                    <tr class="header" >
+                        <td style="">Clave</td>
+                        <td style="">Producto</td>
+                        <td style="">Precio</td>
+                        <td style="">Descuento</td>
+                        <td style="">Cantidad</td>
+                        <td style="">Importe</td>
+                    </tr>
+            ';
+            for($i=0;$i<=count($sales)-1;$i++){
+                $table.='
+                    <tr>
+                        <td style="text-align:center;">'.$sales[$i]->product_code.'</td>
+                        <td style="text-align:center;">'.$sales[$i]->product_name.'</td>
+                        <td style="text-align:center;">'.$this->tec->formatMoney($sales[$i]->unit_price).'</td>
+                        <td style="text-align:center;">'.$this->tec->formatMoney($sales[$i]->discount).'</td>
+                        <td style="text-align:center;">'.$this->tec->formatMoney($sales[$i]->quantity).'</td>
+                        <td style="text-align:center;">'.$this->tec->formatMoney($sales[$i]->subtotal).'</td>
+                    </tr>
+                ';
+                $cantidad += floatval($sales[$i]->quantity);
+                $importe += floatval($sales[$i]->subtotal);
+            }
+        }
+        
+        $html='
+            <p>"ITALIA JOYAS"</p> 
+            <p>Reporte de Ventas por producto</p>
+            <p>De la fecha "'.$arrayfiltros[1].'" a la fecha "'.$arrayfiltros[2].'"</p>
+            <hr style="text-align:left;margin-left:0">
+            <hr style="text-align:left;margin-left:0">
+            
+            <table class="blueTable" style="width:100%;text-align:center;">
+                <tbody>
+                    '.$header.'
+                    '.$table.'
+                    '.$footer.'
+                </tbody>
+            </table>
+            
+        ';
+        $dompdf = new DOMPDF();
+        $dompdf->loadHtml($html);
+        $dompdf->render();
+        $dompdf->stream($arrayfiltros[0].".pdf", array("Attachment"=>0));
+
+        
     }
 }

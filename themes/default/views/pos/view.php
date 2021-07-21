@@ -139,6 +139,21 @@ if ($modal) {
                                             <?php
                                         }
                                       ?>
+                                       <tr>
+                                            <th class="text-left" colspan="2">Métodos de pago</th>
+                                            <th colspan="2" class="text-right"></th>
+                                        </tr>
+                                      <?php
+                                        foreach ($payments as $payment) {
+                                      ?>
+                                        <tr>
+                                            <th class="text-left" colspan="2"></th>
+                                            <th colspan="2" class="text-right"><?= lang($payment->paid_by);?>  <?= $payment->banks;?> : <?= $this->tec->formatMoney($payment->amount);?></th>
+                                        </tr>
+                                      <?php
+                                        }
+                                      ?>
+                                        
                                         <tr>
                                             <th class="text-left" colspan="2"><?= lang('paid_amount'); ?></th>
                                             <th colspan="2" class="text-right"><?= $this->tec->formatMoney($inv->paid); ?></th>

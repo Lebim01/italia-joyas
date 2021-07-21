@@ -192,4 +192,32 @@ class Products_model extends CI_Model
         }
         return false;
     }
+
+    public function getProducts($filtros)
+    {
+        $where = "";
+
+        if(isset($filtros[1]) && isset($filtros[2])){
+            $where = 'WHERE SUBSTRING(tec_products.code, 1, 1) = "'.$filtros[1].'" AND SUBSTRING(tec_products.code, 2, 3) = "'.$filtros[2].'" ';
+        } else if(isset($filtros[1]) && !isset($filtros[2])){
+            $where = "WHERE SUBSTRING(tec_products.code, 1, 1) = '".$filtros[1]."'";
+        } else if(!isset($filtros[1]) && isset($filtros[2])){
+            $where = "WHERE SUBSTRING(tec_products.code, 2, 3) = '".$filtros[2]."'";
+        }
+
+
+        $data = $this->db->query("SELECT 
+                                    tec_products.*,
+                                    tec_product_store_qty.quantity AS cantidad,
+                                    tec_product_store_qty.quantity * tec_products.price AS importe
+                                FROM
+                                    tec_products 
+                                    INNER JOIN tec_product_store_qty 
+                                    ON tec_products.id = tec_product_store_qty.product_id 
+                                    ".$where."
+                                    ORDER BY tec_products.name ASC
+                                    ")->result();
+        return  $data;
+        
+    }
 }
