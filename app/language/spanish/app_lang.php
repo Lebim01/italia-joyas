@@ -411,6 +411,7 @@ $lang['install']                              = 'Instalar';
 $lang['changelog']                            = 'Log de cambios';
 $lang['disabled_in_demo']                     = 'Lo sentimos, esta desactivado en el demo.';
 $lang['payments_report']                      = 'Reporte de Pagos';
+$lang['inventory_report']                     = 'Reporte de Invetario';
 $lang['top_products_heading']                 = 'Revise la grafica de productos principales a continuación.';
 $lang['sale']                                 = 'Venta';
 $lang['sale_no']                              = 'Venta No';

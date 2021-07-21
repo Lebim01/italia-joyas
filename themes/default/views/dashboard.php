@@ -19,7 +19,6 @@ if ($chartData) {
 ?>
 
 <script type="text/javascript">
-
     $(document).ready(function () {
         Highcharts.getOptions().colors = Highcharts.map(Highcharts.getOptions().colors, function (color) {
             return {
@@ -29,13 +28,14 @@ if ($chartData) {
         });
         <?php if ($chartData) { ?>
         const options = {
+        /*const options = {
             chart: { },
             credits: { enabled: false },
             exporting: { enabled: false },
             title: { text: '' },
             xAxis: { categories: [<?php foreach ($months as $month) {
-    echo "'" . $month . "', ";
-} ?>] },
+                echo "'" . $month . "', ";
+        } ?>] },
             yAxis: { min: 0, title: "" },
             tooltip: {
                 shared: true,
@@ -76,6 +76,10 @@ if ($chartData) {
         <?php } ?>
         <?php if ($topProducts) { ?>
         const options2 = {
+        $('#chart').highcharts(options);*/
+        <?php } ?>
+        <?php if ($topProducts) { ?>
+        /*const options2 = {
             chart: { },
             title: { text: '' },
             credits: { enabled: false },
@@ -115,6 +119,7 @@ if ($chartData) {
         console.log(options2)
         $('#chart2').highcharts(options2);
 <?php } ?>
+        $('#chart2').highcharts(options2);*/
 });
 
 </script>

@@ -92,6 +92,15 @@ class Products_model extends CI_Model
         return false;
     }
 
+    public function getProductById($id)
+    {
+        $q = $this->db->get_where('products', ['id' => $id], 1);
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return false;
+    }
+
     public function getProductByCode($code)
     {
         $q = $this->db->get_where('products', ['code' => $code], 1);

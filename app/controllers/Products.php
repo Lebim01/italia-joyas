@@ -174,6 +174,7 @@ class Products extends MY_Controller
             $this->session->set_flashdata('error', lang('access_denied'));
             redirect('pos');
         }
+
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
@@ -237,14 +238,29 @@ class Products extends MY_Controller
                 $items = [];
             }
 
+            $phpFileUploadErrors = array(
+                0 => 'There is no error, the file uploaded with success',
+                1 => 'The uploaded file exceeds the upload_max_filesize directive in php.ini',
+                2 => 'The uploaded file exceeds the MAX_FILE_SIZE directive that was specified in the HTML form',
+                3 => 'The uploaded file was only partially uploaded',
+                4 => 'No file was uploaded',
+                6 => 'Missing a temporary folder',
+                7 => 'Failed to write file to disk.',
+                8 => 'A PHP extension stopped the file upload.',
+            );
+
+            if ($_FILES['userfile']['error'] > 0) {
+                echo $phpFileUploadErrors[$_FILES['userfile']['error']];
+            }
+
             if ($_FILES['userfile']['size'] > 0) {
                 $this->load->library('upload');
 
                 $config['upload_path']   = 'uploads/';
                 $config['allowed_types'] = 'gif|jpg|png';
-                $config['max_size']      = '500';
-                $config['max_width']     = '800';
-                $config['max_height']    = '800';
+                //$config['max_size']      = '500';
+                //$config['max_width']     = '800';
+                //$config['max_height']    = '800';
                 $config['overwrite']     = false;
                 $config['encrypt_name']  = true;
                 $this->upload->initialize($config);
@@ -322,17 +338,17 @@ class Products extends MY_Controller
         }
 
         $where = '1=1';
-        if ($in_stock == 1) $where .= ' AND product_store_qty.quantity > 0';
+        if ($in_stock == 1) $where .= ' AND INV.available > 0';
 
         $this->datatables->from('products')
             ->join('categories', 'categories.id=products.category_id', 'left')
-            ->join('product_store_qty', 'product_store_qty.product_id = products.id', 'left')
+            ->join("{$this->db->dbprefix('inventory')} INV", 'INV.product_id = products.id', 'left')
             ->join("( SELECT * from {$this->db->dbprefix('product_store_qty')} WHERE store_id = {$store_id}) psq", 'products.id=psq.product_id', 'left')
             // ->where('product_store_qty.store_id', $store_id)
             ->where($where)
             ->group_by('products.id');
 
-        $this->datatables->add_column('Actions', "<div class='text-center'><div class='btn-group'><a href='" . site_url('products/view/$1') . "' title='" . lang('view') . "' class='tip btn btn-primary btn-xs' data-toggle='ajax'><i class='fa fa-file-text-o'></i></a><a href='" . site_url('products/single_barcode/$1') . "' title='" . lang('print_barcodes') . "' class='tip btn btn-default btn-xs' data-toggle='ajax-modal'><i class='fa fa-print'></i></a> <a href='" . site_url('products/single_label/$1') . "' title='" . lang('print_labels') . "' class='tip btn btn-default btn-xs' data-toggle='ajax-modal'><i class='fa fa-print'></i></a> <a class='tip image btn btn-primary btn-xs' id='$4 ($3)' href='" . base_url('uploads/$2') . "' title='" . lang('view_image') . "'><i class='fa fa-picture-o'></i></a> <a href='" . site_url('products/edit/$1') . "' title='" . lang('edit_product') . "' class='tip btn btn-warning btn-xs'><i class='fa fa-edit'></i></a> <a href='" . site_url('products/delete/$1') . "' onClick=\"return confirm('" . lang('alert_x_product') . "')\" title='" . lang('delete_product') . "' class='tip btn btn-danger btn-xs'><i class='fa fa-trash-o'></i></a></div></div>", 'pid, image, code, pname, barcode_symbology');
+        $this->datatables->add_column('Actions', "<div class='text-center'><div class='btn-group'><a href='" . site_url('products/view/$1') . "' title='" . lang('view') . "' class='tip btn btn-primary btn-xs' data-toggle='ajax'><i class='fa fa-file-text-o'></i></a><a href='" . site_url('products/single_barcode/$1') . "' title='" . lang('print_barcodes') . "' class='tip btn btn-default btn-xs' data-toggle='ajax-modal'><i class='fa fa-print'></i></a> <a href='" . site_url('products/single_label/$1') . "' title='" . lang('print_labels') . "' class='tip btn btn-default btn-xs' data-toggle='ajax-modal'><i class='fa fa-print'></i></a> <a class='tip image btn btn-primary btn-xs' id='$4 ($3)' pid='$1' href='" . base_url('uploads/$2') . "' title='" . lang('view_image') . "'><i class='fa fa-picture-o'></i></a> <a href='" . site_url('products/edit/$1') . "' title='" . lang('edit_product') . "' class='tip btn btn-warning btn-xs'><i class='fa fa-edit'></i></a> <a href='" . site_url('products/delete/$1') . "' onClick=\"return confirm('" . lang('alert_x_product') . "')\" title='" . lang('delete_product') . "' class='tip btn btn-danger btn-xs'><i class='fa fa-trash-o'></i></a></div></div>", 'pid, image, code, pname, barcode_symbology');
 
         $this->datatables->unset_column('pid')->unset_column('barcode_symbology');
         echo $this->datatables->generate();
@@ -637,7 +653,67 @@ class Products extends MY_Controller
         $dompdf->loadHtml($html);
         $dompdf->render();
         $dompdf->stream($arrayfiltros[0].".pdf", array("Attachment"=>0));
-
+    }
         
+    public function update_picture($id = null){
+        $base64 = $this->input->post('base64');
+        $product = $this->products_model->getProductById($id);
+        $photo = $product->code.'.jpg';
+        $base64 = str_replace('[removed]', "", $base64);
+        $data = base64_decode($base64);
+
+        file_put_contents('uploads/'.$photo, $data);
+
+        $this->load->helper('file');
+        $this->load->library('image_lib');
+        $config['image_library']  = 'gd2';
+        $config['source_image']   = 'uploads/' . $photo;
+        $config['new_image']      = 'uploads/thumbs/' . $photo;
+        $config['maintain_ratio'] = true;
+        $config['width']          = 110;
+        $config['height']         = 110;
+
+        $this->image_lib->clear();
+        $this->image_lib->initialize($config);
+
+        if (!$this->image_lib->resize()) {
+            $this->session->set_flashdata('error', $this->image_lib->display_errors());
+        }
+
+        $this->products_model->updateProduct($product->id, (array) $product, [], [], $photo);
+    }
+
+    public function set_images()
+    {
+        $products = $this->products_model->getAllProducts();
+        foreach ($products as $prod) {
+            $path = APPPATH . '../uploads/fotos/' . $prod->code . '.JPG';
+            if (file_exists($path)) {
+                $this->products_model->updateProduct($prod->id, (array) $prod, [], [], 'fotos/' . $prod->code . '.JPG');
+            }
+        }
+    }
+
+    public function resize_images()
+    {
+        set_time_limit(1000);
+        $products = $this->products_model->getAllProducts();
+        foreach ($products as $prod) {
+            if ($prod->image != 'no_image.png') {
+                $this->load->library('image_lib');
+                $config['image_library']  = 'gd2';
+                $config['source_image']   = 'uploads/' . $prod->image;
+                $config['new_image']      = 'uploads/thumbs/' . $prod->image;
+                $config['maintain_ratio'] = true;
+                $config['width']          = 110;
+                $config['height']         = 110;
+
+                $this->image_lib->clear();
+                $this->image_lib->initialize($config);
+
+                $this->image_lib->resize();
+                echo "Resized <br />";
+            }
+        }
     }
 }

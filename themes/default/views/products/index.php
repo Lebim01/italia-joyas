@@ -1,4 +1,5 @@
 <?php (defined('BASEPATH')) or exit('No direct script access allowed'); ?>
+<script src="<?= $assets ?>dev/js/webcamjs/webcam.min.js" type="text/javascript"></script>
 
 <script type="text/javascript">
     $(document).ready(function() {
@@ -153,13 +154,10 @@
             table.ajax.url('<?= site_url('products/get_products/' . $store->id . '/'); ?>' + `?in_stock=${in_stock}`).load()
         })
 
-    });
-</script>
-<script type="text/javascript">
-    $(document).ready(function() {
         $('#prTables').on('click', '.image', function() {
             var a_href = $(this).attr('href');
             var code = $(this).attr('id');
+
             $('#myModalLabel').text(code);
             $('#product_image').attr('src', a_href);
             $('#picModal').modal();
@@ -168,6 +166,7 @@
         $('#prTables').on('click', '.barcode', function() {
             var a_href = $(this).attr('href');
             var code = $(this).attr('id');
+
             $('#myModalLabel').text(code);
             $('#product_image').attr('src', a_href);
             $('#picModal').modal();
@@ -176,11 +175,97 @@
         $('#prTables').on('click', '.open-image', function() {
             var a_href = $(this).attr('href');
             var code = $(this).closest('tr').find('.image').attr('id');
+            window.id = $(this).closest('tr').find('.image').attr('pid');
+
             $('#myModalLabel').text(code);
             $('#product_image').attr('src', a_href);
             $('#picModal').modal();
             return false;
         });
+
+        $("#button_camera_capture").click(open_camera)
+        $("#take_picture").click(take_snapshot)
+        $("#retry_picture").click(retry_picture)
+        $("#cancel_picture").click(cancel_picture)
+        $("#upload_picture").click(upload_picture)
+
+        $("#camera_capture").hide()
+        $("#results").hide()
+
+        function hide_capture_camera(){
+            $("#camera_capture").hide();
+        }
+
+        function take_snapshot() {
+            hide_capture_camera()
+			$("#results").show()
+
+			// take snapshot and get image data
+			Webcam.snap( function(data_uri) {
+				// display results in page
+				document.getElementById('picture_taken').innerHTML = '<img id="picture_data" src="'+data_uri+'"/>';
+			});
+		}
+
+        function retry_picture(){
+            hide_results()
+            close_camera()
+            open_camera()
+        }
+
+        function hide_results(){
+            $("#results").hide()
+        }
+
+        function open_camera(){
+            $("#button_camera_capture").hide()
+            $("#camera_capture").show();
+
+            Webcam.set({
+                width: 500,
+                height: 350,
+                image_format: 'jpeg',
+                jpeg_quality: 100
+            });
+            Webcam.attach( '#camera_video' );
+        }
+
+        function close_camera(){
+            Webcam.reset()
+            $("#button_camera_capture").show()
+            hide_capture_camera()
+        }
+
+        function cancel_picture(){
+            close_camera()
+            hide_results()
+            hide_capture_camera()
+            $("#button_camera_capture").show()
+        }
+
+        function upload_picture(){
+			const base64image =  document.getElementById("picture_data").src;
+            $.ajax({
+                type: 'POST',
+                url: '<?= site_url('products/update_picture/') ?>' + window.id + '/',
+                dataType: 'json',
+                data: {
+                    base64: base64image
+                },
+                complete: function (data) {
+                    console.log('success')
+                    $('#picModal').modal('hide')
+                    table.ajax.reload()
+                },
+            });
+        }
+
+        $('#picModal').on('shown.bs.modal', function (e) {
+            
+        })
+        $('#picModal').on('hidden.bs.modal', function (e) {
+            cancel_picture()
+        })
     });
 </script>
 <style type="text/css">
@@ -339,7 +424,20 @@
                                     <h4 class="modal-title" id="myModalLabel">title</h4>
                                 </div>
                                 <div class="modal-body text-center">
-                                    <img id="product_image" src="" alt="" />
+                                    <img id="product_image" src="" alt="" style="max-width: 100%;" />
+                                    <div id="camera_capture" style="display: flex; flex-direction: column; align-items: center;">
+                                        <div id="camera_video"></div>
+                                        <button class="btn btn-primary" id="take_picture">Capturar imagen</button>
+                                    </div>
+                                    <div id="results">
+                                        <div id="picture_taken"></div>
+                                        <button class="btn btn-danger" id="cancel_picture">Cancelar</button>
+                                        <button class="btn btn-warning" id="retry_picture">Tomar otra vez</button>
+                                        <button class="btn btn-success" id="upload_picture">Subir</button>
+                                    </div>
+                                    <div>
+                                        <button id="button_camera_capture">Tomar foto</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
