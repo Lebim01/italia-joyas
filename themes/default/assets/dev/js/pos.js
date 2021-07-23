@@ -760,7 +760,7 @@ $(document).ready(function () {
     });
   });
 
-  const execAjaxProducts = (reset = false) => {
+  function execAjaxProducts(reset){
     let data = { 
       category_id: cat_id, 
       in_stock: in_stock ? 1 : 0, 
@@ -821,7 +821,7 @@ $(document).ready(function () {
     }
     p_page += pro_limit;
     if (tcp >= pro_limit && p_page < tcp) {
-      execAjaxProducts()
+      execAjaxProducts(false)
     } else {
       p_page -= pro_limit;
     }
@@ -836,7 +836,7 @@ $(document).ready(function () {
       if (p_page == 0) {
         p_page = 'n';
       }
-      execAjaxProducts()
+      execAjaxProducts(false)
     }
   });
 
