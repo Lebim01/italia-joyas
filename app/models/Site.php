@@ -145,19 +145,28 @@ class Site extends CI_Model
         if (!$store_id) {
             $store_id = $this->session->userdata('store_id');
         }
-        $jpsq = "( SELECT product_id, quantity, price from {$this->db->dbprefix('product_store_qty')} WHERE store_id = " . ($store_id ? $store_id : "''") . ' ) AS PSQ';
-        $this->db->select("{$this->db->dbprefix('products')}.*, COALESCE(PSQ.quantity, 0) as quantity, COALESCE(PSQ.price, {$this->db->dbprefix('products')}.price) as store_price", false)
-        ->join($jpsq, 'PSQ.product_id=products.id', 'left');
+        $jpsq = "(SELECT product_id, apart, quantity, price from {$this->db->dbprefix('product_store_qty')} WHERE store_id = " . ($store_id ? $store_id : "''") . ' ) AS PSQ';
+        $this->db
+            ->select([
+                "{$this->db->dbprefix('products')}.*", 
+                "COALESCE(PSQ.quantity, 0) as quantity", 
+                "COALESCE(PSQ.apart, 0) as apart", 
+                "COALESCE(PSQ.price, {$this->db->dbprefix('products')}.price) as store_price",
+                "COALESCE(INV.available, 0) as available"
+            ], false)
+            ->join($jpsq, 'PSQ.product_id=products.id', 'left')
+            ->join("{$this->db->dbprefix('inventory')} AS INV", "INV.product_id = products.id", 'left');
         $q = $this->db->get_where('products', ['products.id' => $id], 1);
         if ($q->num_rows() > 0) {
             return $q->row();
         }
+        echo $this->db->last_query();
         return false;
     }
 
     public function getStockByID($id)
     {
-        $stock = $this->db->get_where('tec_product_store_qty', ['product_id' => $id], $id);
+        $stock = $this->db->get_where('tec_inventory', ['product_id' => $id], $id);
         if ($stock->num_rows() > 0) {
             return $stock->row();
         }
@@ -190,6 +199,15 @@ class Site extends CI_Model
             return false;
         }
         $q = $this->db->get_where('stores', ['id' => $id], 1);
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return false;
+    }
+    
+    public function getStore()
+    {
+        $q = $this->db->get_where('stores');
         if ($q->num_rows() > 0) {
             return $q->row();
         }

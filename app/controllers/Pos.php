@@ -323,7 +323,7 @@ class Pos extends MY_Controller
 
                 $stock = $this->site->getStockByID($item_id);
 
-                if (intval($stock->quantity - $stock->apart) < intval($item_quantity)) {
+                if (intval($stock->available) < intval($item_quantity)) {
                     $this->session->set_flashdata('error', lang('No hay stock suficiente pata el producto ' . $_POST['product_name'][$r]));
                     redirect($_SERVER['HTTP_REFERER']);
                 }
@@ -341,23 +341,23 @@ class Pos extends MY_Controller
                     }
                     if (!$this->Settings->overselling) {
                         if ($product_details->type == 'standard') {
-                            if ($product_details->quantity < $item_quantity) {
+                            if ($product_details->available < $item_quantity) {
                                 $this->session->set_flashdata('error', lang('quantity_low') . ' (' .
                                     lang('name') . ': ' . $product_details->name . ' | ' .
                                     lang('ordered') . ': ' . $item_quantity . ' | ' .
-                                    lang('available') . ': ' . $product_details->quantity .
-                                    ')');
+                                    lang('available') . ': ' . $product_details->available .
+                                ')');
                                 redirect('pos');
                             }
                         } elseif ($product_details->type == 'combo') {
                             $combo_items = $this->pos_model->getComboItemsByPID($product->id);
                             foreach ($combo_items as $combo_item) {
                                 $cpr = $this->site->getProductByID($combo_item->id);
-                                if ($cpr->quantity < $item_quantity) {
+                                if ($cpr->available < $item_quantity) {
                                     $this->session->set_flashdata('error', lang('quantity_low') . ' (' .
                                         lang('name') . ': ' . $cpr->name . ' | ' .
                                         lang('ordered') . ': ' . $item_quantity . ' x ' . $combo_item->qty . ' = ' . $item_quantity * $combo_item->qty . ' | ' .
-                                        lang('available') . ': ' . $cpr->quantity .
+                                        lang('available') . ': ' . $cpr->available .
                                         ') ' . $product_details->name);
                                     redirect('pos');
                                 }
@@ -455,8 +455,6 @@ class Pos extends MY_Controller
                 $order_tax    = 0;
             }
 
-
-
             $datametodos = [
                 'metodos'           => $this->input->post('metodos'),
                 'cantidad'          => $this->input->post('cantidad'),
@@ -478,10 +476,7 @@ class Pos extends MY_Controller
             //$paid        = $this->input->post('amount') ? $this->input->post('amount') : 0;
             $round_total = $this->tec->roundNumber($grand_total, $this->Settings->rounding);
             $rounding    = $this->tec->formatDecimal(($round_total - $grand_total));
-            /* if (!$suspend && $customer_details->id == 1 && $this->tec->formatDecimal($paid) < $this->tec->formatDecimal($round_total)) {
-                $this->session->set_flashdata('error', lang('select_customer_for_due'));
-                redirect($_SERVER['HTTP_REFERER']);
-            }*/
+            
             if (!$eid) {
                 $status = 'due';
                 if ($this->tec->formatDecimal($round_total) <= $this->tec->formatDecimal($paid)) {
@@ -495,7 +490,7 @@ class Pos extends MY_Controller
             $totalpagos = $this->input->post('total_pagos');
 
             $data = [
-                'date'         => $date,
+                'date'              => $date,
                 'customer_id'       => $customer_id,
                 'customer_name'     => $customer,
                 'total'             => $this->tec->formatDecimal($total, 4),
@@ -516,6 +511,8 @@ class Pos extends MY_Controller
                 'created_by'        => $this->session->userdata('user_id'),
                 'note'              => $note,
                 'hold_ref'          => $this->input->post('hold_ref'),
+                'transaction_type'  => $this->input->post('transaction_type'),
+                'delivered'         => $this->input->post('transaction_type') == 'apart' ? 0 : 1
             ];
 
             if (!$eid) {
@@ -536,17 +533,6 @@ class Pos extends MY_Controller
                 $data['paid'] = $amount;
 
                 for ($r = 0; $r < count($metodos); $r++) {
-                    #var_dump($metodos[$r]);exit;
-                    /* if($metodos[$r] == "cash"){
-                        $payment [$r] = [
-                            'bancos'      => null,
-                        ];
-                    } else {
-                        $payment [$r] = [
-                            'bancos'      => $bancos[$r],
-                        ];
-                    } */
-
                     $payment[$r] = [
                         'date'        => $date,
                         'amount'      => $cantidad[$r],
@@ -571,12 +557,9 @@ class Pos extends MY_Controller
             } else {
                 $payment = [];
             }
-
-            // $this->tec->print_arrays($data, $products, $payment);
         }
+
         if ($this->form_validation->run() == true && !empty($products)) {
-
-
             if ($suspend) {
                 unset($data['status'], $data['rounding']);
                 if ($this->pos_model->suspendSale($data, $products, $did)) {

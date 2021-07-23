@@ -15,6 +15,7 @@
 		"stripe/stripe-php": "^6.6",
 		"zendframework/zend-barcode": "^2.7",
 		"phpmailer/phpmailer": "^6.1",
-		"league/oauth2-google": "^3.0"
+		"league/oauth2-google": "^3.0",
+		"dompdf/dompdf": "0.7.0"
 	}
 }

@@ -1,4 +1,5 @@
 <?php (defined('BASEPATH')) or exit('No direct script access allowed'); ?>
+<script src="<?= $assets ?>dev/js/webcamjs/webcam.min.js" type="text/javascript"></script>
 
 <script type="text/javascript">
     $(document).ready(function() {
@@ -153,13 +154,10 @@
             table.ajax.url('<?= site_url('products/get_products/' . $store->id . '/'); ?>' + `?in_stock=${in_stock}`).load()
         })
 
-    });
-</script>
-<script type="text/javascript">
-    $(document).ready(function() {
         $('#prTables').on('click', '.image', function() {
             var a_href = $(this).attr('href');
             var code = $(this).attr('id');
+
             $('#myModalLabel').text(code);
             $('#product_image').attr('src', a_href);
             $('#picModal').modal();
@@ -168,6 +166,7 @@
         $('#prTables').on('click', '.barcode', function() {
             var a_href = $(this).attr('href');
             var code = $(this).attr('id');
+
             $('#myModalLabel').text(code);
             $('#product_image').attr('src', a_href);
             $('#picModal').modal();
@@ -176,11 +175,97 @@
         $('#prTables').on('click', '.open-image', function() {
             var a_href = $(this).attr('href');
             var code = $(this).closest('tr').find('.image').attr('id');
+            window.id = $(this).closest('tr').find('.image').attr('pid');
+
             $('#myModalLabel').text(code);
             $('#product_image').attr('src', a_href);
             $('#picModal').modal();
             return false;
         });
+
+        $("#button_camera_capture").click(open_camera)
+        $("#take_picture").click(take_snapshot)
+        $("#retry_picture").click(retry_picture)
+        $("#cancel_picture").click(cancel_picture)
+        $("#upload_picture").click(upload_picture)
+
+        $("#camera_capture").hide()
+        $("#results").hide()
+
+        function hide_capture_camera(){
+            $("#camera_capture").hide();
+        }
+
+        function take_snapshot() {
+            hide_capture_camera()
+			$("#results").show()
+
+			// take snapshot and get image data
+			Webcam.snap( function(data_uri) {
+				// display results in page
+				document.getElementById('picture_taken').innerHTML = '<img id="picture_data" src="'+data_uri+'"/>';
+			});
+		}
+
+        function retry_picture(){
+            hide_results()
+            close_camera()
+            open_camera()
+        }
+
+        function hide_results(){
+            $("#results").hide()
+        }
+
+        function open_camera(){
+            $("#button_camera_capture").hide()
+            $("#camera_capture").show();
+
+            Webcam.set({
+                width: 500,
+                height: 350,
+                image_format: 'jpeg',
+                jpeg_quality: 100
+            });
+            Webcam.attach( '#camera_video' );
+        }
+
+        function close_camera(){
+            Webcam.reset()
+            $("#button_camera_capture").show()
+            hide_capture_camera()
+        }
+
+        function cancel_picture(){
+            close_camera()
+            hide_results()
+            hide_capture_camera()
+            $("#button_camera_capture").show()
+        }
+
+        function upload_picture(){
+			const base64image =  document.getElementById("picture_data").src;
+            $.ajax({
+                type: 'POST',
+                url: '<?= site_url('products/update_picture/') ?>' + window.id + '/',
+                dataType: 'json',
+                data: {
+                    base64: base64image
+                },
+                complete: function (data) {
+                    console.log('success')
+                    $('#picModal').modal('hide')
+                    table.ajax.reload()
+                },
+            });
+        }
+
+        $('#picModal').on('shown.bs.modal', function (e) {
+            
+        })
+        $('#picModal').on('hidden.bs.modal', function (e) {
+            cancel_picture()
+        })
     });
 </script>
 <style type="text/css">
@@ -199,6 +284,51 @@
     }
 </style>
 <section class="content">
+    <div class="row">
+        <div class="col-xs-12">
+            <button type="button" class="btn btn-primary" id="print_report"><i class='fa fa-print'></i> Imprimir reportes</button>
+        </div>
+    </div>
+    <br>
+    <div class="modal" data-easein="flipYIn" id="reportsModal" tabindex="-1" role="dialog" aria-labelledby="cModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header modal-primary">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+                    <h4 class="modal-title" id="cModalLabel">
+                       Imprimir reportes
+                    </h4>
+                </div>
+                
+                <div class="modal-body">
+                    <div id="c-alert" class="alert alert-danger" style="display:none;"></div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="form-group">
+                                <select id="tipoReporte" class="form-control paid_by select2 bank" style="width:35%; display:inline-block">
+                                    <option value="seleccione" selected="selected">Seleccione una opción</option>
+                                    <option value="byStock">Reporte de existencia de productos</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="display:none" id="datesFilter">
+                        <div class="col-xs-12">
+                            <div class="form-group">
+                                <input type="text" id="linea" placeholder="Línea">
+                                <input type="text" id="familia" placeholder="Familia">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin-top:0;">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal"> Cerrar </button>
+                    <button type="submit" class="btn btn-primary" id="print">Imprimir </button>
+                </div>
+                <?= form_close(); ?>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-xs-12">
             <div class="box box-primary">
@@ -294,7 +424,20 @@
                                     <h4 class="modal-title" id="myModalLabel">title</h4>
                                 </div>
                                 <div class="modal-body text-center">
-                                    <img id="product_image" src="" alt="" />
+                                    <img id="product_image" src="" alt="" style="max-width: 100%;" />
+                                    <div id="camera_capture" style="display: flex; flex-direction: column; align-items: center;">
+                                        <div id="camera_video"></div>
+                                        <button class="btn btn-primary" id="take_picture">Capturar imagen</button>
+                                    </div>
+                                    <div id="results">
+                                        <div id="picture_taken"></div>
+                                        <button class="btn btn-danger" id="cancel_picture">Cancelar</button>
+                                        <button class="btn btn-warning" id="retry_picture">Tomar otra vez</button>
+                                        <button class="btn btn-success" id="upload_picture">Subir</button>
+                                    </div>
+                                    <div>
+                                        <button id="button_camera_capture">Tomar foto</button>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -306,3 +449,39 @@
         </div>
     </div>
 </section>
+<script src="<?= $assets ?>plugins/bootstrap-datetimepicker/js/moment.min.js" type="text/javascript"></script>
+<script src="<?= $assets ?>plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        $(document).on('click', '#print_report', function() {
+            $('#reportsModal').modal({ backdrop: 'static' });
+        });
+        
+        $("#tipoReporte").change(function() {
+            if($(this).val() != "seleccione"){
+                $("#datesFilter").css("display", "inline-block");
+            } else {
+                $("#datesFilter").css("display", "none");
+                $("#date_inicio").val("")
+
+                $("#date_fin").val("")
+            }
+        });
+
+        $("#print").click(function() {
+
+            if($("#tipoReporte").val() == "byStock"){
+                let data = ["Reporte de existencia de productos",$('#linea').val(),$('#familia').val()]
+                let url=  new URL(window.location.href+"/reports/");
+                url.searchParams.append('filtros', data)
+                window.open(url.toString(), '_blank')
+                $("#datesFilter").css("display", "none");
+                $("#familia").val("")
+                $("#linea").val("")
+                $('#tipoReporte').val("")
+                $('#reportsModal').modal('hide');
+            } 
+
+        });
+    });
+</script>

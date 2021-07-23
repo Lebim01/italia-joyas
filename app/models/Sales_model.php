@@ -198,4 +198,44 @@ class Sales_model extends MY_Model
         }
         return false;
     }
+
+    public function getallSales($fechas)
+    {
+        $data = $this->db->query("SELECT 
+                                    tec_sales.id,
+                                    tec_sales.date,
+                                    tec_sales.grand_total,
+                                    SUM(tec_sale_items.discount) AS discount 
+                                    FROM
+                                    tec_sales 
+                                    LEFT JOIN tec_sale_items 
+                                        ON tec_sales.id = tec_sale_items.sale_id 
+                                        WHERE tec_sales.date >= '".$fechas[1]." 00:00:00' AND tec_sales.date <= '".$fechas[2]." 23:59:59'
+                                    GROUP BY tec_sales.id 
+                                    ORDER BY tec_sales.date ASC 
+                                    ")->result();
+        return $data;
+        
+    }
+
+    public function getallItemSales($fechas)
+    {
+        $data = $this->db->query("SELECT 
+                                    product_code,
+                                    product_name,
+                                    unit_price,
+                                    discount,
+                                    SUM(quantity) AS quantity,
+                                    SUM(subtotal) AS subtotal 
+                                FROM
+                                    tec_sale_items 
+                                    LEFT JOIN tec_sales 
+                                    ON tec_sale_items.sale_id = tec_sales.id
+                                    WHERE tec_sales.date >= '".$fechas[1]." 00:00:00' AND tec_sales.date <= '".$fechas[2]." 23:59:59'
+                                    GROUP BY tec_sale_items.product_id
+                                    ORDER BY tec_sales.date ASC
+                                    ")->result();
+        return $data;
+        
+    }
 }

@@ -8,6 +8,7 @@
     <link rel="shortcut icon" href="<?= $assets ?>images/icon.png" />
     <link href="<?= $assets ?>dist/css/styles.css" rel="stylesheet" type="text/css" />
     <?= $Settings->rtl ? '<link href="' . $assets . 'dist/css/rtl.css" rel="stylesheet" />' : ''; ?>
+    <link href="<?= $assets ?>plugins/font-awesome/css/font-awesome.css" rel="stylesheet" type="text/css" />
     <script src="<?= $assets ?>plugins/jQuery/jQuery-2.1.4.min.js"></script>
 </head>
 
@@ -464,6 +465,7 @@
                                     <input type="hidden" name="total_pagos" id="total_pagos" value="0" />
                                     <input type="hidden" name="bancos" id="bancos" value="" />
                                     <input type="hidden" name="cantidad" id="cantidad" value="0" />
+                                    <input type="hidden" name="transaction_type" id="transaction_type" value="liquidate" />
                                 </div>
                                 <input type="hidden" name="customer" id="customer" value="<?= $Settings->default_customer ?>" />
                                 <input type="hidden" name="order_tax" id="tax_val" value="" />
@@ -836,7 +838,6 @@
                                             <option value="other"><?= lang('other'); ?></option>
                                         </select> -->
                                             <button type="button" class="btn btn-primary" id="add_payment"><i class='fa fa-plus'></i> Agregar método de pago</button>
-
                                         </div>
                                     </div>
                                 </div>
@@ -925,7 +926,7 @@
                                         <div id="campos" class="form-group">
 
                                         </div>
-                                        <button type="button" class="btn btn-danger" id="remove_payment" style="margin-left:15px;display:none"><i class='fa fa-minus'></i> Eliminar método de pago</button>
+                                        <!--<button type="button" class="btn btn-danger" id="remove_payment" style="margin-left:15px;display:none"><i class='fa fa-minus'></i> Eliminar método de pago</button>-->
                                     </div>
                                 </div>
                             </div>
@@ -946,7 +947,33 @@
                         id="clear-cash-notes"><?= lang('clear'); ?></button>
                     </div>
                 </div> -->
+                    <div class="font16" style="margin-top: 10px;">                        
+                        <table class="table table-bordered table-condensed" style="margin-bottom: 0;">
+                            <tbody>
+                                <tr>
+                                    <td width="25%" style="border-right-color: #FFF !important;">Tipo de transacción</td>
+                                    <td width="25%">
+                                        <select class="form-control select2" style="width: 100%; display:inline-block" name="transaction_type" id="transaction_type">
+                                            <option value="liquidate" selected>Contado</option>
+                                            <option value="credit">Crédito</option>
+                                            <option value="apart">Apartado</option>
+                                        </select>
+                                    </td>
+                                    <td width="25%" style="border-right-color: #FFF !important;">Pagando con</td>
+                                    <td width="25%" class="text-right"><span id="payment_amount">0.00</span></td>
+                                </tr>
+                                <!--  <tr>
+                                <td style="border-right-color: #FFF !important;"><?= lang('total_paying'); ?></td>
+                                <td class="text-right"><span id="total_paying">0.00</span></td>
+                                <td style="border-right-color: #FFF !important;"><?= lang('balance'); ?></td>
+                                <td class="text-right"><span id="balance">0.00</span></td>
+                            </tr> -->
+                            </tbody>
+                        </table>
+                        <div class="clearfix"></div>
+                    </div>
                 </div>
+                
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default pull-left" data-dismiss="modal"> <?= lang('close') ?> </button>
