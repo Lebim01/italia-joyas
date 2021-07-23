@@ -210,12 +210,11 @@ class Sales_model extends MY_Model
                                     tec_sales 
                                     LEFT JOIN tec_sale_items 
                                         ON tec_sales.id = tec_sale_items.sale_id 
-                                        WHERE tec_sales.date >= '".$fechas[1]." 00:00:00' AND tec_sales.date <= '".$fechas[2]." 23:59:59'
+                                        WHERE tec_sales.date >= '" . $fechas[1] . " 00:00:00' AND tec_sales.date <= '" . $fechas[2] . " 23:59:59'
                                     GROUP BY tec_sales.id 
                                     ORDER BY tec_sales.date ASC 
                                     ")->result();
         return $data;
-        
     }
 
     public function getallItemSales($fechas)
@@ -231,11 +230,10 @@ class Sales_model extends MY_Model
                                     tec_sale_items 
                                     LEFT JOIN tec_sales 
                                     ON tec_sale_items.sale_id = tec_sales.id
-                                    WHERE tec_sales.date >= '".$fechas[1]." 00:00:00' AND tec_sales.date <= '".$fechas[2]." 23:59:59'
+                                    WHERE tec_sales.date >= '" . $fechas[1] . " 00:00:00' AND tec_sales.date <= '" . $fechas[2] . " 23:59:59'
                                     GROUP BY tec_sale_items.product_id
                                     ORDER BY tec_sales.date ASC
                                     ")->result();
         return $data;
-        
     }
 }

@@ -87,9 +87,9 @@ class Products extends MY_Controller
 
                 $config['upload_path']   = 'uploads/';
                 $config['allowed_types'] = 'gif|jpg|png';
-                $config['max_size']      = '500';
-                $config['max_width']     = '800';
-                $config['max_height']    = '800';
+                //$config['max_size']      = '500';
+                //$config['max_width']     = '800';
+                //$config['max_height']    = '800';
                 $config['overwrite']     = false;
                 $config['encrypt_name']  = true;
                 $this->upload->initialize($config);
@@ -607,7 +607,7 @@ class Products extends MY_Controller
         $footer = "";
         $table = "";
 
-        if($arrayfiltros[0] == "Reporte de existencia de productos"){
+        if ($arrayfiltros[0] == "Reporte de existencia de productos") {
             $productos = $this->products_model->getProducts($arrayfiltros);
             //echo $productos;exit;
             $header = '
@@ -619,21 +619,21 @@ class Products extends MY_Controller
                         <td style="">Importe</td>
                     </tr>
             ';
-            for($i=0;$i<=count($productos)-1;$i++){
-                $table.='
+            for ($i = 0; $i <= count($productos) - 1; $i++) {
+                $table .= '
                     <tr>
-                        <td style="text-align:center;">'.$productos[$i]->code.'</td>
-                        <td style="text-align:center;">'.$productos[$i]->name.'</td>
-                        <td style="text-align:center;">'.$this->tec->formatMoney($productos[$i]->price).'</td>
-                        <td style="text-align:center;">'.$this->tec->formatMoney($productos[$i]->cantidad).'</td>
-                        <td style="text-align:center;">'.$this->tec->formatMoney($productos[$i]->importe).'</td>
+                        <td style="text-align:center;">' . $productos[$i]->code . '</td>
+                        <td style="text-align:center;">' . $productos[$i]->name . '</td>
+                        <td style="text-align:center;">' . $this->tec->formatMoney($productos[$i]->price) . '</td>
+                        <td style="text-align:center;">' . $this->tec->formatMoney($productos[$i]->cantidad) . '</td>
+                        <td style="text-align:center;">' . $this->tec->formatMoney($productos[$i]->importe) . '</td>
                     </tr>
                 ';
             }
         }
 
 
-        $html='
+        $html = '
             <p>"ITALIA JOYAS"</p> 
             <p>Reporte de Ventas por producto</p>
             
@@ -642,9 +642,9 @@ class Products extends MY_Controller
             
             <table class="blueTable" style="width:100%;text-align:center;">
                 <tbody>
-                    '.$header.'
-                    '.$table.'
-                    '.$footer.'
+                    ' . $header . '
+                    ' . $table . '
+                    ' . $footer . '
                 </tbody>
             </table>
             
@@ -652,17 +652,18 @@ class Products extends MY_Controller
         $dompdf = new DOMPDF();
         $dompdf->loadHtml($html);
         $dompdf->render();
-        $dompdf->stream($arrayfiltros[0].".pdf", array("Attachment"=>0));
+        $dompdf->stream($arrayfiltros[0] . ".pdf", array("Attachment" => 0));
     }
-        
-    public function update_picture($id = null){
+
+    public function update_picture($id = null)
+    {
         $base64 = $this->input->post('base64');
         $product = $this->products_model->getProductById($id);
-        $photo = $product->code.'.jpg';
+        $photo = $product->code . '.jpg';
         $base64 = str_replace('[removed]', "", $base64);
         $data = base64_decode($base64);
 
-        file_put_contents('uploads/'.$photo, $data);
+        file_put_contents('uploads/' . $photo, $data);
 
         $this->load->helper('file');
         $this->load->library('image_lib');
