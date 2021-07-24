@@ -27,7 +27,7 @@ function libsLibs() {
   return gulp
     .src(libs.libs)
     .pipe(concat("libraries.min.js"))
-    .pipe(uglify())
+    //pipe(uglify())
     .pipe(gulp.dest(libs.dist.js));
 }
 exports.libsLibs = libsLibs;
@@ -38,7 +38,7 @@ function libsPurchase() {
     .src(libs.purchase)
     .pipe(sourcemaps.init())
     .pipe(concat("purchases.min.js"))
-    .pipe(uglify())
+    //.pipe(uglify())
     .pipe(sourcemaps.write("./maps"))
     .pipe(gulp.dest(libs.dist.js));
 }
@@ -50,7 +50,7 @@ function libsJs() {
     .src(libs.js)
     .pipe(sourcemaps.init())
     .pipe(concat("scripts.min.js"))
-    .pipe(uglify())
+    //.pipe(uglify())
     .pipe(sourcemaps.write("./maps"))
     .pipe(gulp.dest(libs.dist.js));
 }

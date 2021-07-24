@@ -306,9 +306,16 @@ class Reports extends MY_Controller
 
         $this->load->library('datatables');
         $this->datatables
-            ->select("{$this->db->dbprefix('products')}.id as id, {$this->db->dbprefix('products')}.name, {$this->db->dbprefix('inventory')}.available, {$this->db->dbprefix('inventory')}.quantity, {$this->db->dbprefix('inventory')}.apart")
+            ->select("{$this->db->dbprefix('products')}.code as code, {$this->db->dbprefix('products')}.name, {$this->db->dbprefix('inventory')}.available, {$this->db->dbprefix('inventory')}.quantity, {$this->db->dbprefix('inventory')}.apart")
             ->from('inventory')
-            ->join('products', 'inventory.product_id=products.id', 'left');
+            ->join('products', 'inventory.product_id=products.id', 'left')
+            ->order_by('code');
+
+        $this->datatables->add_column(
+            'Fisico',
+            "<input class='form-control w-100 physical-inv' type='number' placeholder='$1' />",
+            'quantity'
+        );
 
         if ($this->session->userdata('store_id')) {
             $this->datatables->where('inventory.store_id', $this->session->userdata('store_id'));

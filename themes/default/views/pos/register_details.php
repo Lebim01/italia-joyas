@@ -27,12 +27,14 @@
                             <span><?= $this->tec->formatMoney($chsales->paid ? $chsales->paid : '0.00') . ' (' . $this->tec->formatMoney($chsales->total ? $chsales->total : '0.00') . ')'; ?></span>
                         </h4></td>
                 </tr>
+                <!--
                 <tr>
                     <td style="border-bottom: 1px solid #EEE;"><h4><?= lang('gc_sale'); ?>:</h4></td>
                     <td style="text-align:right;border-bottom: 1px solid #EEE;"><h4>
                             <span><?= $this->tec->formatMoney($gcsales->paid ? $gcsales->paid : '0.00') . ' (' . $this->tec->formatMoney($gcsales->total ? $gcsales->total : '0.00') . ')'; ?></span>
                         </h4></td>
                 </tr>
+                -->
                 <tr>
                     <td style="border-bottom: 1px solid <?= (!isset($Settings->stripe)) ? '#DDD' : '#EEE'; ?>;"><h4><?= lang('cc_sale'); ?>:</h4></td>
                     <td style="text-align:right;border-bottom: 1px solid <?= (!isset($Settings->stripe)) ? '#DDD' : '#EEE'; ?>;"><h4>
@@ -40,7 +42,7 @@
                         </h4></td>
                 </tr>
 
-                <?php if (isset($Settings->stripe)) { ?>
+                <?php if (false && isset($Settings->stripe)) { ?>
                     <tr>
                         <td style="border-bottom: 1px solid #DDD;"><h4><?= lang('stripe'); ?>:</h4></td>
                         <td style="text-align:right;border-bottom: 1px solid #DDD;"><h4>
@@ -48,7 +50,6 @@
                             </h4></td>
                     </tr>
                 <?php } ?>
-
                 <tr>
                     <td style="border-bottom: 1px solid #008d4c;"><h4><?= lang('other_sale'); ?>:</h4></td>
                     <td style="text-align:right;border-bottom: 1px solid #008d4c;"><h4>

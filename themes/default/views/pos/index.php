@@ -14,7 +14,6 @@
 
 <body class="skin-<?= $Settings->theme_style; ?> sidebar-collapse sidebar-mini pos">
     <div class="wrapper rtl rtl-inv">
-
         <header class="main-header">
             <a href="<?= site_url(); ?>" class="logo">
                 <?php if ($store) { ?>
@@ -330,7 +329,7 @@
 
             <table style="width:100%;" class="layout-table">
                 <tr>
-                    <td style="width: 460px;">
+                    <td style="width: 50%;">
 
                         <div id="pos">
                             <?= form_open('pos', 'id="pos-sale-form"'); ?>
@@ -370,10 +369,11 @@
                                             <table class="table table-striped table-condensed table-hover list-table" style="margin:0;">
                                                 <thead>
                                                     <tr class="success">
+                                                        <th class="text-center" style="width: 100px;">Imagen</th>
                                                         <th><?= lang('product') ?></th>
-                                                        <th style="width: 15%;text-align:center;"><?= lang('price') ?></th>
-                                                        <th style="width: 15%;text-align:center;"><?= lang('qty') ?></th>
-                                                        <th style="width: 20%;text-align:center;"><?= lang('subtotal') ?></th>
+                                                        <th style="width: 10%;text-align:center;"><?= lang('price') ?></th>
+                                                        <th style="width: 10%;text-align:center;"><?= lang('qty') ?></th>
+                                                        <th style="width: 15%;text-align:center;"><?= lang('subtotal') ?></th>
                                                         <th style="width: 20px;" class="satu"><i class="fa fa-trash-o"></i></th>
                                                     </tr>
                                                 </thead>
@@ -382,10 +382,11 @@
                                         <table id="posTable" class="table table-striped table-condensed table-hover list-table" style="margin:0px;" data-height="100">
                                             <thead>
                                                 <tr class="success">
+                                                    <th class="text-center" style="width: 100px;">Imagen</th>
                                                     <th><?= lang('product') ?></th>
-                                                    <th style="width: 15%;text-align:center;"><?= lang('price') ?></th>
-                                                    <th style="width: 15%;text-align:center;"><?= lang('qty') ?></th>
-                                                    <th style="width: 20%;text-align:center;"><?= lang('subtotal') ?></th>
+                                                    <th style="width: 10%;text-align:center;"><?= lang('price') ?></th>
+                                                    <th style="width: 10%;text-align:center;"><?= lang('qty') ?></th>
+                                                    <th style="width: 15%;text-align:center;"><?= lang('subtotal') ?></th>
                                                     <th style="width: 20px;" class="satu"><i class="fa fa-trash-o"></i></th>
                                                 </tr>
                                             </thead>
@@ -409,7 +410,7 @@
                                                     <td class="text-right"><span id="ts_con">0</span></td>
                                                 </tr>
                                                 <tr class="success">
-                                                    <td colspan="2" style="font-weight:bold;">
+                                                    <td colspan="3" style="font-weight:bold;">
                                                         <?= lang('total_payable') ?>
                                                         <a role="button" data-toggle="modal" data-target="#noteModal">
                                                             <i class="fa fa-comment"></i>
@@ -421,7 +422,7 @@
                                         </table>
                                     </div>
                                 </div>
-                                <div id="botbuttons" class="col-xs-  text-center">
+                                <div id="botbuttons" class="col-xs-12 text-center">
                                     <div class="row">
                                         <div class="col-xs-4" style="padding: 0;">
                                             <div class="btn-group-vertical btn-block">
@@ -432,9 +433,16 @@
                                         </div>
                                         <div class="col-xs-4" style="padding: 0 5px;">
                                             <div class="btn-group-vertical btn-block">
+                                                <!--
                                                 <button type="button" class="btn bg-purple btn-block btn-flat" id="print_order"><?= lang('print_order'); ?></button>
-
                                                 <button type="button" class="btn bg-navy btn-block btn-flat" id="print_bill"><?= lang('print_bill'); ?></button>
+                                                -->
+                                                <button type="button" class="btn bg-purple btn-block btn-flat" id="register_payment">
+                                                    Registrar abono
+                                                </button>
+                                                <button type="button" class="btn bg-navy btn-block btn-flat" id="register_speding">
+                                                    Registrar gasto
+                                                </button>
                                             </div>
                                         </div>
                                         <div class="col-xs-4" style="padding: 0;">

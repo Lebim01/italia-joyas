@@ -106,6 +106,12 @@ class Datatables
     return $this;
   }
 
+  public function order_by($column, $dir = "asc")
+  {
+    $this->db->order_by($column, $dir);
+    return $this;
+  }
+
   /**
    * Generates the FROM portion of the query
    *

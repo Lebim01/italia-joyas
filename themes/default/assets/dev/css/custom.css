@@ -5,6 +5,9 @@ body.pos {
   min-width: 1024px;
   overflow: visible;
 }
+.w-100 {
+  width: 100% !important;
+}
 .fv-has-feedback {
   position: relative;
 }
@@ -228,8 +231,7 @@ body.pos {
 .pos .contents #item-list .items {
   height: 100%;
   position: relative;
-  overflow: hidden;
-  background: red;
+  overflow: hidden
 }
 .pos .contents #item-list .btn-name {
   width: 116px;
@@ -894,4 +896,7 @@ th {
   .bb th {
     border-bottom: 1px solid #ddd !important;
   }
+}
+.img-open-modal {
+  cursor: pointer;
 }

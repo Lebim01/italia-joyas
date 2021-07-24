@@ -263,7 +263,8 @@ class Pos_model extends CI_Model
         }
         $this->db->select('COUNT(' . $this->db->dbprefix('payments') . '.id) as total_cc_slips, SUM( COALESCE( grand_total, 0 ) ) AS total, SUM( COALESCE( amount, 0 ) ) AS paid', false)
             ->join('sales', 'sales.id=payments.sale_id', 'left')
-            ->where('payments.date >', $date)->where("{$this->db->dbprefix('payments')}.paid_by", 'CC');
+            ->where('payments.date >', $date)
+            ->where("{$this->db->dbprefix('payments')}.paid_by", 'CC');
         $this->db->where('payments.created_by', $user_id);
 
         $q = $this->db->get('payments');

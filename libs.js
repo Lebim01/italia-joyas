@@ -18,7 +18,7 @@ module.exports = {
     './themes/default/assets/dev/js/jquery-ui.min.js',
     './themes/default/assets/dev/js/hideseek.min.js',
     './themes/default/assets/dev/js/common-libs.js',
-    './themes/default/assets/dev/js/app.min.js',
+    './themes/default/assets/dev/js/app.js',
   ],
   js: ['./themes/default/assets/dev/js/pages/all.js', './themes/default/assets/dev/js/custom.js'],
   posjs: ['./themes/default/assets/dev/js/pos.js'],

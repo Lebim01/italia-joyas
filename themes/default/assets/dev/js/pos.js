@@ -111,8 +111,13 @@ function loadItems() {
 
       var row_no = new Date().getTime();
       var newTr = $('<tr id="' + row_no + '" class="' + item_id + '" data-item-id="' + item_id + '" data-id="' + item.row.id + '"></tr>');
-      tr_html =
-        '<td><input name="product_id[]" type="hidden" class="rid" value="' +
+      tr_html = `
+        <td>
+          <img class="img-open-modal" width="100" height="100" src="/uploads/thumbs/${item.row.image}" />
+        </td>
+      `
+      tr_html +=
+        `<td><input name="product_id[]" type="hidden" class="rid" value="' +
         product_id +
         '"><input name="item_comment[]" type="hidden" class="ritem_comment" value="' +
         item_comment +
@@ -124,13 +129,12 @@ function loadItems() {
         row_no +
         '" data-item="' +
         item_id +
-        '"><span class="sname" id="name_' +
-        row_no +
-        '">' +
-        item_name +
-        ' (' +
-        item_code +
-        ')</span></button></td>';
+        '">
+            <span class="sname" id="name_${row_no}">
+              ${item_name} (${item_code})
+            </span>
+          </button>
+        </td>`;
       // <input class="rprice" name="net_price[]" type="hidden" id="price_' + row_no + '" value="' + formatDecimal(item_price) + '">
       tr_html +=
         '<td class="text-right"><input class="realuprice" name="real_unit_price[]" type="hidden" value="' +

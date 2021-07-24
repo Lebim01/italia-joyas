@@ -26,15 +26,15 @@ $v = "?v=1";
         }
 
         var table = $('#PayRData').DataTable({
-            "paging": false,
-            'ajax': {
+            paging: false,
+            ajax: {
                 url: '<?= site_url('reports/get_inventory/' . $v); ?>',
                 type: 'POST',
                 "data": function(d) {
                     d.<?= $this->security->get_csrf_token_name(); ?> = "<?= $this->security->get_csrf_hash() ?>";
                 }
             },
-            "buttons": [{
+            buttons: [{
                     extend: 'copyHtml5',
                     'footer': true,
                     exportOptions: {
@@ -69,8 +69,8 @@ $v = "?v=1";
                     text: 'Columns'
                 },
             ],
-            "columns": [{
-                    "data": "id",
+            columns: [{
+                    "data": "code",
                 },
                 {
                     "data": "name"
@@ -84,8 +84,15 @@ $v = "?v=1";
                 {
                     "data": "available",
                 },
+                {
+                    "data": "Fisico",
+                },
             ],
         });
+
+        $("#PayRData").delegate('.physical-inv', 'change', function(e){
+            $("#apply").show()
+        })
 
     });
 </script>
@@ -124,11 +131,12 @@ $v = "?v=1";
                         <table id="PayRData" class="table table-bordered table-hover table-striped table-condensed reports-table">
                             <thead>
                                 <tr>
-                                    <th style="max-width:30px;"><?= lang("id"); ?></th>
+                                    <th style="max-width:30px;"><?= lang("code"); ?></th>
                                     <th class="col-xs-3"><?= lang("product"); ?></th>
                                     <th class="col-xs-3"><?= lang("quantity"); ?></th>
                                     <th class="col-xs-2"><?= lang("apart"); ?></th>
                                     <th class="col-xs-2"><?= lang("available"); ?></th>
+                                    <th class="col-xs-2">Fisico</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -138,34 +146,11 @@ $v = "?v=1";
                             </tbody>
                         </table>
                     </div>
-                    <?php if ($this->input->post('customer')) { ?>
-                        <div class="row">
-                            <div class="col-md-3">
-                                <button class="btn bg-purple btn-lg btn-block" style="cursor:default;">
-                                    <strong><?= $this->tec->formatMoney($total_sales->number, 0); ?></strong>
-                                    <?= lang("sales"); ?>
-                                </button>
-                            </div>
-                            <div class="col-md-3">
-                                <button class="btn btn-primary btn-lg btn-block" style="cursor:default;">
-                                    <strong><?= $this->tec->formatMoney($total_sales->amount); ?></strong>
-                                    <?= lang("amount"); ?>
-                                </button>
-                            </div>
-                            <div class="col-md-3">
-                                <button class="btn btn-success btn-lg btn-block" style="cursor:default;">
-                                    <strong><?= $this->tec->formatMoney($total_sales->paid); ?></strong>
-                                    <?= lang("paid"); ?>
-                                </button>
-                            </div>
-                            <div class="col-md-3">
-                                <button class="btn btn-warning btn-lg btn-block" style="cursor:default;">
-                                    <strong><?= $this->tec->formatMoney($total_sales->amount - $total_sales->paid); ?></strong>
-                                    <?= lang("due"); ?>
-                                </button>
-                            </div>
-                        </div>
-                    <?php } ?>
+                    <div class="col-sm-12 text-right">
+                        <button class="btn btn-primary" id="apply" style="display: none">
+                            Aplicar
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
