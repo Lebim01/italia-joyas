@@ -26,6 +26,7 @@ $v = "?v=1";
         }
 
         var table = $('#PayRData').DataTable({
+            "paging": false,
             'ajax': {
                 url: '<?= site_url('reports/get_inventory/' . $v); ?>',
                 type: 'POST',
@@ -68,8 +69,7 @@ $v = "?v=1";
                     text: 'Columns'
                 },
             ],
-            "columns": [
-                {
+            "columns": [{
                     "data": "id",
                 },
                 {
