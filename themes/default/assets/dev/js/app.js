@@ -285,8 +285,8 @@ $(function () {
               resolve()
             },
             error: function () {
-              $(`#${ID_MODAL}`).modal('hide')
               alert('Autorización invalida')
+              $(`#${ID_MODAL}`).modal('hide')
               reject()
             }
           })
