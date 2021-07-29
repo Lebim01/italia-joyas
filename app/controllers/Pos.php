@@ -14,6 +14,7 @@ class Pos extends MY_Controller
         }
         $this->load->helper('pos');
         $this->load->model('pos_model');
+        $this->load->model('sales_model');
         $this->load->library('form_validation');
     }
 
@@ -686,6 +687,7 @@ class Pos extends MY_Controller
             $this->data['categories']      = $this->site->getAllCategories();
             $this->data['message']         = $this->session->flashdata('message');
             $this->data['suspended_sales'] = $this->site->getUserSuspenedSales();
+            $this->data['partialOrders']   = $this->sales_model->getAllPartialSales();
 
             $this->data['printer'] = $this->site->getPrinterByID($this->Settings->printer);
             $printers              = [];

@@ -682,6 +682,58 @@
         </div>
     </div>
 
+    <div class="modal" data-easein="flipYIn" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+                    <h4 class="modal-title" id="tsModalLabel">Abonar</h4>
+                </div>
+                <div class="modal-body">
+                    <select class="form-control input-md">
+                        <option value="">Seleccionar cuenta</option>
+                        <?php foreach($partialOrders as $order): ?>
+                            <option data-row='<?= json_encode($order) ?>' value="<?= $order->id ?>"><?= $order->customer->name ?> (<?= $order->id ?>)</option>
+                        <?php endforeach; ?>
+                    </select>
+                    <br />
+                    <fieldset>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <label class="label-control">Cuenta total:</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <span id="grand_total"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <label class="label-control">Cuenta abonado:</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <span id="paid"></span>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <label class="label-control">Cuenta restante:</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <span id="remaining"></span>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <br />
+                    <input type='number' class='form-control input-md' value='' placeholder="Monto">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal"><?= lang('close') ?></button>
+                    <button type="button" id="makePayment" class="btn btn-primary btn-sm">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="modal" data-easein="flipYIn" id="noteModal" tabindex="-1" role="dialog" aria-labelledby="noteModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-sm">
             <div class="modal-content">

@@ -1548,4 +1548,9 @@ class Auth_model extends CI_Model
 
         return $this;
     }
+
+    public function permission_code($code){
+        $this->db->where('permission_code', $code);
+        return $this->db->get($this->tables['users'])->row();
+    }
 }

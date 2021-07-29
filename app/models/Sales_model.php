@@ -236,4 +236,18 @@ class Sales_model extends MY_Model
                                     ")->result();
         return $data;
     }
+
+    public function getAllPartialSales(){
+        $sql = "SELECT *
+                FROM tec_sales
+                WHERE status = 'partial'";
+        $data = $this->db->query($sql)->result();
+
+        foreach($data as $row){
+            $sql_customer = "SELECT * FROM tec_customers WHERE id = {$row->customer_id}";
+            $row->customer = $this->db->query($sql_customer)->row();
+        }
+
+        return $data;
+    }
 }

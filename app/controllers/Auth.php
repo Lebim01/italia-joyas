@@ -638,4 +638,17 @@ class Auth extends MY_Controller
         $this->data['page_title'] = lang('users');
         $this->page_construct('auth/index', $this->data, $meta);
     }
+
+    public function is_admin_authorized(){
+        $code = $this->input->post('code');
+
+        $permission_code = $this->auth_model->permission_code($code);
+
+        if($permission_code){
+            return true;
+        }else{
+            $this->output->set_status_header(401);
+            return false;
+        }
+    }
 }

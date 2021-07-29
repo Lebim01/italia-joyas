@@ -646,7 +646,9 @@ $(document).ready(function () {
     return false;
   });
 
-  $('#updateDiscount').click(function () {
+  $('#updateDiscount').click(async function () {
+    await $.requestAdminPermission()
+
     var ds = $('#get_ds').val() ? $('#get_ds').val() : '0';
     var apply_to = $('input[name=apply_to]:checked').val();
     if (ds.length != 0) {
@@ -1026,6 +1028,29 @@ $(document).ready(function () {
       }
     }
     return false;
+  });
+
+  $('#register_payment').click(function () {
+    $("#paymentModal #makePayment").attr('disabled', true)
+    $("#paymentModal").modal('show')
+    $("#paymentModal").delegate('select', 'change', function () {
+      const selected_value = $(this).val()
+
+      if (selected_value) {
+        const option = $(this).find(`option[value=${selected_value}]`)
+        const data = $(option).data('row')
+
+        $("#paymentModal #grand_total").html(formatDecimal(parseFloat(data.grand_total)))
+        $("#paymentModal #paid").html(formatDecimal(parseFloat(data.paid)))
+        $("#paymentModal #remaining ").html(formatDecimal(parseFloat(data.grand_total) - parseFloat(data.paid)))
+        $("#paymentModal #makePayment").attr('disabled', false)
+      } else {
+        $("#paymentModal #grand_total").html('')
+        $("#paymentModal #paid").html('')
+        $("#paymentModal #remaining ").html('')
+        $("#paymentModal #makePayment").attr('disabled', true)
+      }
+    })
   });
 
   $('#suspend').click(function () {
