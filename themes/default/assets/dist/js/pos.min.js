@@ -459,7 +459,9 @@ $(document).ready(function () {
   /* =============================
     Edit Item Method
     ============================= */
-  $(document).on('click', '#editItem', function () {
+  $(document).on('click', '#editItem', async function () {
+    await $.requestAdminPermission()
+
     var item_id = $('#item_id').val();
     var price = parseFloat($('#nPrice').val());
     if (!is_valid_discount($('#nDiscount').val())) {
@@ -973,7 +975,7 @@ $(document).ready(function () {
   $(document).on('click', '.posdel', function () {
     var row = $(this).closest('tr');
     var item_id = row.attr('data-item-id');
-    if (protect_delete == 1) {
+    /*if (protect_delete == 1) {
       var boxd = bootbox.dialog({
         title: lang.enter_pin_code,
         closeButton: true,
@@ -1018,15 +1020,15 @@ $(document).ready(function () {
             }
           });
       });
+    } else {*/
+    delete spositems[item_id];
+    row.remove();
+    if (spositems.hasOwnProperty(item_id)) {
     } else {
-      delete spositems[item_id];
-      row.remove();
-      if (spositems.hasOwnProperty(item_id)) {
-      } else {
-        localStorage.setItem('spositems', JSON.stringify(spositems));
-        loadItems();
-      }
+      localStorage.setItem('spositems', JSON.stringify(spositems));
+      loadItems();
     }
+    //}
     return false;
   });
 

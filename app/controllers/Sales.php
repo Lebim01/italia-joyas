@@ -259,6 +259,7 @@ class Sales extends MY_Controller
             $this->datatables->select("id, transaction_type, DATE_FORMAT(date, '%Y-%m-%d %H:%i') as date, customer_name, total, total_tax, total_discount, grand_total, paid, status");
         }
         $this->datatables->from('sales');
+        
         if (!$this->Admin && !$this->session->userdata('view_right')) {
             $this->datatables->where('created_by', $this->session->userdata('user_id'));
         }
