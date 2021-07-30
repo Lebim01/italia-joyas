@@ -117,19 +117,12 @@ function loadItems() {
         </td>
       `
       tr_html +=
-        `<td><input name="product_id[]" type="hidden" class="rid" value="' +
-        product_id +
-        '"><input name="item_comment[]" type="hidden" class="ritem_comment" value="' +
-        item_comment +
-        '"><input name="product_code[]" type="hidden" value="' +
-        item.row.code +
-        '"><input name="product_name[]" type="hidden" value="' +
-        item.row.name +
-        '"><button type="button" class="btn bg-purple btn-block btn-xs edit" id="' +
-        row_no +
-        '" data-item="' +
-        item_id +
-        '">
+        `<td>
+          <input name="product_id[]" type="hidden" class="rid" value="${product_id}">
+          <input name="item_comment[]" type="hidden" class="ritem_comment" value="${item_comment}">
+          <input name="product_code[]" type="hidden" value="${item.row.code}">
+          <input name="product_name[]" type="hidden" value="${item.row.name}">
+          <button type="button" class="btn bg-purple btn-block btn-xs edit" id="${row_no}" data-item="${item_id}">
             <span class="sname" id="name_${row_no}">
               ${item_name} (${item_code})
             </span>
