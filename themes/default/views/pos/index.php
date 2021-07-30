@@ -330,11 +330,16 @@
             <table style="width:100%;" class="layout-table">
                 <tr>
                     <td style="width: 50%;">
-
                         <div id="pos">
                             <?= form_open('pos', 'id="pos-sale-form"'); ?>
                             <div class="well well-sm" id="leftdiv">
                                 <div id="lefttop" style="margin-bottom:5px;">
+                                    <div class="form-group" style="margin-bottom:5px;">
+                                        <?php foreach ($cashiers as $cashier) {
+                                            $cashiers_options[$cashier->id] = $cashier->first_name.' '.$cashier->last_name;
+                                        } ?>
+                                        <?= form_dropdown('created_by', $cashiers_options, set_value('created_by', $user_id), 'id="spos_cashier" data-placeholder="' . lang('select') . ' Cajero" required="required" class="form-control select2" style="width:100%;position:absolute;"'); ?>
+                                    </div>
                                     <div class="form-group" style="margin-bottom:5px;">
                                         <div class="input-group">
                                             <?php foreach ($customers as $customer) {

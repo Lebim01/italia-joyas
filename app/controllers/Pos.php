@@ -509,7 +509,7 @@ class Pos extends MY_Controller
                 'rounding'          => $rounding,
                 'paid'              => $paid,
                 'status'            => $status,
-                'created_by'        => $this->session->userdata('user_id'),
+                'created_by'        => $this->input->post('created_by'),
                 'note'              => $note,
                 'hold_ref'          => $this->input->post('hold_ref'),
                 'transaction_type'  => $this->input->post('transaction_type'),
@@ -548,7 +548,7 @@ class Pos extends MY_Controller
                         'cc_year'     => $this->input->post('cc_year'),
                         'cc_type'     => $this->input->post('cc_type'),
                         'cc_cvv2'     => $this->input->post('cc_cvv2'),
-                        'created_by'  => $this->session->userdata('user_id'),
+                        'created_by'  => $this->input->post('created_by'),
                         'store_id'    => $this->session->userdata('store_id'),
                         'note'        => $this->input->post('payment_note'),
                         'pos_paid'    => $this->tec->formatDecimal($this->input->post('amount'), 4),
@@ -682,12 +682,14 @@ class Pos extends MY_Controller
             $this->data['sid']             = isset($sid) && !empty($sid) ? $sid : 0;
             $this->data['eid']             = isset($eid) && !empty($eid) ? $eid : 0;
             $this->data['customers']       = $this->site->getAllCustomers();
+            $this->data['cashiers']        = $this->pos_model->getAllCashiers();
             $this->data['tcp']             = $this->pos_model->products_count($this->Settings->default_category, $this->Settings->default_in_stock);
             $this->data['products']        = $this->ajaxproducts($this->Settings->default_category, 1, $this->Settings->default_in_stock);
             $this->data['categories']      = $this->site->getAllCategories();
             $this->data['message']         = $this->session->flashdata('message');
             $this->data['suspended_sales'] = $this->site->getUserSuspenedSales();
             $this->data['partialOrders']   = $this->sales_model->getAllPartialSales();
+            $this->data['user_id']         = $this->session->userdata('user_id');
 
             $this->data['printer'] = $this->site->getPrinterByID($this->Settings->printer);
             $printers              = [];

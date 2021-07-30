@@ -730,4 +730,9 @@ class Pos_model extends CI_Model
 
         return false;
     }
+
+    public function getAllCashiers(){
+        $this->db->where('active', 1);
+        return $this->db->get('users')->result();
+    }
 }
