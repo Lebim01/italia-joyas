@@ -173,14 +173,21 @@
                                 </div>
 
                                 <div class="form-group">
-                                    <?= lang('default_email', 'default_email'); ?>
-                                    <?= form_input('default_email', $settings->default_email, 'class="form-control tip" id="default_email" required="required"'); ?>
-                                </div>
-
-                                <div class="form-group">
                                     <?= lang('rtl_support', 'rtl'); ?>
                                     <?php $yn = [0 => lang('disable'), 1 => lang('enable')]; ?>
                                     <?= form_dropdown('rtl', $yn, $settings->rtl, 'class="form-control select2" style="width:100%;" id="rtl"'); ?>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="well well-sm">
+                                    <p>Notificaciones de cajas <small>(las notificaciones se enviaran de forma automatica despues de las 10 PM si una caja se quedo abierta)</small></p>
+                                    <div class="form-group">
+                                        <?= lang('default_email', 'default_email'); ?>
+                                        <?= form_input('default_email', $settings->default_email, 'class="form-control tip" id="default_email" required="required"'); ?>
+                                    </div>
                                 </div>
                             </div>
                         </div>

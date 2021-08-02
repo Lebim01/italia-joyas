@@ -307,9 +307,9 @@
                 </ul>
             </section>
         </aside>
-
+        
+        
         <div class="content-wrapper">
-
             <div class="col-lg-12 alerts">
                 <?php if ($error) { ?>
                     <div class="alert alert-danger alert-dismissable">
@@ -327,6 +327,7 @@
                 <?php } ?>
             </div>
 
+            <?php if(!$obligate_close): ?>
             <table style="width:100%;" class="layout-table">
                 <tr>
                     <td style="width: 50%;">
@@ -544,6 +545,9 @@
                     </td>
                 </tr>
             </table>
+            <?php else: ?>
+                <h3 class="text-center">Esta caja fue abierta en un dia pasado, debe ser cerrada antes de poder abrir otra</h3>
+            <?php endif; ?>
         </div>
     </div>
 

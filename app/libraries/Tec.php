@@ -254,12 +254,8 @@ class Tec
 
     public function send_email($to, $subject, $message, $from = null, $from_name = null, $attachment = null, $cc = null, $bcc = null)
     {
-        list($user, $domain) = explode('@', $to);
-        if ($domain != 'tecdiary.com' || DEMO) {
-            $this->load->library('tec_mail');
-            return $this->tec_mail->send_mail($to, $subject, $message, $from, $from_name, $attachment, $cc, $bcc);
-        }
-        return false;
+        $this->load->library('tec_mail');
+        return $this->tec_mail->send_mail($to, $subject, $message, $from, $from_name, $attachment, $cc, $bcc);
     }
 
     public function send_json($data)

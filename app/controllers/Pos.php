@@ -273,14 +273,18 @@ class Pos extends MY_Controller
         } else {
             $did = null;
         }
+
         if ($eid && !$this->Admin) {
             $this->session->set_flashdata('error', lang('access_denied'));
             redirect($_SERVER['HTTP_REFERER'] ?? 'pos');
         }
+
         if (!$this->Settings->default_customer) {
             $this->session->set_flashdata('warning', lang('please_update_settings'));
             redirect('settings');
         }
+
+        /* Abrir nuevo caja */
         if (!$this->session->userdata('register_id')) {
             if ($register = $this->pos_model->registerData($this->session->userdata('user_id'))) {
                 $register_data = ['register_id' => $register->id, 'cash_in_hand' => $register->cash_in_hand, 'register_open_time' => $register->date];
@@ -677,6 +681,16 @@ class Pos extends MY_Controller
                 $this->data['sale']    = $sale;
                 $this->data['message'] = lang('sale_loaded');
             }
+
+            /**
+             * Validar que la caja que esta abierta sigue valida (solo vigente el mismo dia)
+             * Obligarlo a cerrarla para volver a abrirla
+             */
+            if($this->session->userdata('register_id')){
+                $this->session->set_flashdata('error', 'Este corte de caja es de un dia pasado, debe ser cerrado primero antes de abrir otro');
+                $this->data['obligate_close'] = true;
+            }
+
             $this->data['error']           = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
             $this->data['reference_note']  = isset($sid) && !empty($sid) ? $suspended_sale->hold_ref : (isset($eid) && !empty($eid) ? $sale->hold_ref : null);
             $this->data['sid']             = isset($sid) && !empty($sid) ? $sid : 0;
@@ -1226,5 +1240,48 @@ class Pos extends MY_Controller
     public function view_bill()
     {
         $this->load->view($this->theme . 'pos/view_bill', $this->data);
+    }
+
+    public function send_email_register_open(){
+        $registers = $this->pos_model->getRegisterOpen();
+
+        if(count($registers) > 0){
+            $time = date('Y-m-d H:m:i');
+
+            $body = "";
+            foreach($resgisters as $reg){
+                $body .= "
+                    <tr>
+                        <td>{$reg->date}</td>
+                        <td>{$reg->user}</td>
+                        <td>{$reg->store}</td>
+                    </tr>
+                ";
+            }
+
+            $html = "
+                <h4>Se notifica que a esta hora {$time} se detecto que las siguientes cajas siguen abiertas</h4>
+
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Hora abierta</th>
+                            <th>Responsable</th>
+                            <th>Sucursal</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {$body}
+                    </tbody>
+                </table>
+            ";
+
+            $this->tec->send_email(
+                $this->Settings->default_email, 
+                "Reporte de cajas abiertas", 
+                $html
+            );
+        }
     }
 }

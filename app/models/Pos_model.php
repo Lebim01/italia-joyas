@@ -735,4 +735,16 @@ class Pos_model extends CI_Model
         $this->db->where('active', 1);
         return $this->db->get('users')->result();
     }
+
+    public function getRegisterOpen(){
+        $sql = "SELECT 
+                    reg.*, 
+                    CONCAT(users.first_name, ' ', users.last_name) as user, 
+                    stores.name as store
+                FROM tec_registers reg
+                INNER JOIN tec_users users ON users.id = reg.user_id
+                INNER JOIN tec_stores stores ON stores.id = reg.store_id
+                WHERE status = 'open'";
+        return $this->db->query($sql)->result();
+    }
 }
