@@ -1249,7 +1249,7 @@ class Pos extends MY_Controller
             $time = date('Y-m-d H:m:i');
 
             $body = "";
-            foreach($resgisters as $reg){
+            foreach($registers as $reg){
                 $body .= "
                     <tr>
                         <td>{$reg->date}</td>
@@ -1268,7 +1268,6 @@ class Pos extends MY_Controller
                             <th>Hora abierta</th>
                             <th>Responsable</th>
                             <th>Sucursal</th>
-
                         </tr>
                     </thead>
                     <tbody>
@@ -1277,11 +1276,15 @@ class Pos extends MY_Controller
                 </table>
             ";
 
-            $this->tec->send_email(
+            $result = $this->tec->send_email(
                 $this->Settings->default_email, 
                 "Reporte de cajas abiertas", 
                 $html
             );
+
+            echo $html;
+
+            print_r($result);
         }
     }
 }

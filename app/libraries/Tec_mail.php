@@ -41,7 +41,7 @@ class Tec_mail
                 $mail->Password   = $Settings->smtp_pass;
                 $mail->SMTPSecure = !empty($Settings->smtp_crypto) ? $Settings->smtp_crypto : false;
                 $mail->Port       = $Settings->smtp_port;
-            // $mail->SMTPDebug = 2;
+                //$mail->SMTPDebug = 2;
             } else {
                 $mail->isMail();
             }
