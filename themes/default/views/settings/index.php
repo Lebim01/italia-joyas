@@ -183,6 +183,25 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="well well-sm">
+                                    <p>Apartados</p>
+                                    
+                                    <div class="form-group">
+                                        <label for="apart_expiration_days">
+                                            Dias en los que un apartado vence 
+                                        </label>
+                                        <?= form_input('apart_expiration_days', $settings->apart_expiration_days, 'class="form-control tip" id="apart_expiration_days" required="required" type="number"'); ?>
+                                        <span class="text-muted">
+                                            Si el valor es 0 no vence nunca, todos los apartados que no hayan recibido un abono en este lapso de dias los articulos pasaran automaticamente a inventario disponibles para su venta y el dinero de la venta será cerrado
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="well well-sm">
                                     <p>Notificaciones de cajas <small>(las notificaciones se enviaran de forma automatica despues de las 10 PM si una caja se quedo abierta)</small></p>
                                     
                                     <div class="form-group">

@@ -533,6 +533,7 @@ class Settings extends MY_Controller
                 'weight_start'           => $this->input->post('weight_start'),
                 'weight_chars'           => $this->input->post('weight_chars'),
                 'weight_divide_by'       => $this->input->post('weight_divide_by'),
+                'apart_expiration_days'  => $this->input->post('apart_expiration_days')
             ];
             if ($this->input->post('smtp_pass')) {
                 $data['smtp_pass'] = $this->input->post('smtp_pass');
