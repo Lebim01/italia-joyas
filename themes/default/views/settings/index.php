@@ -184,10 +184,12 @@
                             <div class="col-lg-12">
                                 <div class="well well-sm">
                                     <p>Notificaciones de cajas <small>(las notificaciones se enviaran de forma automatica despues de las 10 PM si una caja se quedo abierta)</small></p>
+                                    
                                     <div class="form-group">
                                         <?= lang('default_email', 'default_email'); ?>
                                         <?= form_input('default_email', $settings->default_email, 'class="form-control tip" id="default_email" required="required"'); ?>
                                     </div>
+
                                 </div>
                             </div>
                         </div>

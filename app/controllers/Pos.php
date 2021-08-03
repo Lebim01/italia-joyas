@@ -686,7 +686,10 @@ class Pos extends MY_Controller
              * Validar que la caja que esta abierta sigue valida (solo vigente el mismo dia)
              * Obligarlo a cerrarla para volver a abrirla
              */
-            if($this->session->userdata('register_id')){
+            $datetime1 = new DateTime($this->session->userdata('register_open_time'));
+            $datetime2 = new DateTime(date('Y-m-d'));
+            $interval = $datetime1->diff($datetime2);
+            if($this->session->userdata('register_id') && $interval->days > 0){
                 $this->session->set_flashdata('error', 'Este corte de caja es de un dia pasado, debe ser cerrado primero antes de abrir otro');
                 $this->data['obligate_close'] = true;
             }
