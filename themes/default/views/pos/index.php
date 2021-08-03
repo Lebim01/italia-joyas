@@ -446,8 +446,8 @@
                                                 <button type="button" class="btn bg-purple btn-block btn-flat" id="register_payment">
                                                     Registrar abono
                                                 </button>
-                                                <button type="button" class="btn bg-navy btn-block btn-flat" id="register_speding">
-                                                    Registrar gasto
+                                                <button type="button" class="btn bg-navy btn-block btn-flat" id="register_speding" disabled>
+                                                    Registrar gasto (en desarrollo)
                                                 </button>
                                             </div>
                                         </div>

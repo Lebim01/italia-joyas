@@ -1027,6 +1027,7 @@ $(document).ready(function () {
 
   $('#register_payment').click(function () {
     $("#paymentModal #makePayment").attr('disabled', true)
+    $("#paymentModal input").val(0)
     $("#paymentModal").modal('show')
     $("#paymentModal").delegate('select', 'change', function () {
       const selected_value = $(this).val()
@@ -1047,6 +1048,39 @@ $(document).ready(function () {
       }
     })
   });
+
+  $("#paymentModal #makePayment").click(function () {
+    const selected_sale = $("#paymentModal select").val()
+    const amount = parseFloat($("#paymentModal input").val()) || 0
+
+    if (!amount > 0) {
+      alert('El monto no puede ser 0')
+      return;
+    }
+
+    if (!selected_sale) {
+      alert('Seleccione una cuenta')
+      return;
+    }
+
+    const option = $("#paymentModal select").find(`option[value=${selected_sale}]`)
+    const sale_data = $(option).data('row')
+
+    console.log(sale_data)
+
+    $.ajax({
+      url: base_url + `sales/add_payment/${sale_data.id}/${sale_data.customer_id}`,
+      method: 'POST',
+      data: {
+        'amount-paid': amount,
+        paid_by: 'cash'
+      },
+      success: function () {
+        $("#paymentModal").modal('hide')
+        alert('Abono hecho correctamente')
+      }
+    })
+  })
 
   $('#suspend').click(function () {
     if (count <= 1) {
