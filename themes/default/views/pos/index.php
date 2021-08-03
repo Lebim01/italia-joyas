@@ -505,7 +505,7 @@
                             </div>
                             <div class="col-sm-3">
                                 <select id="categorias_filter" class="form-control paid_by select2" style="width:100%;">
-                                    <option value="">Seleccione una categoría</option>
+                                    <option value="">Todas las categorias</option>
                                     <?php
                                     foreach ($categories as $category) {
                                         echo '<option value="' . $category->id . '">' . $category->name . '</option>">';

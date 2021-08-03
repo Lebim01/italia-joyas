@@ -9,21 +9,21 @@
                 d.<?=$this->security->get_csrf_token_name();?> = "<?=$this->security->get_csrf_hash()?>";
             }},
             "buttons": [
-            { extend: 'copyHtml5', 'footer': false, exportOptions: { columns: [ 0, 1, 2, 3, 4, 5 ] } },
-            { extend: 'excelHtml5', 'footer': false, exportOptions: { columns: [ 0, 1, 2, 3, 4, 5 ] } },
-            { extend: 'csvHtml5', 'footer': false, exportOptions: { columns: [ 0, 1, 2, 3, 4, 5 ] } },
-            { extend: 'pdfHtml5', orientation: 'landscape', pageSize: 'A4', 'footer': false,
-            exportOptions: { columns: [ 0, 1, 2, 3, 4, 5 ] } },
-            { extend: 'colvis', text: 'Columns'},
+                { extend: 'copyHtml5', 'footer': false, exportOptions: { columns: [ 0, 1, 2, 3, 4, 5 ] } },
+                { extend: 'excelHtml5', 'footer': false, exportOptions: { columns: [ 0, 1, 2, 3, 4, 5 ] } },
+                { extend: 'csvHtml5', 'footer': false, exportOptions: { columns: [ 0, 1, 2, 3, 4, 5 ] } },
+                { extend: 'pdfHtml5', orientation: 'landscape', pageSize: 'A4', 'footer': false,
+                exportOptions: { columns: [ 0, 1, 2, 3, 4, 5 ] } },
+                { extend: 'colvis', text: 'Columns'},
             ],
             "columns": [
-            { "data": "id", "visible": false },
-            { "data": "name" },
-            { "data": "phone" },
-            { "data": "email" },
-            { "data": "cf1" },
-            { "data": "cf2" },
-            { "data": "Actions", "searchable": false, "orderable": false }
+                { "data": "id", "visible": false },
+                { "data": "name" },
+                { "data": "phone" },
+                { "data": "email" },
+                { "data": "cf1" },
+                { "data": "cf2" },
+                { "data": "Actions", "searchable": false, "orderable": false }
             ]
 
         });

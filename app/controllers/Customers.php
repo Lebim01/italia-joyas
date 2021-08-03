@@ -111,10 +111,27 @@ class Customers extends MY_Controller
     {
         $this->load->library('datatables');
         $this->datatables
-        ->select('id, name, phone, email, cf1, cf2')
-        ->from('customers')
-        ->add_column('Actions', "<div class='text-center'><div class='btn-group'><a href='" . site_url('customers/edit/$1') . "' class='tip btn btn-warning btn-xs' title='" . $this->lang->line('edit_customer') . "'><i class='fa fa-edit'></i></a> <a href='" . site_url('customers/delete/$1') . "' onClick=\"return confirm('" . $this->lang->line('alert_x_customer') . "')\" class='tip btn btn-danger btn-xs' title='" . $this->lang->line('delete_customer') . "'><i class='fa fa-trash-o'></i></a></div></div>", 'id')
-        ->unset_column('id');
+            ->select('id, name, phone, email, cf1, cf2')
+            ->from('customers')
+            ->add_column('Actions', 
+                ($this->Admin
+                    ? 
+                    "<div class='text-center'>
+                        <div class='btn-group'>
+                            <a href='" . site_url('customers/edit/$1') . "' class='tip btn btn-warning btn-xs' title='" . $this->lang->line('edit_customer') . "'><i class='fa fa-edit'></i></a>
+                            <a href='" . site_url('customers/delete/$1') . "' onClick=\"return confirm('" . $this->lang->line('alert_x_customer') . "')\" class='tip btn btn-danger btn-xs' title='" . $this->lang->line('delete_customer') . "'><i class='fa fa-trash-o'></i></a>
+                        </div>
+                    </div>"
+                    :
+                    "<div class='text-center'>
+                        <div class='btn-group'>
+                            <a href='" . site_url('customers/edit/$1') . "' class='tip btn btn-warning btn-xs' title='" . $this->lang->line('edit_customer') . "'><i class='fa fa-edit'></i></a>
+                        </div>
+                    </div>"
+                ),
+                'id'
+            )
+            ->unset_column('id');
 
         echo $this->datatables->generate();
     }

@@ -265,29 +265,45 @@ class Sales extends MY_Controller
         }
         $this->datatables->where('store_id', $this->session->userdata('store_id'));
 
-        $actions = "
-        <div class='text-center'>
-            <div class='btn-group'>
-                <a href='" . site_url('pos/view/$1/1') . "' title='" . lang('view_invoice') . "' class='tip btn btn-primary btn-xs' data-toggle='ajax-modal'>
-                    <i class='fa fa-list'></i>
-                </a>
-                <a href='" . site_url('sales/payments/$1') . "' title='" . lang('view_payments') . "' class='tip btn btn-primary btn-xs' data-toggle='ajax'>
-                    <i class='fa fa-money'></i>
-                </a>
-                <a href='" . site_url('sales/add_payment/$1') . "' title='" . lang('add_payment') . "' class='tip btn btn-primary btn-xs status-$2' data-toggle='ajax'>
-                    <i class='fa fa-briefcase'></i>
-                </a>
-                <a href='" . site_url('pos/?edit=$1') . "' title='" . lang('edit_invoice') . "' class='tip btn btn-warning btn-xs'>
-                    <i class='fa fa-edit'></i>
-                </a>
-                <a href='" . site_url('sales/delete/$1') . "' onClick=\"return confirm('" . lang('alert_x_sale') . "')\" title='" . lang('delete_sale') . "' class='tip btn btn-danger btn-xs'>
-                    <i class='fa fa-trash-o'></i>
-                </a>
-            </div>
-        </div>";
+        $actions = "";
+        if($this->Admin){
+            $actions = "
+            <div class='text-center'>
+                <div class='btn-group'>
+                    <a href='" . site_url('pos/view/$1/1') . "' title='" . lang('view_invoice') . "' class='tip btn btn-primary btn-xs' data-toggle='ajax-modal'>
+                        <i class='fa fa-list'></i>
+                    </a>
+                    <a href='" . site_url('sales/payments/$1') . "' title='" . lang('view_payments') . "' class='tip btn btn-primary btn-xs' data-toggle='ajax'>
+                        <i class='fa fa-money'></i>
+                    </a>
+                    <a href='" . site_url('sales/add_payment/$1') . "' title='" . lang('add_payment') . "' class='tip btn btn-primary btn-xs status-$2' data-toggle='ajax'>
+                        <i class='fa fa-briefcase'></i>
+                    </a>
+                    <a href='" . site_url('pos/?edit=$1') . "' title='" . lang('edit_invoice') . "' class='tip btn btn-warning btn-xs'>
+                        <i class='fa fa-edit'></i>
+                    </a>
+                    <a href='" . site_url('sales/delete/$1') . "' onClick=\"return confirm('" . lang('alert_x_sale') . "')\" title='" . lang('delete_sale') . "' class='tip btn btn-danger btn-xs'>
+                        <i class='fa fa-trash-o'></i>
+                    </a>
+                </div>
+            </div>";
+        }else{
+            $actions = "
+            <div class='text-center'>
+                <div class='btn-group'>
+                    <a href='" . site_url('pos/view/$1/1') . "' title='" . lang('view_invoice') . "' class='tip btn btn-primary btn-xs' data-toggle='ajax-modal'>
+                        <i class='fa fa-list'></i>
+                    </a>
+                    <a href='" . site_url('sales/payments/$1') . "' title='" . lang('view_payments') . "' class='tip btn btn-primary btn-xs' data-toggle='ajax'>
+                        <i class='fa fa-money'></i>
+                    </a>
+                    <a href='" . site_url('sales/add_payment/$1') . "' title='" . lang('add_payment') . "' class='tip btn btn-primary btn-xs status-$2' data-toggle='ajax'>
+                        <i class='fa fa-briefcase'></i>
+                    </a>
+                </div>
+            </div>";
+        }
         $this->datatables->add_column('Actions', $actions, 'id, status');
-
-        // $this->datatables->unset_column('id');
         echo $this->datatables->generate();
     }
 

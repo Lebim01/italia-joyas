@@ -268,32 +268,46 @@ $(function () {
 
   $.requestAdminPermission = function () {
     return new Promise((resolve, reject) => {
-      $(`#${ID_MODAL}`).modal('show')
-      $(`#${ID_MODAL} #sendPermission`).click(function () {
-        const password = $(`#${ID_MODAL} input`).val()
-        try {
-          if (!password) throw new Error('La contraseña no puede estar vacia')
+      var boxd = bootbox.dialog({
+        title: lang.enter_pin_code,
+        closeButton: true,
+        message: '<input id="pos_pin" name="pos_pin" type="password" placeholder="Pin Code" class="form-control kb-pad"> ',
+        buttons: {
+          danger: {
+            label: lang.close,
+            className: 'btn-default pull-left',
+            callback: function () { },
+          },
+          success: {
+            label: "<i class='fa fa-tick'></i> Enter",
+            className: 'btn-warning verify_pin',
+            callback: function () {
+              var pos_pin = md5($('#pos_pin').val());
+              if (pos_pin == Settings.pin_code) {
+                resolve()
+              } else {
+                bootbox.alert(lang.wrong_pin);
+                reject()
+              }
+            },
+          },
+        },
+      });
 
-          $.ajax({
-            type: 'POST',
-            url: base_url + "/auth/is_admin_authorized",
-            data: {
-              code: password
-            },
-            success: function () {
-              $(`#${ID_MODAL}`).modal('hide')
-              resolve()
-            },
-            error: function () {
-              alert('Autorización invalida')
-              $(`#${ID_MODAL}`).modal('hide')
-              reject()
-            }
-          })
-        } catch (err) {
-          alert(err.toString())
+      boxd.on('shown.bs.modal', function () {
+        if (Settings.display_kb == 1) {
+          display_keyboards();
         }
-      })
+        $('#pos_pin')
+          .focus()
+          .keypress(function (e) {
+            if (e.keyCode == 13) {
+              e.preventDefault();
+              $('.verify_pin').trigger('click');
+              return false;
+            }
+          });
+      });
     })
   }
 });
