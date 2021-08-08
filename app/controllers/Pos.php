@@ -1290,4 +1290,30 @@ class Pos extends MY_Controller
             print_r($result);
         }
     }
+
+    public function check_aparts_expirations(){
+        /**
+         * 1. Traer todos los apartados que no hayan sido liquidados
+         * 2. Traer la fecha del ultimo pago de cada apartado
+         * 3. Validar que la cantidad de dias no haya superado a la configuración "apart_expiration_days"
+         */
+        $aparts = $this->pos_model->getApartsOpened();
+        foreach($aparts as $sale){
+            $payment = $this->pos_model->getLastPaymentSale($sale->id);
+
+            if($payment){
+                $datetime1 = new DateTime($payment->date);
+                $datetime2 = new DateTime(date('Y-m-d'));
+                $interval = $datetime1->diff($datetime2);
+                if($interval->days > $this->Settings->apart_expiration_days){
+                    /**
+                     * Este apartado ya expiro
+                     * El status de la venta cambia a "closed"
+                     * Los items son eliminados de "apart" de la tabla "tec_product_store_qty"
+                     */
+                    $this->pos_model->closeSale($sale->id);
+                }
+            }
+        }
+    }
 }

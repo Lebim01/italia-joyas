@@ -422,8 +422,6 @@ class Sales extends MY_Controller
         $dompdf = new DOMPDF();
         $dompdf->loadHtml($html);
         $dompdf->render();
-        $dompdf->stream($arrayfiltros[0].".pdf", array("Attachment"=>0));
-
-        
+        $dompdf->stream($arrayfiltros[0].".pdf", array("Attachment"=>0)); 
     }
 }

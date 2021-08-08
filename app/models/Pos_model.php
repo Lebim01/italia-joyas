@@ -747,4 +747,34 @@ class Pos_model extends CI_Model
                 WHERE status = 'open'";
         return $this->db->query($sql)->result();
     }
+
+    public function getApartsOpened(){
+        $this->db->where('status', 'partial');
+        $this->db->where('transaction_type', 'apart');
+        return $this->db->get('sales')->result();
+    }
+
+    public function getLastPaymentSale($sale_id){
+        $this->db->where('sale_id', $sale_id);
+        $this->db->order_by('date', 'DESC');
+        $this->db->limit(1);
+        return $this->db->get('payments')->row();
+    }
+
+    public function closeSale($sale_id){
+        $this->load->model('sales_model');
+        $sale = $this->sales_model->getSaleByID($sale_id);
+        $items = $this->getAllSaleItems($sale_id);
+
+        foreach($items as $item){
+            $this->db->where('product_id', $item->id);
+            $this->db->where('store_id', $sale->store_id);
+
+            $this->db->set('apart', 'apart-'.$item->quantity, FALSE);
+            $this->db->update('product_store_qty');
+        }
+
+        $this->db->where('id', $sale_id);
+        $this->db->update('sales', ['status' => 'closed']);
+    }
 }
