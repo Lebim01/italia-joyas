@@ -97,6 +97,9 @@
                     "render": transactionType
                 },
                 {
+                    "data": "cashier_name"
+                },
+                {
                     "data": "customer_name"
                 },
                 {
@@ -242,6 +245,7 @@
                                     <th style="max-width:30px;"><?= lang("id"); ?></th>
                                     <th class="col-xs-2"><?= lang("date"); ?></th>
                                     <th class="col-xs-1"><?= lang("transaction_type"); ?></th>
+                                    <th><?= lang('cashier') ?></th>
                                     <th><?= lang("customer"); ?></th>
                                     <th class="col-xs-1"><?= lang("total"); ?></th>
                                     <th class="col-xs-1"><?= lang("tax"); ?></th>
@@ -269,6 +273,7 @@
                                             <?php endforeach; ?>
                                         </select>
                                     </th>
+                                    <th class="col-sm-2"><input type="text" class="text_filter" placeholder="[<?= lang('cashier'); ?>]"></th>
                                     <th class="col-sm-2"><input type="text" class="text_filter" placeholder="[<?= lang('customer'); ?>]"></th>
                                     <th class="col-sm-1"><?= lang("total"); ?></th>
                                     <th class="col-sm-1"><?= lang("tax"); ?></th>

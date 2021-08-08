@@ -685,12 +685,25 @@ class Pos_model extends CI_Model
 
     public function updateSale($id, $data, $items)
     {
-        $osale  = $this->getSaleByID($id);
-        $oitems = $this->getAllSaleItems($id);
+        // boolean flag
+        $discountInvetory = in_array($data['transaction_type'], ['liquidate', 'credit']);
+        // add items apart
+        $isApart = in_array($data['transaction_type'], ['apart']);
+
+        $osale  = $this->getSaleByID($id); // OLD SALE
+        $oitems = $this->getAllSaleItems($id); // OLD ITEMS
+
         foreach ($oitems as $oitem) {
             $product = $this->site->getProductByID($oitem->product_id, $osale->store_id);
             if ($product->type == 'standard') {
-                $this->db->update('product_store_qty', ['quantity' => ($product->quantity + $oitem->quantity)], ['product_id' => $product->id, 'store_id' => $osale->store_id]);
+                $dataUpdate = [];
+                if($discountInvetory){
+                    $dataUpdate = ['quantity' => ($product->quantity + $oitem->quantity)];
+                }
+                if($isApart){
+                    $dataUpdate = ['apart' => ($product->apart - $oitem->quantity)];
+                }
+                $this->db->update('product_store_qty', $dataUpdate, ['product_id' => $product->id, 'store_id' => $data['store_id']]);
             } elseif ($product->type == 'combo') {
                 $combo_items = $this->getComboItemsByPID($product->id);
                 foreach ($combo_items as $combo_item) {
@@ -711,7 +724,14 @@ class Pos_model extends CI_Model
                 if ($this->db->insert('sale_items', $item)) {
                     $product = $this->site->getProductByID($item['product_id'], $osale->store_id);
                     if ($product->type == 'standard') {
-                        $this->db->update('product_store_qty', ['quantity' => ($product->quantity - $item['quantity'])], ['product_id' => $product->id, 'store_id' => $osale->store_id]);
+                        $dataUpdate = [];
+                        if($discountInvetory){
+                            $dataUpdate = ['quantity' => ($product->quantity - $item['quantity'])];
+                        }
+                        if($isApart){
+                            $dataUpdate = ['apart' => ($product->apart + $item['quantity'])];
+                        }
+                        $this->db->update('product_store_qty', $dataUpdate, ['product_id' => $product->id, 'store_id' => $data['store_id']]);
                     } elseif ($product->type == 'combo') {
                         $combo_items = $this->getComboItemsByPID($product->id);
                         foreach ($combo_items as $combo_item) {

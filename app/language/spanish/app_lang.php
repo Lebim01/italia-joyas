@@ -159,6 +159,7 @@ $lang['total_sold']                           = 'Total Vendido';
 $lang['quick_links']                          = 'Enlaces Rapidos';
 $lang['select']                               = 'Seleccionar';
 $lang['customer']                             = 'Cliente';
+$lang['cashier']                              = 'Cajero';
 $lang['search__scan']                         = 'Buscar Producto por codigo o nombre, puedes usar lector de codigos';
 $lang['product']                              = 'Producto';
 $lang['price']                                = 'Precio';
