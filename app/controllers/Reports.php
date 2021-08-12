@@ -1,5 +1,7 @@
 <?php defined('BASEPATH') or exit('No direct script access allowed');
+require "vendor/autoload.php";
 
+use Dompdf\Dompdf;
 class Reports extends MY_Controller
 {
 
@@ -392,5 +394,380 @@ class Reports extends MY_Controller
         $this->datatables->add_column("Actions", "<div class='text-center'><a href='#' class='btn btn-xs btn-primary ap tip' data-id='$1' title='" . lang('add_to_purcahse_order') . "'><i class='fa fa-plus'></i></a></div>", "id");
         // $this->datatables->unset_column('id');
         echo $this->datatables->generate();
+    }
+
+    function getStores()
+    {
+        $stores = $this->reports_model->getStores();
+        echo json_encode($stores);
+    }
+
+    public function reportsproducts()
+    {
+        $filtros = $_GET['filtros'];
+        $arrayfiltros = explode(",", $filtros);
+        $productos = [];
+        $header = "";
+        $table = "";
+        $tableBS = "";
+        $tableIA = "";
+        $tableRC = "";
+        $tableRS = "";
+        $tableS = "";
+        $rango = "";
+        $tablaExis = "";
+        if ($arrayfiltros[0] == "Reporte de existencia de productos") {
+            $productos = $this->reports_model->getProducts($arrayfiltros);
+            //echo $productos;exit;
+            $header = '
+                <tr class="header">
+                    <td style="text-align:center">#</td>
+                    <td style="text-align:center">Clave</td>
+                    <td style="text-align:center">Nombre</td>
+                    <td style="text-align:center">Precio P</td>
+                    <td style="text-align:center">Unidades</td>
+                    <td style="text-align:center">Importe</td>
+                </tr>
+            ';
+            for ($i = 0; $i <= count($productos) - 1; $i++) {
+                $item = $i + 1;
+                $table .= '
+                    <tr>
+                        <td style="text-align:center;">' . $item . '</td>
+                        <td style="text-align:center;">' . $productos[$i]->code . '</td>
+                        <td style="text-align:center;">' . $productos[$i]->name . '</td>
+                        <td style="text-align:center;">' . $this->tec->formatMoney($productos[$i]->price) . '</td>
+                        <td style="text-align:center;">' . $this->tec->formatMoney($productos[$i]->cantidad) . '</td>
+                        <td style="text-align:center;">' . $this->tec->formatMoney($productos[$i]->importe) . '</td>
+                    </tr>
+                ';
+            }
+        }
+
+        if ($arrayfiltros[0] == "Reporte de movimientos de productos") {
+            $productos = $this->reports_model->movementsProducts($arrayfiltros);
+            //echo $productos;exit;
+            if($productos == "NA"){
+                echo "Verifique el codigo del producto para continuar";
+                return;
+            }
+            $header = '
+                <tr class="header">
+                    <td style="text-align:center">Folio</td>
+                    <td style="text-align:center">Cantidad</td>
+                    <td style="text-align:center">Descripcion</td>
+                    <td style="text-align:center">Importe</td>
+                    <td style="text-align:center">Fecha</td>
+                    <td style="text-align:center">Referencia</td>
+                </tr>
+            ';
+            for ($i = 0; $i <= count($productos) - 1; $i++) {
+
+                if($productos[$i]->codemovement == "sale"){
+                    $tableS .= '
+                        <tr>
+                            <td style="text-align:center">No se ha generado</td>
+                            <td style="text-align:center;">' . $productos[$i]->quantity . '</td>
+                            <td style="text-align:center;">' . $productos[$i]->productname . '</td>
+                            <td style="text-align:center;">' . $this->tec->formatMoney($productos[$i]->price) . '</td>
+                            <td style="text-align:center;">' . $productos[$i]->date . '</td>
+                            <td style="text-align:center;">' . $productos[$i]->description . '</td>
+                        </tr>
+                    ';
+                }
+
+                if($productos[$i]->codemovement == "inventory-adjust"){
+                    $tableIA .= '
+                        <tr>
+                            <td style="text-align:center">No se ha generado</td>
+                            <td style="text-align:center;">' . $productos[$i]->quantity . '</td>
+                            <td style="text-align:center;">' . $productos[$i]->productname . '</td>
+                            <td style="text-align:center;">' . $this->tec->formatMoney($productos[$i]->price) . '</td>
+                            <td style="text-align:center;">' . $productos[$i]->date . '</td>
+                            <td style="text-align:center;">' . $productos[$i]->description . '</td>
+                        </tr>
+                    ';
+                }
+
+                if($productos[$i]->codemovement == "buy-supplier"){
+                    $tableBS .= '
+                        <tr>
+                            <td style="text-align:center">No se ha generado</td>
+                            <td style="text-align:center;">' . $productos[$i]->quantity . '</td>
+                            <td style="text-align:center;">' . $productos[$i]->productname . '</td>
+                            <td style="text-align:center;">' . $this->tec->formatMoney($productos[$i]->price) . '</td>
+                            <td style="text-align:center;">' . $productos[$i]->date . '</td>
+                            <td style="text-align:center;">' . $productos[$i]->description . '</td>
+                        </tr>
+                    ';
+                }
+
+                if($productos[$i]->codemovement == "return-supplier"){
+                    $tableRS .= '
+                        <tr>
+                            <td style="text-align:center">No se ha generado</td>
+                            <td style="text-align:center;">' . $productos[$i]->quantity . '</td>
+                            <td style="text-align:center;">' . $productos[$i]->productname . '</td>
+                            <td style="text-align:center;">' . $this->tec->formatMoney($productos[$i]->price) . '</td>
+                            <td style="text-align:center;">' . $productos[$i]->date . '</td>
+                            <td style="text-align:center;">' . $productos[$i]->description . '</td>
+                        </tr>
+                    ';
+                }
+
+                if($productos[$i]->codemovement == "return-customer"){
+                    $tableRC .= '
+                        <tr>
+                            <td style="text-align:center">No se ha generado</td>
+                            <td style="text-align:center;">' . $productos[$i]->quantity . '</td>
+                            <td style="text-align:center;">' . $productos[$i]->productname . '</td>
+                            <td style="text-align:center;">' . $this->tec->formatMoney($productos[$i]->price) . '</td>
+                            <td style="text-align:center;">' . $productos[$i]->date . '</td>
+                            <td style="text-align:center;">' . $productos[$i]->description . '</td>
+                        </tr>
+                    ';
+                }
+            }
+        }
+
+        if ($arrayfiltros[0] == "Reporte de movimientos de productos") {
+            $rango = '<br><label>De la fecha "'.$arrayfiltros[1].'" a la fecha "'.$arrayfiltros[2].'"</label>';
+            if(isset($tableIA)){
+                $tablaExis .= '
+                    <h3>E-INV</h3>
+                    <table class="blueTable floatedTable" style="width:100%;text-align:center;">
+                        <tbody>
+                            ' . $header . '
+                            ' . $tableIA . '
+                        </tbody>
+                    </table>
+                ';
+            }
+            if(isset($tableBS)){
+                $tablaExis .= '
+                    <h3>E-COM</h3>
+                    <table class="blueTable floatedTable" style="width:100%;text-align:center;">
+                        <tbody>
+                            ' . $header . '
+                            ' . $tableBS . '
+                        </tbody>
+                    </table>
+                ';
+            }
+            if(isset($tableS)){
+                $tablaExis .= '
+                    <h3>S-VEN</h3>
+                    <table class="blueTable floatedTable" style="width:100%;text-align:center;">
+                        <tbody>
+                            ' . $header . '
+                            ' . $tableS . '
+                        </tbody>
+                    </table>
+                ';
+            }
+            if(isset($tableRS)){
+                $tablaExis .= '
+                    <h3>S-PRO</h3>
+                    <table class="blueTable floatedTable" style="width:100%;text-align:center;">
+                        <tbody>
+                            ' . $header . '
+                            ' . $tableRS . '
+                        </tbody>
+                    </table>
+                ';
+            }
+            if(isset($tableRC)){
+                $tablaExis .= '
+                    <h3>E-CLI</h3>
+                    <table class="blueTable floatedTable" style="width:100%;text-align:center;">
+                        <tbody>
+                            ' . $header . '
+                            ' . $tableRC . '
+                        </tbody>
+                    </table>
+                ';
+            }
+            
+        } else {
+            $tablaExis = '
+                <table class="blueTable floatedTable" style="width:100%;text-align:center;">
+                    <tbody>
+                        ' . $header . '
+                        ' . $table . '
+                    </tbody>
+                </table>
+            ';
+        }
+
+
+
+        $html = '
+            <p>"ITALIA JOYAS"</p> 
+            <label>Reporte de existencias por producto</label>
+            '.$rango.'
+            <label style="margin-left:30%">Fecha de impresión: '.date("d-m-Y").'</label>
+            <br></br>          
+            <hr style="text-align:left;margin-left:0;margin-top:20px">
+            <hr style="text-align:left;margin-left:0">
+            <style>
+                .floatedTable{
+                border-collapse: collapse;
+                width: 100%;
+                }
+
+                .floatedTable th, .floatedTable td {
+                text-align: left;
+                padding: 8px;
+                }
+
+                .floatedTable tr:nth-child(even) {
+                background-color: #D8D8D8;
+                }
+            </style>
+            '.$tablaExis.'
+        ';
+        $dompdf = new DOMPDF();
+        $dompdf->loadHtml($html);
+
+        if ($arrayfiltros[0] == "Reporte de movimientos de productos") {
+            $dompdf->set_paper("A4", "landscape"); 
+        }
+
+        $dompdf->render();
+
+        $dompdf->stream($arrayfiltros[0] . ".pdf", array("Attachment" => 0));
+        //echo $html;
+    }
+
+    public function reportssales()
+    {
+        $filtros = $_GET['filtros'];
+        $arrayfiltros = explode(",", $filtros);
+        $cantidad = 0;
+        $importe = 0;
+        $sales = [];
+        $header = "";
+        $table = "";
+
+        if($arrayfiltros[0] == "Reporte de ventas por producto"){
+            $sales = $this->reports_model->getallItemSales($arrayfiltros);
+            $header = '
+                    <tr class="header" >
+                        <td style="">#</td>
+                        <td style="">Clave</td>
+                        <td style="">Producto</td>
+                        <td style="">Fecha venta</td>
+                        <td style="">Vendedor</td>
+                        <td style="">Precio</td>
+                        <td style="">Descuento</td>
+                        <td style="">Cantidad</td>
+                        <td style="">Importe</td>
+                    </tr>
+            ';
+            for($i=0;$i<=count($sales)-1;$i++){
+                $item = $i + 1;
+                $table.='
+                    <tr>
+                        <td style="text-align:center;">'.$item.'</td>
+                        <td style="text-align:center;">'.$sales[$i]->product_code.'</td>
+                        <td style="text-align:center;">'.$sales[$i]->product_name.'</td>
+                        <td style="text-align:center;">'.$sales[$i]->date.'</td>
+                        <td style="text-align:center;">'.$sales[$i]->first_name.' '.$sales[$i]->last_name.'</td>
+                        <td style="text-align:center;">'.$this->tec->formatMoney($sales[$i]->unit_price).'</td>
+                        <td style="text-align:center;">'.$this->tec->formatMoney($sales[$i]->discount).'</td>
+                        <td style="text-align:center;">'.$this->tec->formatMoney($sales[$i]->quantity).'</td>
+                        <td style="text-align:center;">'.$this->tec->formatMoney($sales[$i]->subtotal).'</td>
+                    </tr>
+                ';
+            }
+        } else if($arrayfiltros[0] == "Reporte de ventas"){
+            $sales = $this->reports_model->getallSales($arrayfiltros);
+            $header = '
+                    <tr class="header" >
+                        <td style="text-align:center;">#</td>
+                        <td style="text-align:center;">Vendedor</td>
+                        <td style="text-align:center;">Fecha</td>
+                        <td style="text-align:center;">Descuento</td>
+                        <td style="text-align:center;">Total</td>
+                    </tr>
+            ';
+            for($i=0;$i<=count($sales)-1;$i++){
+                $item = $i + 1;
+                $table.='
+                    <tr>
+                        <td style="text-align:center;">'.$item.'</td>
+                        <td style="text-align:center;">'.$sales[$i]->first_name.' '.$sales[$i]->last_name.'</td>
+                        <td style="text-align:center;">'.$sales[$i]->date.'</td>
+                        <td style="text-align:center;">'.$this->tec->formatMoney($sales[$i]->discount).'</td>
+                        <td style="text-align:center;">'.$this->tec->formatMoney($sales[$i]->grand_total).'</td>
+                    </tr>
+                ';
+            }
+            
+        } else if($arrayfiltros[0] == "Reporte de ventas fiscal"){
+            $sales = $this->reports_model->getallSalesFiscal($arrayfiltros);
+            //var_dump($sales);exit;
+            $header = '
+                    <tr class="header" >
+                        <td style="text-align:center;">#</td>
+                        <td style="text-align:center;">Invoice</td>
+                        <td style="text-align:center;">Vendedor</td>
+                        <td style="text-align:center;">Fecha</td>
+                        <td style="text-align:center;">Descuento</td>
+                        <td style="text-align:center;">Total</td>
+                    </tr>
+            ';
+            for($i=0;$i<=count($sales)-1;$i++){
+                $item = $i + 1;
+                $table.='
+                    <tr>
+                        <td style="text-align:center;">'.$item.'</td>
+                        <td style="text-align:center;">'.$sales[$i]->invoice.'</td>
+                        <td style="text-align:center;">'.$sales[$i]->first_name.' '.$sales[$i]->last_name.'</td>
+                        <td style="text-align:center;">'.$sales[$i]->date.'</td>
+                        <td style="text-align:center;">'.$this->tec->formatMoney($sales[$i]->discount).'</td>
+                        <td style="text-align:center;">'.$this->tec->formatMoney($sales[$i]->grand_total).'</td>
+                    </tr>
+                ';
+            }
+            
+        }
+        
+        $html='
+            <p>"ITALIA JOYAS"</p> 
+            <p>Reporte de Ventas por producto</p>
+            <p>De la fecha "'.$arrayfiltros[1].'" a la fecha "'.$arrayfiltros[2].'"</p>
+            <hr style="text-align:left;margin-left:0">
+            <hr style="text-align:left;margin-left:0">
+            <style>
+                .floatedTable{
+                border-collapse: collapse;
+                width: 100%;
+                }
+
+                .floatedTable th, .floatedTable td {
+                text-align: left;
+                padding: 8px;
+                }
+
+                .floatedTable tr:nth-child(even) {
+                background-color: #D8D8D8;
+                }
+            </style>
+            <table class="blueTable floatedTable" style="width:100%;text-align:center;">
+                <tbody>
+                    '.$header.'
+                    '.$table.'
+                </tbody>
+            </table>
+            
+        ';
+        $dompdf = new DOMPDF();
+        $dompdf->loadHtml($html);
+        if ($arrayfiltros[0] == "Reporte de ventas por producto") {
+            $dompdf->set_paper("A4", "landscape"); 
+        }
+        $dompdf->render();
+        $dompdf->stream($arrayfiltros[0].".pdf", array("Attachment"=>0)); 
     }
 }

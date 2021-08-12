@@ -291,4 +291,145 @@ class Reports_model extends CI_Model
         }
         return false;
     }
+
+    public function getProducts($filtros)
+    {
+        $where = "";
+
+        if(isset($filtros[1]) && isset($filtros[2])){
+            $where = 'WHERE SUBSTRING(tec_products.code, 1, 1) = "'.$filtros[1].'" AND SUBSTRING(tec_products.code, 2, 3) = "'.$filtros[2].'" ';
+        } else if(isset($filtros[1]) && !isset($filtros[2])){
+            $where = "WHERE SUBSTRING(tec_products.code, 1, 1) = '".$filtros[1]."'";
+        } else if(!isset($filtros[1]) && isset($filtros[2])){
+            $where = "WHERE SUBSTRING(tec_products.code, 2, 3) = '".$filtros[2]."'";
+        }
+
+
+        $data = $this->db->query("SELECT 
+                                    tec_products.*,
+                                    tec_product_store_qty.quantity AS cantidad,
+                                    tec_product_store_qty.quantity * tec_products.price AS importe
+                                FROM
+                                    tec_products 
+                                    INNER JOIN tec_product_store_qty 
+                                    ON tec_products.id = tec_product_store_qty.product_id 
+                                    ".$where." AND tec_product_store_qty.store_id = ".$filtros[3]."
+                                    ORDER BY tec_products.name ASC
+                                    ")->result();
+        return  $data;
+        
+    }
+
+    public function getallSales($fechas)
+    {
+        $data = $this->db->query("SELECT 
+                                    tec_sales.id,
+                                    tec_sales.date,
+                                    tec_sales.grand_total,
+                                    SUM(tec_sale_items.discount) AS discount ,
+                                    tec_users.first_name,
+                                    tec_users.last_name
+                                    FROM
+                                    tec_sales 
+                                    LEFT JOIN tec_sale_items 
+                                        ON tec_sales.id = tec_sale_items.sale_id 
+                                    LEFT JOIN tec_users
+                                        ON tec_sales.created_by = tec_users.id
+                                    WHERE tec_sales.store_id = ".$fechas[3]." AND  tec_sales.date >= '" . $fechas[1] . " 00:00:00' AND tec_sales.date <= '" . $fechas[2] . " 23:59:59'
+                                    GROUP BY tec_sales.id 
+                                    ORDER BY tec_sales.date ASC 
+                                    ")->result();
+        return $data;
+    }
+
+    public function getallSalesFiscal($fechas)
+    {
+        $data = $this->db->query("SELECT 
+                                    tec_sales.id,
+                                    tec_sales.date,
+                                    tec_sales.invoice,
+                                    tec_sales.grand_total,
+                                    SUM(tec_sale_items.discount) AS discount ,
+                                    tec_users.first_name,
+                                    tec_users.last_name
+                                    FROM
+                                    tec_sales 
+                                    LEFT JOIN tec_sale_items 
+                                        ON tec_sales.id = tec_sale_items.sale_id 
+                                    LEFT JOIN tec_users
+                                        ON tec_sales.created_by = tec_users.id
+                                    WHERE tec_sales.store_id = ".$fechas[3]."  AND tec_sales.invoice IS NOT NULL AND  tec_sales.date >= '" . $fechas[1] . " 00:00:00' AND tec_sales.date <= '" . $fechas[2] . " 23:59:59'
+                                    GROUP BY tec_sales.id 
+                                    ORDER BY tec_sales.date ASC 
+                                    ")->result();
+        return $data;
+    }
+
+    public function getallItemSales($fechas)
+    {
+        $data = $this->db->query("SELECT 
+                                    product_code,
+                                    product_name,
+                                    unit_price,
+                                    discount,
+                                    tec_sales.date,
+                                    tec_sales.created_by,
+                                    quantity,
+                                    subtotal,
+                                    tec_users.first_name,
+                                    tec_users.last_name
+                                FROM
+                                    tec_sale_items 
+                                    LEFT JOIN tec_sales 
+                                    ON tec_sale_items.sale_id = tec_sales.id 
+                                    LEFT JOIN tec_users
+                                    ON tec_sales.created_by = tec_users.id
+                                    WHERE tec_sales.store_id = ".$fechas[3]." AND  tec_sales.date >= '" . $fechas[1] . " 00:00:00'  AND tec_sales.date <= '" . $fechas[2] . " 23:59:59' 
+                                ORDER BY tec_sales.date ASC 
+                                ")->result();
+        return $data;
+    }
+
+    public function movementsProducts($filtros)
+    {
+        $id = $this->db->query("SELECT * FROM tec_products WHERE code =  ".$filtros[1]." ")->result();
+        //var_dump($id[0]->code); exit;
+        if(isset($id[0]->code)){
+                $data = $this->db->query("SELECT 
+                tec_stores.name as store,
+                tec_stores.id AS storeid,
+                tec_products.name AS productname,
+                tec_products.details,
+                tec_products.price,
+                tec_products.code AS codeproducts,
+                tec_products_movements.code AS codemovement,
+                tec_products_movements.quantity,
+                tec_products_movements.date,
+                tec_products_movements.description 
+            FROM
+                tec_products_movements 
+                LEFT JOIN tec_products 
+                ON tec_products_movements.product_id = tec_products.id 
+                LEFT JOIN tec_stores 
+                ON tec_products_movements.store_id = tec_stores.id 
+                WHERE   tec_products.id = ".$id[0]->id."
+                AND tec_products_movements.store_id = ".$filtros[4]." 
+                AND tec_products_movements.date BETWEEN '" . $filtros[2] . " 00:00:00' 
+                AND '" . $filtros[3] . " 23:59:59' 
+            ")->result();
+            return $data;
+        } else {
+            return "NA";
+        }
+        
+        
+    }
+
+    public function getStores()
+    {
+        $data = $this->db->query("SELECT * FROM tec_stores ")->result();
+        return $data;
+    }
+
+    
 }

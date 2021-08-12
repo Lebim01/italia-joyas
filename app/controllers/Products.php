@@ -604,24 +604,27 @@ class Products extends MY_Controller
         $arrayfiltros = explode(",", $filtros);
         $productos = [];
         $header = "";
-        $footer = "";
         $table = "";
 
         if ($arrayfiltros[0] == "Reporte de existencia de productos") {
             $productos = $this->products_model->getProducts($arrayfiltros);
             //echo $productos;exit;
             $header = '
-                    <tr class="header" >
-                        <td style="">Clave</td>
-                        <td style="">Nombre</td>
-                        <td style="">Precio P</td>
-                        <td style="">Unidades</td>
-                        <td style="">Importe</td>
+                    <tr class="header">
+                        <td style="text-align:center">#</td>
+                        <td style="text-align:center">Clave</td>
+                        <td style="text-align:center">Nombre</td>
+                        <td style="text-align:center">Precio P</td>
+                        <td style="text-align:center">Unidades</td>
+                        <td style="text-align:center">Importe</td>
                     </tr>
+                    
             ';
             for ($i = 0; $i <= count($productos) - 1; $i++) {
+                $item = $i + 1;
                 $table .= '
                     <tr>
+                        <td style="text-align:center;">' . $item . '</td>
                         <td style="text-align:center;">' . $productos[$i]->code . '</td>
                         <td style="text-align:center;">' . $productos[$i]->name . '</td>
                         <td style="text-align:center;">' . $this->tec->formatMoney($productos[$i]->price) . '</td>
@@ -635,16 +638,30 @@ class Products extends MY_Controller
 
         $html = '
             <p>"ITALIA JOYAS"</p> 
-            <p>Reporte de Ventas por producto</p>
-            
+            <label>Reporte de existencias por producto</label>
+            <label style="margin-left:50%">Fecha: '.date("d-m-Y").'</label> 
+            <br></br>          
+            <hr style="text-align:left;margin-left:0;margin-top:20px">
             <hr style="text-align:left;margin-left:0">
-            <hr style="text-align:left;margin-left:0">
-            
-            <table class="blueTable" style="width:100%;text-align:center;">
+            <style>
+                .floatedTable{
+                border-collapse: collapse;
+                width: 100%;
+                }
+
+                .floatedTable th, .floatedTable td {
+                text-align: left;
+                padding: 8px;
+                }
+
+                .floatedTable tr:nth-child(even) {
+                background-color: #D8D8D8;
+                }
+            </style>
+            <table class="blueTable floatedTable" style="width:100%;text-align:center;">
                 <tbody>
                     ' . $header . '
                     ' . $table . '
-                    ' . $footer . '
                 </tbody>
             </table>
             
@@ -653,6 +670,7 @@ class Products extends MY_Controller
         $dompdf->loadHtml($html);
         $dompdf->render();
         $dompdf->stream($arrayfiltros[0] . ".pdf", array("Attachment" => 0));
+        //echo $html;
     }
 
     public function update_picture($id = null)

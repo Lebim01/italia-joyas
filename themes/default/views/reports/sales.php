@@ -110,6 +110,60 @@ if ($this->input->post('end_date')) {
 </script>
 
 <section class="content">
+<div class="row">
+        <div class="col-xs-12">
+            <button type="button" class="btn btn-primary" id="print_report"><i class='fa fa-print'></i> Imprimir reportes</button>
+        </div>
+    </div>
+    <br>
+    <div class="modal" data-easein="flipYIn" id="reportsModal" tabindex="-1" role="dialog" aria-labelledby="cModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header modal-primary">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+                    <h4 class="modal-title" id="cModalLabel">
+                       Imprimir reportes
+                    </h4>
+                </div>
+                
+                <div class="modal-body">
+                    <div id="c-alert" class="alert alert-danger" style="display:none;"></div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="form-group">
+                                Sucursal: <br>
+                                <div id="selectStore">
+                                    <select id="store"></select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                Tipo de reporte: <br>
+                                <select id="tipoReporte" class="form-control paid_by select2 bank" style="width:35%; display:inline-block">
+                                    <option value="seleccione" selected="selected">Seleccione una opción</option>
+                                    <option value="bySales">Reporte de ventas</option>
+                                    <option value="byProducts">Reporte de ventas por producto</option>
+                                    <option value="byInvoice">Reporte de ventas fiscal</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row" style="display:none" id="datesFilter">
+                        <div class="col-xs-12">
+                            <div class="form-group">
+                                <input id="date_inicio" type="text" class=" datepicker2 col-xs-5" placeholder="Fecha de inicio">
+                                <input id="date_fin" type="text" class=" datepicker2 col-xs-5 col-xs-offset-1" placeholder="Fecha fin">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin-top:0;">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal"> Cerrar </button>
+                    <button type="submit" class="btn btn-primary" id="print">Imprimir </button>
+                </div>
+                <?= form_close(); ?>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-sm-12">
             <div class="box box-primary">
@@ -252,10 +306,116 @@ if ($this->input->post('end_date')) {
 <script src="<?= $assets ?>plugins/bootstrap-datetimepicker/js/moment.min.js" type="text/javascript"></script>
 <script src="<?= $assets ?>plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
 <script type="text/javascript">
-    $(function () {
-        $('.datetimepicker').datetimepicker({
-            format: 'YYYY-MM-DD HH:mm'
+    $(document).ready(function() {
+        
+        var options = "";
+
+        $.ajax({
+            type: 'get',
+            url: base_url + 'reports/getStores',
+            dataType: 'json',
+            success: function (data) {
+                for(let i = 0; i < data.length; i ++){
+                   options += '<option value="'+data[i].id+'">'+data[i].name+'</option>'
+                }
+                $('#selectStore select').html(options);
+            },
+        })
+
+        $('.datepicker').datetimepicker({
+            format: 'YYYY-MM-DD',
+            showClear: true,
+            showClose: true,
+            useCurrent: false,
+            widgetPositioning: {
+                horizontal: 'auto',
+                vertical: 'bottom'
+            },
+            widgetParent: $('.dataTable tfoot')
         });
-        $('.datepicker').datetimepicker({format: 'YYYY-MM-DD', showClear: true, showClose: true, useCurrent: false, widgetPositioning: {horizontal: 'auto', vertical: 'bottom'}, widgetParent: $('.dataTable tfoot')});
+
+        $('.datepicker2').datetimepicker({
+            format: 'YYYY-MM-DD',
+            showClear: true,
+            showClose: true,
+            useCurrent: false,
+            widgetPositioning: {
+                horizontal: 'auto',
+                vertical: 'bottom'
+            },
+        });
+
+        $("#tipoReporte").change(function() {
+            if($(this).val() != "seleccione"){
+                $("#datesFilter").css("display", "inline-block");
+            } else {
+                $("#datesFilter").css("display", "none");
+                $("#date_inicio").val("")
+
+                $("#date_fin").val("")
+            }
+        });
+
+        $("#print").click(function() {
+            
+            if($("#tipoReporte").val() == "byProducts"){
+                if($('#date_inicio').val() && $('#date_fin').val()){
+                    let data = ["Reporte de ventas por producto",$('#date_inicio').val(),$('#date_fin').val(),$('#store').val()]
+                    let url=  new URL(window.location.origin+"/reports/reportssales/");
+                    url.searchParams.append('filtros', data)
+                    window.open(url.toString(), '_blank')
+                    clear()
+                    return
+                }
+                else {
+                    alert ("Llene los campos correctamente")
+                }
+            } 
+
+            if($("#tipoReporte").val() == "bySales"){
+                if($('#date_inicio').val() && $('#date_fin').val()){
+                    let data = ["Reporte de ventas",$('#date_inicio').val(),$('#date_fin').val(),$('#store').val()]
+                    let url=  new URL(window.location.origin+"/reports/reportssales/");
+                    url.searchParams.append('filtros', data)
+                    window.open(url.toString(), '_blank')
+                    clear()
+                    return
+                }
+                else {
+                    alert ("Llene los campos correctamentes")
+                }
+            } 
+
+            if($("#tipoReporte").val() == "byInvoice"){
+                if($('#date_inicio').val() && $('#date_fin').val()){
+                    let data = ["Reporte de ventas fiscal",$('#date_inicio').val(),$('#date_fin').val(),$('#store').val()]
+                    let url=  new URL(window.location.origin+"/reports/reportssales/");
+                    url.searchParams.append('filtros', data)
+                    window.open(url.toString(), '_blank')
+                    clear()
+                    return
+                }
+                else {
+                    alert ("Llene los campos correctamentes")
+                }
+            } 
+
+        });
+
+        function clear() {
+            $("#datesFilter").css("display", "none");
+            $("#date_inicio").val("")
+            $("#date_fin").val("")
+            $('#tipoReporte').val("")
+            $('#reportsModal').modal('hide');
+        }
+
+        $(".pull-left").click(function() {
+            clear()
+        })
+
+        $(document).on('click', '#print_report', function() {
+            $('#reportsModal').modal({ backdrop: 'static' });
+        });
     });
 </script>

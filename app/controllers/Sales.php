@@ -414,7 +414,6 @@ class Sales extends MY_Controller
                 <tbody>
                     '.$header.'
                     '.$table.'
-                    '.$footer.'
                 </tbody>
             </table>
             
