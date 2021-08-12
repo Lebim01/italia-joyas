@@ -21,12 +21,17 @@ class Customers extends MY_Controller
         $this->form_validation->set_rules('email', $this->lang->line('email_address'), 'valid_email');
 
         if ($this->form_validation->run() == true) {
-            $data = ['name' => $this->input->post('name'),
+            $data = [
+                'name'      => $this->input->post('name'),
                 'email'     => $this->input->post('email'),
                 'phone'     => $this->input->post('phone'),
                 'cf1'       => $this->input->post('cf1'),
                 'cf2'       => $this->input->post('cf2'),
             ];
+
+            if($this->Admin){
+                $data['credit_limit'] = $this->input->post('credit_limit');
+            }
         }
 
         if ($this->form_validation->run() == true && $cid = $this->customers_model->addCustomer($data)) {
@@ -44,6 +49,7 @@ class Customers extends MY_Controller
 
             $this->data['error']      = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
             $this->data['page_title'] = lang('add_customer');
+            $this->data['is_admin']   = $this->Admin;
             $bc                       = [['link' => site_url('customers'), 'page' => lang('customers')], ['link' => '#', 'page' => lang('add_customer')]];
             $meta                     = ['page_title' => lang('add_customer'), 'bc' => $bc];
             $this->page_construct('customers/add', $this->data, $meta);
@@ -86,12 +92,17 @@ class Customers extends MY_Controller
         $this->form_validation->set_rules('email', $this->lang->line('email_address'), 'valid_email');
 
         if ($this->form_validation->run() == true) {
-            $data = ['name' => $this->input->post('name'),
+            $data = [
+                'name'      => $this->input->post('name'),
                 'email'     => $this->input->post('email'),
                 'phone'     => $this->input->post('phone'),
                 'cf1'       => $this->input->post('cf1'),
                 'cf2'       => $this->input->post('cf2'),
             ];
+
+            if($this->Admin){
+                $data['credit_limit'] = $this->input->post('credit_limit');
+            }
         }
 
         if ($this->form_validation->run() == true && $this->customers_model->updateCustomer($id, $data)) {
@@ -101,6 +112,7 @@ class Customers extends MY_Controller
             $this->data['customer']   = $this->customers_model->getCustomerByID($id);
             $this->data['error']      = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
             $this->data['page_title'] = lang('edit_customer');
+            $this->data['is_admin']   = $this->Admin;
             $bc                       = [['link' => site_url('customers'), 'page' => lang('customers')], ['link' => '#', 'page' => lang('edit_customer')]];
             $meta                     = ['page_title' => lang('edit_customer'), 'bc' => $bc];
             $this->page_construct('customers/edit', $this->data, $meta);

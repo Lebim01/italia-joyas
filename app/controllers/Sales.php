@@ -254,9 +254,9 @@ class Sales extends MY_Controller
     {
         $this->load->library('datatables');
         if ($this->db->dbdriver == 'sqlite3') {
-            $this->datatables->select("id, transaction_type, strftime('%Y-%m-%d %H:%M', date) as date, customer_name, total, total_tax, total_discount, grand_total, paid, status");
+            $this->datatables->select("id, transaction_type, strftime('%Y-%m-%d %H:%M', date) as date, '' cashier_name, customer_name, total, total_tax, total_discount, grand_total, paid, status");
         } else {
-            $this->datatables->select("id, transaction_type, DATE_FORMAT(date, '%Y-%m-%d %H:%i') as date, customer_name, total, total_tax, total_discount, grand_total, paid, status");
+            $this->datatables->select("id, transaction_type, DATE_FORMAT(date, '%Y-%m-%d %H:%i') as date, '' cashier_name, customer_name, total, total_tax, total_discount, grand_total, paid, status");
         }
         $this->datatables->from('sales');
         

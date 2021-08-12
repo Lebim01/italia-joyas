@@ -30,8 +30,19 @@
               <?php echo form_submit('edit_customer', $this->lang->line("edit_customer"), 'class="btn btn-primary"');?>
             </div>
           </div>
+
+          <div class="col-md-6">
+            <div class="well well-sm">
+              <h3>Crédito</h3>
+              <div class="form-group st">
+                <label for="credit_limit">Limite</label>
+                <input type="text" name="credit_limit" value="0.00" class="form-control tip" id="credit_limit" <?= !$is_admin ? 'readonly' : '' ?>>
+              </div>
+            </div>
+          </div>
           <?php echo form_close();?>
         </div>
+
       </div>
     </div>
   </div>
