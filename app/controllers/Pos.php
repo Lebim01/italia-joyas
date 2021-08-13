@@ -432,15 +432,15 @@ class Pos extends MY_Controller
             /**
              * Validar si es una venta a credito no exceda el limite de credito
              */
-            /*if(!$eid){
+            if(!$eid && !$suspended){
                 $this->load->model('customers_model');
                 $available = $this->customers_model->getAvailableCredit($customer_id);
 
                 if($total > $available){
-                    $this->session->set_flashdata('error', "El cliente no cuenta con el crédito disponible suficiente para realizar esta compra, disponible: {$available}");
+                    $this->session->set_flashdata('error', "El cliente no cuenta con el crédito disponible suficiente para realizar esta compra, disponible: ${$available}");
                     redirect($_SERVER['HTTP_REFERER']);
                 }
-            }*/
+            }
 
             if (empty($products)) {
                 $this->form_validation->set_rules('product', lang('order_items'), 'required');
@@ -582,7 +582,7 @@ class Pos extends MY_Controller
 
         if ($this->form_validation->run() == true && !empty($products)) {
             if ($suspend) {
-                unset($data['status'], $data['rounding']);
+                unset($data['status'], $data['rounding'], $data['transaction_type'], $data['delivered']);
                 if ($this->pos_model->suspendSale($data, $products, $did)) {
                     $this->session->set_userdata('rmspos', 1);
                     $this->session->set_flashdata('message', lang('sale_saved_to_opened_bill'));
