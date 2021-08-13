@@ -139,12 +139,6 @@
             "footerCallback": function(tfoot, data, start, end, display) {
                 var api = this.api(),
                     data;
-                $(api.column(3).footer()).html(cf(api.column(3).data().reduce(function(a, b) {
-                    return pf(a) + pf(b);
-                }, 0)));
-                $(api.column(4).footer()).html(cf(api.column(4).data().reduce(function(a, b) {
-                    return pf(a) + pf(b);
-                }, 0)));
                 $(api.column(5).footer()).html(cf(api.column(5).data().reduce(function(a, b) {
                     return pf(a) + pf(b);
                 }, 0)));
@@ -152,6 +146,12 @@
                     return pf(a) + pf(b);
                 }, 0)));
                 $(api.column(7).footer()).html(cf(api.column(7).data().reduce(function(a, b) {
+                    return pf(a) + pf(b);
+                }, 0)));
+                $(api.column(8).footer()).html(cf(api.column(8).data().reduce(function(a, b) {
+                    return pf(a) + pf(b);
+                }, 0)));
+                $(api.column(9).footer()).html(cf(api.column(9).data().reduce(function(a, b) {
                     return pf(a) + pf(b);
                 }, 0)));
             }
@@ -258,7 +258,7 @@
                             </thead>
                             <tbody>
                                 <tr>
-                                    <td colspan="11" class="dataTables_empty"><?= lang('loading_data_from_server'); ?></td>
+                                    <td colspan="12" class="dataTables_empty"><?= lang('loading_data_from_server'); ?></td>
                                 </tr>
                             </tbody>
                             <tfoot>
@@ -291,7 +291,7 @@
                                     <th class="col-sm-1"><?= lang("actions"); ?></th>
                                 </tr>
                                 <tr>
-                                    <td colspan="11" class="p0"><input type="text" class="form-control b0" name="search_table" id="search_table" placeholder="<?= lang('type_hit_enter'); ?>" style="width:100%;"></td>
+                                    <td colspan="12" class="p0"><input type="text" class="form-control b0" name="search_table" id="search_table" placeholder="<?= lang('type_hit_enter'); ?>" style="width:100%;"></td>
                                 </tr>
                             </tfoot>
                         </table>

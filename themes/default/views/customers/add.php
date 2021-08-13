@@ -26,13 +26,20 @@
 							<?= form_input('phone', set_value('phone'), 'class="form-control input-sm" id="phone"');?>
 						</div>
 
-						
-
-
 						<div class="form-group">
 							<?php echo form_submit('add_customer', $this->lang->line("add_customer"), 'class="btn btn-primary"');?>
 						</div>
 					</div>
+
+					<div class="col-md-6">
+            <div class="well well-sm">
+              <h3>Crédito</h3>
+              <div class="form-group st">
+                <label for="credit_limit">Limite</label>
+                <input type="text" name="credit_limit" value="0.00" class="form-control tip" id="credit_limit" <?= !$is_admin ? 'readonly' : '' ?>>
+              </div>
+            </div>
+          </div>
 					<?php echo form_close();?>
 				</div>
 			</div>

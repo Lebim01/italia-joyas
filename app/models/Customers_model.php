@@ -40,4 +40,22 @@ class Customers_model extends CI_Model
         }
         return false;
     }
+
+    public function getAvailableCredit($id){
+        $this->db->where('id', $id);
+        $limit = $this->db->get('customers')->row();
+
+        $this->db->where('customer_id', $id);
+        $this->db->where('status', 'partial');
+        $this->db->where('transaction_type', 'credit');
+        $sales = $this->db->get('sales')->result();
+
+        $total = 0;
+
+        foreach($sales as $sale){
+            $total += (float) $sale->grand_total - (float) $sale->paid;
+        }
+        
+        return $limit - $total;
+    }
 }
