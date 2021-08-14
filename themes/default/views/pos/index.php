@@ -450,8 +450,8 @@
                                                 <button type="button" class="btn bg-purple btn-block btn-flat" id="register_payment">
                                                     Registrar abono
                                                 </button>
-                                                <button type="button" class="btn bg-navy btn-block btn-flat" id="register_speding" disabled>
-                                                    Registrar gasto (en desarrollo)
+                                                <button type="button" class="btn bg-navy btn-block btn-flat" onclick="window.location.href = '<?= site_url('purchases/add_expense'); ?>'">
+                                                    Registrar gasto
                                                 </button>
                                             </div>
                                         </div>
