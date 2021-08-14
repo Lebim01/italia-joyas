@@ -1194,14 +1194,12 @@ $(document).ready(function () {
   }
 
   $("body").delegate(".pago", "change", function (e) {
-    id = e.target.id
-    var idd = id.split('_');
+    const bank = $(this).parent().find('select.bank')
     if (e.target.value == "CC") {
-      $("#banco_" + idd[1]).css({ "visibility": "" });
+      bank.css({ "visibility": "" });
     } else {
-      $("#banco_" + idd[1]).css({ "visibility": "hidden " });
+      bank.css({ "visibility": "hidden" });
     }
-
   });
 
   $('#payModal').on('click', '#add_payment', function () {

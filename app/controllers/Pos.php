@@ -437,7 +437,7 @@ class Pos extends MY_Controller
                 $available = $this->customers_model->getAvailableCredit($customer_id);
 
                 if($total > $available){
-                    $this->session->set_flashdata('error', "El cliente no cuenta con el crédito disponible suficiente para realizar esta compra, disponible: ${$available}");
+                    $this->session->set_flashdata('error', "El cliente <b>$customer</b> no cuenta con el crédito disponible suficiente para realizar esta compra, disponible: ${$available}");
                     redirect($_SERVER['HTTP_REFERER']);
                 }
             }
