@@ -365,6 +365,9 @@
                                     <div class="form-group" style="margin-bottom:5px;">
                                         <input type="text" name="code" id="add_item" class="form-control" placeholder="<?= lang('search__scan') ?>" />
                                     </div>
+                                    <div class="form-group" style="margin-bottom:5px;">
+                                        <button id="add_concept" class="btn btn-md btn-info">Agregar concepto</button>
+                                    </div>
                                 </div>
                                 <div id="printhead" class="print">
                                     <?= $Settings->header; ?>
@@ -642,6 +645,34 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default pull-left" data-dismiss="modal"><?= lang('close') ?></button>
                     <button type="button" id="addGiftCard" class="btn btn-primary"><?= lang('sell_gift_card') ?></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" data-easein="flipYIn" id="addConceptModal" tabindex="-1" role="dialog" aria-labelledby="mModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+                    <h4 class="modal-title" id="myModalLabel">Agregar concepto</h4>
+                </div>
+                <div class="modal-body">
+                    <p><?= lang('enter_info'); ?></p>
+
+                    <div class="form-group">
+                        <label>Concepto *</label>
+                        <?php echo form_input('concept', '', 'class="form-control" id="concept"'); ?>
+                    </div>
+                    <div class="form-group">
+                        <label>Precio *</label>
+                        <?php echo form_input('price', '', 'class="form-control" id="price" type="number"'); ?>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal"><?= lang('close') ?></button>
+                    <button type="button" id="addConceptToList" class="btn btn-primary">Agregar</button>
                 </div>
             </div>
         </div>
