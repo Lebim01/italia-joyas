@@ -229,4 +229,10 @@ class Products_model extends CI_Model
         return  $data;
         
     }
+
+    public function exists($id){
+        $this->db->where('id', $id);
+        $results = $this->db->get('products')->result();
+        return count($results) > 0;
+    }
 }

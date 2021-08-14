@@ -114,10 +114,10 @@ function loadItems() {
       var newTr = $('<tr id="' + row_no + '" class="' + item_id + '" data-item-id="' + item_id + '" data-id="' + item.row.id + '"></tr>');
       tr_html = `
         <td>
-          ${item.row.code !== 'Concepto' 
-            ? `<img class="img-open-modal" width="100" height="100" src="/uploads/thumbs/${item.row.image}" />`
-            : ''
-          }
+          ${item.row.code !== 'Concepto'
+          ? `<img class="img-open-modal" width="100" height="100" src="/uploads/thumbs/${item.row.image}" />`
+          : ''
+        }
         </td>
       `
       tr_html +=
@@ -1203,8 +1203,8 @@ $(document).ready(function () {
   })
 
   $("#addConceptToList").click(function () {
-    const concept = $("#addConceptModal input#concept").val()
-    const price = $("#addConceptModal input#price").val()
+    const concept = $("#addConceptModal input#concept")
+    const price = $("#addConceptModal input#price")
 
     if (concept && price) {
       function getRandomInt(min, max) {
@@ -1218,12 +1218,15 @@ $(document).ready(function () {
         row: {
           id,
           type: 'concept',
-          name: concept,
+          name: concept.val(),
           qty: 1,
           code: 'Concepto',
-          real_unit_price: price
+          real_unit_price: price.val()
         }
       })
+
+      concept.val('')
+      price.val('')
       $("#addConceptModal").modal('hide')
     } else {
       alert('Favor de completar los campos')

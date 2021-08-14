@@ -31,6 +31,7 @@ class Sales_model extends MY_Model
         foreach ($oitems as $oitem) {
             $product = $this->site->getProductByID($oitem->product_id, $osale->store_id);
             if ($product->type == 'standard') {
+                $this->movements_model->removeMovement($oitem->product_id, $id, 'sale');
                 $this->db->update('product_store_qty', ['quantity' => ($product->quantity + $oitem->quantity)], ['product_id' => $product->id, 'store_id' => $osale->store_id]);
             } elseif ($product->type == 'combo') {
                 $combo_items = $this->getComboItemsByPID($product->id);
