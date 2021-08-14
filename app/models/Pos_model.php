@@ -727,7 +727,7 @@ class Pos_model extends CI_Model
                     $dataUpdate = ['apart' => ($product->apart - $oitem->quantity)];
                 }
                 // Registrar moviemitno de producto devuelto
-                $this->movements_model->updateMovementSaleReturn($product->id, $id);
+                $this->movements_model->returnSale($product->id, $id);
                 $this->db->update('product_store_qty', $dataUpdate, ['product_id' => $product->id, 'store_id' => $data['store_id']]);
             } elseif ($product->type == 'combo') {
                 $combo_items = $this->getComboItemsByPID($product->id);
@@ -736,7 +736,7 @@ class Pos_model extends CI_Model
                     if ($cpr->type == 'standard') {
                         $qty = $combo_item->qty * $oitem->quantity;
                         // Registrar moviemitno de producto devuelto
-                        $this->movements_model->updateMovementSaleReturn($cpr->id, $id);
+                        $this->movements_model->returnSale($cpr->id, $id);
                         $this->db->update('product_store_qty', ['quantity' => ($cpr->quantity + $qty)], ['product_id' => $cpr->id, 'store_id' => $osale->store_id]);
                     }
                 }

@@ -20,7 +20,7 @@ class Movements_model extends CI_Model
       }
     }
 
-    public function updateMovementSaleReturn($product_id, $sale_id){
+    public function returnSale($product_id, $sale_id){
       if($sale_id && $product_id){
         $this->db->where('product_id', $product_id);
         $this->db->where('ref_id', $sale_id);
@@ -28,7 +28,20 @@ class Movements_model extends CI_Model
         $this->db->update('products_movements', [
           'description' => '', 
           'code' => 'sale-return', 
-          'description' => 'Articulo devuelto'
+          'description' => 'Producto devuelto'
+        ]);
+      }
+    }
+
+    public function returnBuySupplier($product_id, $purchase_id){
+      if($purchase_id && $product_id){
+        $this->db->where('product_id', $product_id);
+        $this->db->where('ref_id', $purchase_id);
+        $this->db->where('code', 'buy-supplier');
+        $this->db->update('products_movements', [
+          'description' => '', 
+          'code' => 'buy-supplier-return', 
+          'description' => 'Producto devuelto al proveedor'
         ]);
       }
     }
