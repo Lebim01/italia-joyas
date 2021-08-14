@@ -323,6 +323,7 @@
                     <div class="row" style="display:none" id="linfamFilter">
                         <div class="col-xs-12">
                             <div class="form-group">
+                                <input type="checkbox" id="existencia" value="existencia"> Solo productos en existencia<br><br>
                                 <input type="text" id="linea" placeholder="Línea">
                                 <input type="text" id="familia" placeholder="Familia">
                             </div>
@@ -518,42 +519,66 @@
             $('#reportsModal').modal({ backdrop: 'static' });
 
         });
+
+       /*  $("#existencia" ).change(function() {
+            if($("#existencia").is(':checked')) {  
+                $("#linea").css("display", "none");
+                $("#familia").css("display", "none");
+                setToEmpty()
+            } else {
+                $("#linea").css("display", "inline-block");
+                $("#familia").css("display", "inline-block");
+            }
+            
+        }); */
         
         $("#tipoReporte").change(function() {
             if($(this).val() == "byStock"){
                 $("#linfamFilter").css("display", "inline-block");
                 $("#codeFilter").css("display", "none");
                 $("#datesFilter").css("display", "none");
+                $("#familia").val("")
+                $("#linea").val("")
+                $("#codigo").val("")
+                $("#date_inicio").val("")
+                $("#date_fin").val("")
+        
             }
 
             if($(this).val() == "byMovements"){
                 $("#linfamFilter").css("display", "none");
                 $("#codeFilter").css("display", "inline-block");
                 $("#datesFilter").css("display", "inline-block");
+                setToEmpty()
             }
 
             if($(this).val() == "seleccione") {
                 $("#linfamFilter").css("display", "none");
                 $("#codeFilter").css("display", "none");
                 $("#datesFilter").css("display", "none");
-                $("#date_inicio").val("")
-                $("#date_fin").val("")
+                setToEmpty()
             }
         });
 
         $("#print").click(function() {
             if($("#tipoReporte").val() == "byStock"){
-                if($('#linea').val() != "" && $('#familia').val()){
-                    let data = ["Reporte de existencia de productos",$('#linea').val(),$('#familia').val(),$('#store').val()]
+                if($("#existencia").is(':checked')){
+                    let data = ["Reporte solo en existencia",$('#store').val()]
                     let url=  new URL(window.location.origin+"/reports/reportsproducts/");
                     url.searchParams.append('filtros', data)
                     window.open(url.toString(), '_blank')
                     clear()
                     return
                 } else {
-                    alert ("Llene los campos correctamente")
+                    let data = ["Reporte de existencia de productos",$('#linea').val(),$('#familia').val(),$('#store').val()]
+                    let url=  new URL(window.location.origin+"/reports/reportsproducts/");
+                    url.searchParams.append('filtros', data)
+                    window.open(url.toString(), '_blank')
+                    clear()
+                    return
                 }
-            } 
+            }
+
             if($("#tipoReporte").val() == "byMovements"){
                 if($('#codigo').val() && $('#date_inicio').val() && $('#date_fin').val()){
                     let data = ["Reporte de movimientos de productos",$('#codigo').val(),$('#date_inicio').val(),$('#date_fin').val(),$('#store').val()]
@@ -583,6 +608,14 @@
             $("#date_fin").val("")
             $('#tipoReporte').val("")
             $('#reportsModal').modal('hide');
+        }
+
+        function setToEmpty(){
+            $("#familia").val("")
+            $("#linea").val("")
+            $("#codigo").val("")
+            $("#date_inicio").val("")
+            $("#date_fin").val("")
         }
     });
 </script>

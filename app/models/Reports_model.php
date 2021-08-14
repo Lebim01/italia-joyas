@@ -296,11 +296,13 @@ class Reports_model extends CI_Model
     {
         $where = "";
 
-        if(isset($filtros[1]) && isset($filtros[2])){
+        if($filtros[1] && $filtros[2]){
             $where = 'WHERE SUBSTRING(tec_products.code, 1, 1) = "'.$filtros[1].'" AND SUBSTRING(tec_products.code, 2, 3) = "'.$filtros[2].'" ';
-        } else if(isset($filtros[1]) && !isset($filtros[2])){
+        } 
+        if($filtros[1]  && !$filtros[2] ){
             $where = "WHERE SUBSTRING(tec_products.code, 1, 1) = '".$filtros[1]."'";
-        } else if(!isset($filtros[1]) && isset($filtros[2])){
+        } 
+        if(!$filtros[1] && $filtros[2]){
             $where = "WHERE SUBSTRING(tec_products.code, 2, 3) = '".$filtros[2]."'";
         }
 
@@ -308,7 +310,8 @@ class Reports_model extends CI_Model
         $data = $this->db->query("SELECT 
                                     tec_products.*,
                                     tec_product_store_qty.quantity AS cantidad,
-                                    tec_product_store_qty.quantity * tec_products.price AS importe
+                                    tec_product_store_qty.quantity * tec_products.price AS importe,
+                                    tec_product_store_qty.apart
                                 FROM
                                     tec_products 
                                     INNER JOIN tec_product_store_qty 
@@ -320,22 +323,57 @@ class Reports_model extends CI_Model
         
     }
 
+    public function getProductsExistencia($filtros)
+    {
+
+        $data = $this->db->query("SELECT 
+                                    tec_products.*,
+                                    tec_product_store_qty.quantity AS cantidad,
+                                    tec_product_store_qty.quantity * tec_products.price AS importe,
+                                    tec_product_store_qty.apart
+                                FROM
+                                    tec_products 
+                                    INNER JOIN tec_product_store_qty 
+                                    ON tec_products.id = tec_product_store_qty.product_id 
+                                    WHERE tec_product_store_qty.quantity > 0 AND tec_product_store_qty.store_id = ".$filtros[1]."
+                                    ORDER BY tec_products.name ASC
+                                    ")->result();
+        return  $data;
+        
+    }
+
     public function getallSales($fechas)
     {
+        $where = "";
+        if($fechas[4] == "cash"){
+            $where = "AND tec_payments.paid_by = '".$fechas[4]."'";
+        }
+
+        if($fechas[4] == "CC"){
+            $where = "AND tec_payments.paid_by = '".$fechas[4]."'";
+        }
         $data = $this->db->query("SELECT 
                                     tec_sales.id,
                                     tec_sales.date,
+                                    tec_sales.invoice,
                                     tec_sales.grand_total,
                                     SUM(tec_sale_items.discount) AS discount ,
                                     tec_users.first_name,
-                                    tec_users.last_name
+                                    tec_users.last_name,
+                                    CASE
+                                        WHEN tec_payments.paid_by = 'cash' THEN 'Efectivo'
+                                        WHEN tec_payments.paid_by = 'CC' THEN 'Pago con tarjeta'
+                                        ELSE 'NA'
+                                        END AS tipopago
                                     FROM
                                     tec_sales 
                                     LEFT JOIN tec_sale_items 
                                         ON tec_sales.id = tec_sale_items.sale_id 
                                     LEFT JOIN tec_users
                                         ON tec_sales.created_by = tec_users.id
-                                    WHERE tec_sales.store_id = ".$fechas[3]." AND  tec_sales.date >= '" . $fechas[1] . " 00:00:00' AND tec_sales.date <= '" . $fechas[2] . " 23:59:59'
+                                    LEFT JOIN tec_payments 
+                                        ON tec_sales.id = tec_payments.sale_id 
+                                    WHERE tec_sales.store_id = ".$fechas[3]." AND  tec_sales.date >= '" . $fechas[1] . " 00:00:00' AND tec_sales.date <= '" . $fechas[2] . " 23:59:59'  ".$where."
                                     GROUP BY tec_sales.id 
                                     ORDER BY tec_sales.date ASC 
                                     ")->result();
@@ -366,25 +404,40 @@ class Reports_model extends CI_Model
     }
 
     public function getallItemSales($fechas)
-    {
+    {   
+        $where = "";
+        if($fechas[4] == "cash"){
+            $where = "AND tec_payments.paid_by = '".$fechas[4]."'";
+        }
+
+        if($fechas[4] == "CC"){
+            $where = "AND tec_payments.paid_by = '".$fechas[4]."'";
+        }
         $data = $this->db->query("SELECT 
-                                    product_code,
-                                    product_name,
-                                    unit_price,
-                                    discount,
-                                    tec_sales.date,
-                                    tec_sales.created_by,
-                                    quantity,
-                                    subtotal,
-                                    tec_users.first_name,
-                                    tec_users.last_name
-                                FROM
+                                        product_code,
+                                        product_name,
+                                        unit_price,
+                                        discount,
+                                        tec_sales.date,
+                                        tec_sales.created_by,
+                                        quantity,
+                                        subtotal,
+                                        tec_users.first_name,
+                                        tec_users.last_name,
+                                        CASE
+                                        WHEN tec_payments.paid_by = 'cash' THEN 'Efectivo'
+                                        WHEN tec_payments.paid_by = 'CC' THEN 'Pago con tarjeta'
+                                        ELSE 'NA'
+                                        END AS tipopago
+                                    FROM
                                     tec_sale_items 
                                     LEFT JOIN tec_sales 
                                     ON tec_sale_items.sale_id = tec_sales.id 
                                     LEFT JOIN tec_users
                                     ON tec_sales.created_by = tec_users.id
-                                    WHERE tec_sales.store_id = ".$fechas[3]." AND  tec_sales.date >= '" . $fechas[1] . " 00:00:00'  AND tec_sales.date <= '" . $fechas[2] . " 23:59:59' 
+                                    LEFT JOIN tec_payments 
+                                    ON tec_sales.id = tec_payments.sale_id 
+                                    WHERE tec_sales.store_id = ".$fechas[3]." AND  tec_sales.date >= '" . $fechas[1] . " 00:00:00'  AND tec_sales.date <= '" . $fechas[2] . " 23:59:59' ".$where."
                                 ORDER BY tec_sales.date ASC 
                                 ")->result();
         return $data;
@@ -400,7 +453,7 @@ class Reports_model extends CI_Model
                 tec_stores.id AS storeid,
                 tec_products.name AS productname,
                 tec_products.details,
-                tec_products.price,
+                tec_products.price * tec_products_movements.quantity AS price,
                 tec_products.code AS codeproducts,
                 tec_products_movements.code AS codemovement,
                 tec_products_movements.quantity,

@@ -426,6 +426,7 @@ class Reports extends MY_Controller
                     <td style="text-align:center">Nombre</td>
                     <td style="text-align:center">Precio P</td>
                     <td style="text-align:center">Unidades</td>
+                    <td style="text-align:center">Apartados</td>
                     <td style="text-align:center">Importe</td>
                 </tr>
             ';
@@ -438,6 +439,37 @@ class Reports extends MY_Controller
                         <td style="text-align:center;">' . $productos[$i]->name . '</td>
                         <td style="text-align:center;">' . $this->tec->formatMoney($productos[$i]->price) . '</td>
                         <td style="text-align:center;">' . $this->tec->formatMoney($productos[$i]->cantidad) . '</td>
+                        <td style="text-align:center;">' . $this->tec->formatMoney($productos[$i]->cantidad) . '</td>
+                        <td style="text-align:center;">' . $this->tec->formatMoney($productos[$i]->importe) . '</td>
+                    </tr>
+                ';
+            }
+        }
+
+        if ($arrayfiltros[0] == "Reporte solo en existencia") {
+            $productos = $this->reports_model->getProductsExistencia($arrayfiltros);
+            //echo $productos;exit;
+            $header = '
+                <tr class="header">
+                    <td style="text-align:center">#</td>
+                    <td style="text-align:center">Clave</td>
+                    <td style="text-align:center">Nombre</td>
+                    <td style="text-align:center">Precio P</td>
+                    <td style="text-align:center">Unidades</td>
+                    <td style="text-align:center">Apartados</td>
+                    <td style="text-align:center">Importe</td>
+                </tr>
+            ';
+            for ($i = 0; $i <= count($productos) - 1; $i++) {
+                $item = $i + 1;
+                $table .= '
+                    <tr>
+                        <td style="text-align:center;">' . $item . '</td>
+                        <td style="text-align:center;">' . $productos[$i]->code . '</td>
+                        <td style="text-align:center;">' . $productos[$i]->name . '</td>
+                        <td style="text-align:center;">' . $this->tec->formatMoney($productos[$i]->price) . '</td>
+                        <td style="text-align:center;">' . $this->tec->formatMoney($productos[$i]->cantidad) . '</td>
+                        <td style="text-align:center;">' . $this->tec->formatMoney($productos[$i]->apart) . '</td>
                         <td style="text-align:center;">' . $this->tec->formatMoney($productos[$i]->importe) . '</td>
                     </tr>
                 ';
@@ -453,7 +485,7 @@ class Reports extends MY_Controller
             }
             $header = '
                 <tr class="header">
-                    <td style="text-align:center">Folio</td>
+                    <td style="text-align:center">Código</td>
                     <td style="text-align:center">Cantidad</td>
                     <td style="text-align:center">Descripcion</td>
                     <td style="text-align:center">Importe</td>
@@ -466,7 +498,7 @@ class Reports extends MY_Controller
                 if($productos[$i]->codemovement == "sale"){
                     $tableS .= '
                         <tr>
-                            <td style="text-align:center">No se ha generado</td>
+                            <td style="text-align:center">' . $productos[$i]->codeproducts . '</td>
                             <td style="text-align:center;">' . $productos[$i]->quantity . '</td>
                             <td style="text-align:center;">' . $productos[$i]->productname . '</td>
                             <td style="text-align:center;">' . $this->tec->formatMoney($productos[$i]->price) . '</td>
@@ -479,7 +511,7 @@ class Reports extends MY_Controller
                 if($productos[$i]->codemovement == "inventory-adjust"){
                     $tableIA .= '
                         <tr>
-                            <td style="text-align:center">No se ha generado</td>
+                        <td style="text-align:center">' . $productos[$i]->codeproducts . '</td>
                             <td style="text-align:center;">' . $productos[$i]->quantity . '</td>
                             <td style="text-align:center;">' . $productos[$i]->productname . '</td>
                             <td style="text-align:center;">' . $this->tec->formatMoney($productos[$i]->price) . '</td>
@@ -492,7 +524,7 @@ class Reports extends MY_Controller
                 if($productos[$i]->codemovement == "buy-supplier"){
                     $tableBS .= '
                         <tr>
-                            <td style="text-align:center">No se ha generado</td>
+                            <td style="text-align:center">' . $productos[$i]->codeproducts . '</td>
                             <td style="text-align:center;">' . $productos[$i]->quantity . '</td>
                             <td style="text-align:center;">' . $productos[$i]->productname . '</td>
                             <td style="text-align:center;">' . $this->tec->formatMoney($productos[$i]->price) . '</td>
@@ -505,7 +537,7 @@ class Reports extends MY_Controller
                 if($productos[$i]->codemovement == "return-supplier"){
                     $tableRS .= '
                         <tr>
-                            <td style="text-align:center">No se ha generado</td>
+                            <td style="text-align:center">' . $productos[$i]->codeproducts . '</td>
                             <td style="text-align:center;">' . $productos[$i]->quantity . '</td>
                             <td style="text-align:center;">' . $productos[$i]->productname . '</td>
                             <td style="text-align:center;">' . $this->tec->formatMoney($productos[$i]->price) . '</td>
@@ -518,7 +550,7 @@ class Reports extends MY_Controller
                 if($productos[$i]->codemovement == "return-customer"){
                     $tableRC .= '
                         <tr>
-                            <td style="text-align:center">No se ha generado</td>
+                            <td style="text-align:center">' . $productos[$i]->codeproducts . '</td>
                             <td style="text-align:center;">' . $productos[$i]->quantity . '</td>
                             <td style="text-align:center;">' . $productos[$i]->productname . '</td>
                             <td style="text-align:center;">' . $this->tec->formatMoney($productos[$i]->price) . '</td>
@@ -658,6 +690,7 @@ class Reports extends MY_Controller
                         <td style="">Producto</td>
                         <td style="">Fecha venta</td>
                         <td style="">Vendedor</td>
+                        <td style="">Tipo de pago</td>
                         <td style="">Precio</td>
                         <td style="">Descuento</td>
                         <td style="">Cantidad</td>
@@ -673,6 +706,7 @@ class Reports extends MY_Controller
                         <td style="text-align:center;">'.$sales[$i]->product_name.'</td>
                         <td style="text-align:center;">'.$sales[$i]->date.'</td>
                         <td style="text-align:center;">'.$sales[$i]->first_name.' '.$sales[$i]->last_name.'</td>
+                        <td style="text-align:center;">'.$sales[$i]->tipopago.'</td>
                         <td style="text-align:center;">'.$this->tec->formatMoney($sales[$i]->unit_price).'</td>
                         <td style="text-align:center;">'.$this->tec->formatMoney($sales[$i]->discount).'</td>
                         <td style="text-align:center;">'.$this->tec->formatMoney($sales[$i]->quantity).'</td>
@@ -686,6 +720,7 @@ class Reports extends MY_Controller
                     <tr class="header" >
                         <td style="text-align:center;">#</td>
                         <td style="text-align:center;">Vendedor</td>
+                        <td style="">Tipo de pago</td>
                         <td style="text-align:center;">Fecha</td>
                         <td style="text-align:center;">Descuento</td>
                         <td style="text-align:center;">Total</td>
@@ -697,6 +732,7 @@ class Reports extends MY_Controller
                     <tr>
                         <td style="text-align:center;">'.$item.'</td>
                         <td style="text-align:center;">'.$sales[$i]->first_name.' '.$sales[$i]->last_name.'</td>
+                        <td style="text-align:center;">'.$sales[$i]->tipopago.'</td>
                         <td style="text-align:center;">'.$sales[$i]->date.'</td>
                         <td style="text-align:center;">'.$this->tec->formatMoney($sales[$i]->discount).'</td>
                         <td style="text-align:center;">'.$this->tec->formatMoney($sales[$i]->grand_total).'</td>
@@ -735,7 +771,7 @@ class Reports extends MY_Controller
         
         $html='
             <p>"ITALIA JOYAS"</p> 
-            <p>Reporte de Ventas por producto</p>
+            <p>'.$arrayfiltros[0].'</p>
             <p>De la fecha "'.$arrayfiltros[1].'" a la fecha "'.$arrayfiltros[2].'"</p>
             <hr style="text-align:left;margin-left:0">
             <hr style="text-align:left;margin-left:0">
