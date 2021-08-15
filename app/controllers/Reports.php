@@ -181,6 +181,7 @@ class Reports extends MY_Controller
         $this->data['products'] = $this->reports_model->getAllProducts();
         $this->data['page_title'] = $this->lang->line("products_report");
         $this->data['page_title'] = $this->lang->line("products_report");
+        $this->data['stores']     = $this->site->getAllStores();
         $bc = array(array('link' => '#', 'page' => lang('reports')), array('link' => '#', 'page' => lang('products_report')));
         $meta = array('page_title' => lang('products_report'), 'bc' => $bc);
         $this->page_construct('reports/products', $this->data, $meta);

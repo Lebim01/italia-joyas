@@ -9,6 +9,7 @@ class Pos_model extends CI_Model
     public function __construct()
     {
         parent::__construct();
+        $this->load->model('movements_model');
     }
 
     public function addSale($data, $items, $payment = [], $did = null)
@@ -32,6 +33,15 @@ class Pos_model extends CI_Model
                             if($isApart){
                                 $dataUpdate = ['apart' => ($product->apart + $item['quantity'])];
                             }
+                            $this->movements_model->addMovement(
+                                $data['store_id'],
+                                $product->id,
+                                $item['quantity'],
+                                $isApart ? 'apart' : 'sale',
+                                $sale_id,
+                                $isApart ? 'Producto apartado' : 'Producto vendido',
+                                $data['created_by']
+                            );
                             $this->db->update('product_store_qty', $dataUpdate, ['product_id' => $product->id, 'store_id' => $data['store_id']]);
                         } elseif ($product->type == 'combo') {
                             $combo_items = $this->getComboItemsByPID($product->id);
@@ -39,6 +49,15 @@ class Pos_model extends CI_Model
                                 $cpr = $this->site->getProductByID($combo_item->id);
                                 if ($cpr->type == 'standard') {
                                     $qty = $combo_item->qty * $item['quantity'];
+                                    $this->movements_model->addMovement(
+                                        $data['store_id'],
+                                        $cpr->id,
+                                        $item['quantity'],
+                                        $isApart ? 'apart' : 'sale',
+                                        $sale_id,
+                                        $isApart ? 'Producto apartado' : 'Producto vendido',
+                                        $data['created_by']
+                                    );
                                     $this->db->update('product_store_qty', ['quantity' => ($cpr->quantity - $qty)], ['product_id' => $cpr->id, 'store_id' => $data['store_id']]);
                                 }
                             }
@@ -101,10 +120,14 @@ class Pos_model extends CI_Model
     public function getAllSaleItems($sale_id)
     {
         $j = "(SELECT id, code, name, tax_method from {$this->db->dbprefix('products')}) P";
-        $this->db->select("sale_items.*,
-            (CASE WHEN {$this->db->dbprefix('sale_items')}.product_code IS NULL THEN {$this->db->dbprefix('products')}.code ELSE {$this->db->dbprefix('sale_items')}.product_code END) as product_code,
-            (CASE WHEN {$this->db->dbprefix('sale_items')}.product_name IS NULL THEN {$this->db->dbprefix('products')}.name ELSE {$this->db->dbprefix('sale_items')}.product_name END) as product_name,
-            {$this->db->dbprefix('products')}.tax_method as tax_method", false)
+        $this->db
+            ->select("
+                sale_items.*,
+                (CASE WHEN {$this->db->dbprefix('sale_items')}.product_code IS NULL THEN {$this->db->dbprefix('products')}.code ELSE {$this->db->dbprefix('sale_items')}.product_code END) as product_code,
+                (CASE WHEN {$this->db->dbprefix('sale_items')}.product_name IS NULL THEN {$this->db->dbprefix('products')}.name ELSE {$this->db->dbprefix('sale_items')}.product_name END) as product_name,
+                {$this->db->dbprefix('products')}.tax_method as tax_method"
+                , false
+            )
             ->join('products', 'products.id=sale_items.product_id', 'left outer')
             ->order_by('sale_items.id');
         $q = $this->db->get_where('sale_items', ['sale_id' => $sale_id]);
@@ -703,6 +726,8 @@ class Pos_model extends CI_Model
                 if($isApart){
                     $dataUpdate = ['apart' => ($product->apart - $oitem->quantity)];
                 }
+                // Registrar moviemitno de producto devuelto
+                $this->movements_model->returnSale($product->id, $id);
                 $this->db->update('product_store_qty', $dataUpdate, ['product_id' => $product->id, 'store_id' => $data['store_id']]);
             } elseif ($product->type == 'combo') {
                 $combo_items = $this->getComboItemsByPID($product->id);
@@ -710,6 +735,8 @@ class Pos_model extends CI_Model
                     $cpr = $this->site->getProductByID($combo_item->id, $osale->store_id);
                     if ($cpr->type == 'standard') {
                         $qty = $combo_item->qty * $oitem->quantity;
+                        // Registrar moviemitno de producto devuelto
+                        $this->movements_model->returnSale($cpr->id, $id);
                         $this->db->update('product_store_qty', ['quantity' => ($cpr->quantity + $qty)], ['product_id' => $cpr->id, 'store_id' => $osale->store_id]);
                     }
                 }
@@ -731,6 +758,15 @@ class Pos_model extends CI_Model
                         if($isApart){
                             $dataUpdate = ['apart' => ($product->apart + $item['quantity'])];
                         }
+                        $this->movements_model->addMovement(
+                            $osale->store_id,
+                            $product->id,
+                            $item['quantity'],
+                            $isApart ? 'apart' : 'sale',
+                            $id,
+                            $isApart ? 'Producto apartado' : 'Producto vendido',
+                            $data['created_by']
+                        );
                         $this->db->update('product_store_qty', $dataUpdate, ['product_id' => $product->id, 'store_id' => $data['store_id']]);
                     } elseif ($product->type == 'combo') {
                         $combo_items = $this->getComboItemsByPID($product->id);
@@ -738,6 +774,15 @@ class Pos_model extends CI_Model
                             $cpr = $this->site->getProductByID($combo_item->id, $osale->store_id);
                             if ($cpr->type == 'standard') {
                                 $qty = $combo_item->qty * $item['quantity'];
+                                $this->movements_model->addMovement(
+                                    $osale->store_id,
+                                    $cpr->id,
+                                    $item['quantity'],
+                                    $isApart ? 'apart' : 'sale',
+                                    $id,
+                                    $isApart ? 'Producto apartado' : 'Producto vendido',
+                                    $data['created_by']
+                                );
                                 $this->db->update('product_store_qty', ['quantity' => ($cpr->quantity - $qty)], ['product_id' => $cpr->id, 'store_id' => $osale->store_id]);
                             }
                         }

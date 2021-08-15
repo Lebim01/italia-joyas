@@ -160,7 +160,6 @@ class Site extends CI_Model
         if ($q->num_rows() > 0) {
             return $q->row();
         }
-        echo $this->db->last_query();
         return false;
     }
 

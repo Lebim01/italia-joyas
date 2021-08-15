@@ -325,10 +325,14 @@ class Pos extends MY_Controller
                 $item_quantity   = $_POST['quantity'][$r];
                 $item_comment    = $_POST['item_comment'][$r];
                 $item_discount   = $_POST['product_discount'][$r] ?? '0';
+                $item_code       = $_POST['product_code'][$r];
 
                 $stock = $this->site->getStockByID($item_id);
 
-                if (intval($stock->available) < intval($item_quantity)) {
+                /**
+                 * Validación de stock disponible (excepto concepto)
+                 */
+                if ($item_code !== 'Concepto' && intval($stock->available) < intval($item_quantity)) {
                     $this->session->set_flashdata('error', lang('No hay stock suficiente pata el producto ' . $_POST['product_name'][$r]));
                     redirect($_SERVER['HTTP_REFERER']);
                 }
@@ -432,7 +436,7 @@ class Pos extends MY_Controller
             /**
              * Validar si es una venta a credito no exceda el limite de credito
              */
-            if(!$eid && !$suspended){
+            if($this->input->post('transaction_type') === 'credit'){
                 $this->load->model('customers_model');
                 $available = $this->customers_model->getAvailableCredit($customer_id);
 
@@ -489,7 +493,7 @@ class Pos extends MY_Controller
             $paid = 0.0;
 
             for ($r = 0; $r < count($cantidad); $r++) {
-                $paid = $paid + $cantidad[$r];
+                $paid = $paid + (float) $cantidad[$r];
             }
 
             $total_tax   = $this->tec->formatDecimal(($product_tax + $order_tax), 4);
@@ -549,7 +553,7 @@ class Pos extends MY_Controller
                         redirect('pos');
                     }
                 }
-                $amount  = $this->tec->formatDecimal(($paid > $grand_total ? ($paid - $this->input->post('balance_amount')) : $paid), 4);
+                $amount  = $this->tec->formatDecimal(($paid > $grand_total ? ($paid - $grand_total) : $paid), 4);
 
                 $data['paid'] = $amount;
 
@@ -672,7 +676,19 @@ class Pos extends MY_Controller
                 foreach ($inv_items as $item) {
                     $row = $this->site->getProductByID($item->product_id);
                     if (!$row) {
-                        $row = json_decode('{}');
+                        if($item->product_code === 'Concepto'){
+                            $row = (object)[
+                                'name' => $item->product_name,
+                                'code' => 'Concepto',
+                                'id' => $item->product_id,
+                                'type' => 'concept',
+                                'quantity' => $item->quantity,
+                                'unit_price' => $item->unit_price,
+                                'real_unit_price' => $item->real_unit_price
+                            ];
+                        }else{
+                            $row = json_decode('{}');
+                        }
                     }
                     $row->price           = $item->net_unit_price;
                     $row->unit_price      = $item->unit_price;

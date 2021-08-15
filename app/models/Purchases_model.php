@@ -8,6 +8,7 @@ class Purchases_model extends CI_Model
     public function __construct()
     {
         parent::__construct();
+        $this->load->model('movements_model');
     }
 
     public function addExpense($data = [])
@@ -25,6 +26,15 @@ class Purchases_model extends CI_Model
             foreach ($items as $item) {
                 $item['purchase_id'] = $purchase_id;
                 if ($this->db->insert('purchase_items', $item)) {
+                    $this->movements_model->addMovement(
+                        $data['store_id'],
+                        $item['product_id'],
+                        $item['quantity'],
+                        'buy-supplier',
+                        $purchase_id,
+                        'Producto comprado al proveedor',
+                        $data['created_by']
+                    );
                     if ($data['received']) {
                         $this->setStoreQuantity($item['product_id'], $data['store_id'], $item['quantity']);
                     }
@@ -50,6 +60,7 @@ class Purchases_model extends CI_Model
             $oitems = $this->getAllPurchaseItems($id);
             foreach ($oitems as $oitem) {
                 if ($product = $this->site->getProductByID($oitem->product_id)) {
+                    $this->movements_model->returnBuySupplier($oitem->product_id, $id);
                     $this->setStoreQuantity($oitem->product_id, $purchase->store_id, (0 - $oitem->quantity));
                 }
             }
