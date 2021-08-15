@@ -43,7 +43,7 @@ class Customers_model extends CI_Model
 
     public function getAvailableCredit($id){
         $this->db->where('id', $id);
-        $limit = $this->db->get('customers')->row();
+        $limit = $this->db->get('customers')->row()->credit_limit;
 
         $this->db->where('customer_id', $id);
         $this->db->where('status', 'partial');
