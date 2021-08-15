@@ -1442,6 +1442,10 @@ $(document).ready(function () {
 
   //pagar
   $('#submit-sale').click(function () {
+    console.log(window.location.href.match(/edit=/),window.location.href.indexOf('edit='))
+    let edit = window.location.href.indexOf('edit=')
+    console.log(edit)
+
     let transaction_type = $("#transaction_type").val()
 
     for (i = 0; i < nextinput; i++) {
@@ -1467,7 +1471,7 @@ $(document).ready(function () {
       }
     }
 
-    if (transaction_type === 'liquidate') {
+    if (transaction_type === 'liquidate' && edit < 0) {
       if (total_cantidad < g_total) {
         alert('El monto no puede ser menor que el total a pagar')
         return;
