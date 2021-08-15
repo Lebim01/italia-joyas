@@ -807,4 +807,20 @@ class Reports extends MY_Controller
         $dompdf->render();
         $dompdf->stream($arrayfiltros[0].".pdf", array("Attachment"=>0)); 
     }
+
+    public function aplpy_ajust_inventory(){
+        $this->load->model('inventory_model');
+        $items = $this->input->post('items');
+
+        if(count($items) > 0){
+            foreach($items as $item){
+                $this->inventory_model->adjustProduct(
+                    $this->session->userdata('store_id'),
+                    $item['code'],
+                    $item['quantity'],
+                    $this->session->userdata('user_id')
+                );
+            }
+        }
+    }
 }
