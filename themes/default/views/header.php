@@ -186,7 +186,7 @@
                                 </ul>
                             </li>
                         <?php } ?>
-                        <li class="treeview mm_gift_cards">
+                        <!-- <li class="treeview mm_gift_cards">
                             <a href="#">
                                 <i class="fa fa-credit-card"></i>
                                 <span><?= lang('gift_cards'); ?></span>
@@ -196,7 +196,7 @@
                                 <li id="gift_cards_index"><a href="<?= site_url('gift_cards'); ?>"><i class="fa fa-circle-o"></i> <?= lang('list_gift_cards'); ?></a></li>
                                 <li id="gift_cards_add"><a href="<?= site_url('gift_cards/add'); ?>"><i class="fa fa-circle-o"></i> <?= lang('add_gift_card'); ?></a></li>
                             </ul>
-                        </li>
+                        </li> -->
 
                         <li class="treeview mm_auth mm_customers mm_suppliers">
                             <a href="#">
@@ -230,8 +230,8 @@
                                     <li id="settings_add_store"><a href="<?= site_url('settings/add_store'); ?>"><i class="fa fa-circle-o"></i> <?= lang('add_store'); ?></a></li>
                                     <li class="divider"></li>
                                 <?php } ?>
-                                <li id="settings_printers"><a href="<?= site_url('settings/printers'); ?>"><i class="fa fa-circle-o"></i> <?= lang('printers'); ?></a></li>
-                                <li id="settings_add_printer"><a href="<?= site_url('settings/add_printer'); ?>"><i class="fa fa-circle-o"></i> <?= lang('add_printer'); ?></a></li>
+                                <!-- <li id="settings_printers"><a href="<?= site_url('settings/printers'); ?>"><i class="fa fa-circle-o"></i> <?= lang('printers'); ?></a></li> -->
+                                <!-- <li id="settings_add_printer"><a href="<?= site_url('settings/add_printer'); ?>"><i class="fa fa-circle-o"></i> <?= lang('add_printer'); ?></a></li> -->
                                 <li class="divider"></li>
                                 <?php if ($this->db->dbdriver != 'sqlite3') { ?>
                                     <li id="settings_backups"><a href="<?= site_url('settings/backups'); ?>"><i class="fa fa-circle-o"></i> <?= lang('backups'); ?></a></li>

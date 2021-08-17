@@ -178,31 +178,6 @@ if ($chartData) {
                     <?php } ?>
                 </div>
             </div>
-
-            <div class="row">
-                <div class="col-md-8">
-                    <div class="box box-primary">
-                        <div class="box-header">
-                            <h3 class="box-title"><?= lang('sales_chart'); ?></h3>
-                        </div>
-                        <div class="box-body">
-                            <div id="chart" style="height:300px;"></div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="col-md-4">
-                    <div class="box box-primary">
-                        <div class="box-header">
-                            <h3 class="box-title"><?= lang('top_products') . ' (' . date('F Y') . ')'; ?></h3>
-                        </div>
-                        <div class="box-body">
-                            <div id="chart2" style="height:300px;"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
 </section>

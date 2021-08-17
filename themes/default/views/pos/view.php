@@ -83,6 +83,7 @@ if ($modal) {
                                     <thead>
                                         <tr>
                                             <th class="text-center" style="width: 50%; border-bottom: 2px solid #ddd;"><?=lang('description');?></th>
+                                            <th class="text-center" style="width: 50%; border-bottom: 2px solid #ddd;">Código</th>
                                             <th class="text-center" style="width: 12%; border-bottom: 2px solid #ddd;"><?=lang('quantity');?></th>
                                             <th class="text-center" style="width: 24%; border-bottom: 2px solid #ddd;"><?=lang('price');?></th>
                                             <th class="text-center" style="width: 26%; border-bottom: 2px solid #ddd;"><?=lang('subtotal');?></th>
@@ -94,8 +95,10 @@ if ($modal) {
                                         foreach ($rows as $row) {
                                             echo '<tr><td>';
                                             echo $row->product_name;
+                                            
                                             // echo $row->comment ? '<br>' . nl2br($row->comment) : '';
                                             echo '</td>';
+                                            echo '<td style="text-align:center;">' . $row->product_code . '</td>';
                                             echo '<td style="text-align:center;">' . $this->tec->formatQuantity($row->quantity) . '</td>';
                                             echo '<td class="text-right">';
                                             echo $this->tec->formatMoney($row->net_unit_price + ($row->item_tax / $row->quantity)) . '</td><td class="text-right">' . $this->tec->formatMoney($row->subtotal) . '</td></tr>';
@@ -105,17 +108,17 @@ if ($modal) {
                                     <tfoot>
                                         <tr>
                                             <th class="text-left" colspan="2"><?= lang('total'); ?></th>
-                                            <th colspan="2" class="text-right"><?= $this->tec->formatMoney($inv->total + $inv->product_tax); ?></th>
+                                            <th colspan="3" class="text-right"><?= $this->tec->formatMoney($inv->total + $inv->product_tax); ?></th>
                                         </tr>
                                         <?php
                                         if ($inv->order_tax != 0) {
-                                            echo '<tr><th class="text-left" colspan="2">' . lang('order_tax') . '</th><th colspan="2" class="text-right">' . $this->tec->formatMoney($inv->order_tax) . '</th></tr>';
+                                            echo '<tr><th class="text-left" colspan="3">' . lang('order_tax') . '</th><th colspan="3" class="text-right">' . $this->tec->formatMoney($inv->order_tax) . '</th></tr>';
                                         }
                                         if ($inv->total_discount != 0) {
-                                            echo '<tr><th class="text-left" colspan="2">' . lang('order_discount') . '</th><th colspan="2" class="text-right">' . $this->tec->formatMoney($inv->total_discount) . '</th></tr>';
+                                            echo '<tr><th class="text-left" colspan="3">' . lang('order_discount') . '</th><th colspan="3" class="text-right">' . $this->tec->formatMoney($inv->total_discount) . '</th></tr>';
                                         }
                                         if ($inv->total_tax != 0) {
-                                            echo '<tr><th class="text-left" colspan="2">' . lang('tax') . '</th><th colspan="2" class="text-right">' . $this->tec->formatMoney($inv->total_tax) . '</th></tr>';
+                                            echo '<tr><th class="text-left" colspan="3">' . lang('tax') . '</th><th colspan="3" class="text-right">' . $this->tec->formatMoney($inv->total_tax) . '</th></tr>';
                                         }
 
                                         if ($Settings->rounding) {
@@ -123,45 +126,45 @@ if ($modal) {
                                             $rounding    = $this->tec->formatDecimal($round_total - $inv->grand_total); ?>
                                             <tr>
                                                 <th class="text-left" colspan="2"><?= lang('rounding'); ?></th>
-                                                <th colspan="2" class="text-right"><?= $this->tec->formatMoney($rounding); ?></th>
+                                                <th colspan="3" class="text-right"><?= $this->tec->formatMoney($rounding); ?></th>
                                             </tr>
                                             <tr>
                                                 <th class="text-left" colspan="2"><?= lang('grand_total'); ?></th>
-                                                <th colspan="2" class="text-right"><?= $this->tec->formatMoney($inv->grand_total + $rounding); ?></th>
+                                                <th colspan="3" class="text-right"><?= $this->tec->formatMoney($inv->grand_total + $rounding); ?></th>
                                             </tr>
                                             <?php
                                         } else {
                                             $round_total = $inv->grand_total; ?>
                                             <tr>
                                                 <th class="text-left" colspan="2"><?= lang('grand_total'); ?></th>
-                                                <th colspan="2" class="text-right"><?= $this->tec->formatMoney($inv->grand_total); ?></th>
+                                                <th colspan="3" class="text-right"><?= $this->tec->formatMoney($inv->grand_total); ?></th>
                                             </tr>
                                             <?php
                                         }
                                       ?>
                                        <tr>
                                             <th class="text-left" colspan="2">Métodos de pago</th>
-                                            <th colspan="2" class="text-right"></th>
+                                            <th colspan="3" class="text-right"></th>
                                         </tr>
                                       <?php
                                         foreach ($payments as $payment) {
                                       ?>
                                         <tr>
                                             <th class="text-left" colspan="2"></th>
-                                            <th colspan="2" class="text-right"><?= lang($payment->paid_by);?>  <?= $payment->banks;?> : <?= $this->tec->formatMoney($payment->amount);?></th>
+                                            <th colspan="3" class="text-right"><?= lang($payment->paid_by);?>  <?= $payment->banks;?> : <?= $this->tec->formatMoney($payment->amount);?></th>
                                         </tr>
                                       <?php
                                         }
                                       ?>
                                         
                                         <tr>
-                                            <th class="text-left" colspan="2"><?= lang('paid_amount'); ?></th>
-                                            <th colspan="2" class="text-right"><?= $this->tec->formatMoney($inv->paid); ?></th>
+                                            <th class="text-left" colspan="2">Cambio</th>
+                                            <th colspan="3" class="text-right"><?= $this->tec->formatMoney($inv->paid); ?></th>
                                         </tr>
                                         <?php if($inv->paid >= $inv->grand_total): ?>
                                         <tr>
                                             <th class="text-left" colspan="2">Cambio</th>
-                                            <th colspan="2" class="text-right"><?= $this->tec->formatMoney($inv->paid - $inv->grand_total); ?></th>
+                                            <th colspan="3" class="text-right"><?= $this->tec->formatMoney($inv->paid - $inv->grand_total); ?></th>
                                         </tr>
                                         <?php endif; ?>
                                         
