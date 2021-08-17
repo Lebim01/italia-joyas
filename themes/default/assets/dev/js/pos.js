@@ -1076,8 +1076,9 @@ $(document).ready(function () {
         paid_by: 'cash'
       },
       success: function () {
-        $("#paymentModal").modal('hide')
+        //$("#paymentModal").modal('hide')
         alert('Abono hecho correctamente')
+        window.location.reload()
       }
     })
   })
