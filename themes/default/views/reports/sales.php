@@ -138,11 +138,12 @@ if ($this->input->post('end_date')) {
                             </div>
                             <div class="form-group">
                                 Tipo de reporte: <br>
-                                <select id="tipoReporte" class="form-control paid_by select2 bank" style="width:35%; display:inline-block">
+                                <select id="tipoReporte" class="form-control paid_by select2 bank" style="width:50%; display:inline-block">
                                     <option value="seleccione" selected>Seleccione una opción</option>
                                     <option value="bySales">Reporte de ventas</option>
                                     <option value="byProducts">Reporte de ventas por producto</option>
                                     <option value="byInvoice">Reporte de ventas fiscal</option>
+                                    <option value="byComision">Reporte de comisiones de ventas</option>
                                 </select>
                             </div>
                         </div>
@@ -373,7 +374,7 @@ if ($this->input->post('end_date')) {
                 $("#date_fin").val("")
             }
 
-            if( $(this).val() != "seleccione" && $(this).val() != "byInvoice"){
+            if( $(this).val() != "seleccione" && $(this).val() != "byInvoice" && $(this).val() != "byComision"){
                 $("#paymentFilter").css("display", "inline-block");
             } else{
                 $("#paymentFilter").css("display", "none");
@@ -384,11 +385,7 @@ if ($this->input->post('end_date')) {
             if($("#tipoReporte").val() == "byProducts"){
                 if($('#date_inicio').val() && $('#date_fin').val()){
                     let data = ["Reporte de ventas por producto",$('#date_inicio').val(),$('#date_fin').val(),$('#store').val(),$("input[type='radio']:checked").val()]
-                    let url=  new URL(window.location.origin+"/reports/reportssales/");
-                    url.searchParams.append('filtros', data)
-                    window.open(url.toString(), '_blank')
-                    clear()
-                    return
+                    redirect(data)
                 }
                 else {
                     alert ("Llene los campos correctamente")
@@ -398,10 +395,7 @@ if ($this->input->post('end_date')) {
             if($("#tipoReporte").val() == "bySales"){
                 if($('#date_inicio').val() && $('#date_fin').val()){
                     let data = ["Reporte de ventas",$('#date_inicio').val(),$('#date_fin').val(),$('#store').val(),$("input[type='radio']:checked").val()]
-                    let url=  new URL(window.location.origin+"/reports/reportssales/");
-                    url.searchParams.append('filtros', data)
-                    window.open(url.toString(), '_blank')
-                    clear()
+                    redirect(data)
                     return
                 }
                 else {
@@ -412,18 +406,32 @@ if ($this->input->post('end_date')) {
             if($("#tipoReporte").val() == "byInvoice"){
                 if($('#date_inicio').val() && $('#date_fin').val()){
                     let data = ["Reporte de ventas fiscal",$('#date_inicio').val(),$('#date_fin').val(),$('#store').val()]
-                    let url=  new URL(window.location.origin+"/reports/reportssales/");
-                    url.searchParams.append('filtros', data)
-                    window.open(url.toString(), '_blank')
-                    clear()
-                    return
+                    redirect(data)
                 }
                 else {
                     alert ("Llene los campos correctamentes")
                 }
-            } 
+            }
+            
+            if($("#tipoReporte").val() == "byComision"){
+                if($('#date_inicio').val() && $('#date_fin').val()){
+                    let data = ["Reporte de ventas por comision",$('#date_inicio').val(),$('#date_fin').val(),$('#store').val()]
+                    redirect(data)
+                }
+                else {
+                    alert ("Llene los campos correctamentes")
+                }
+            }
 
         });
+
+        function redirect(data){
+            let url=  new URL(window.location.origin+"/reports/reportssales/");
+            url.searchParams.append('filtros', data)
+            window.open(url.toString(), '_blank')
+            clear()
+            return
+        }
 
         function clear() {
             $("#datesFilter").css("display", "none");

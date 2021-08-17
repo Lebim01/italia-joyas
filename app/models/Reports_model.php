@@ -342,6 +342,41 @@ class Reports_model extends CI_Model
         
     }
 
+    public function getComisiones($filtros)
+    {
+
+        $data = $this->db->query("SELECT 
+                                tec_users.first_name,
+                                tec_users.last_name,
+                                SUM(tec_sales.grand_total),
+                                SUM(
+                                    CASE
+                                    WHEN tec_sales.transaction_type = 'credit' 
+                                    THEN tec_sales.grand_total * .01 
+                                    ELSE 0 
+                                    END
+                                ) AS tarjeta,
+                                SUM(
+                                    CASE
+                                    WHEN tec_sales.transaction_type = 'liquidate' 
+                                    THEN tec_sales.grand_total * .015 
+                                    ELSE 0 
+                                    END
+                                ) AS contado 
+                                FROM
+                                tec_sales 
+                                LEFT JOIN tec_users 
+                                    ON tec_sales.created_by = tec_users.id 
+                                WHERE tec_sales.store_id = ".$filtros[3]." 
+                                AND tec_sales.date >= '".$filtros[1]."  00:00:00' 
+                                AND tec_sales.date <= '".$filtros[2]."  23:59:59'
+                                GROUP BY tec_sales.created_by
+                                ")->result();
+                                //echo $this->db->last_query();exit;
+        return  $data;
+        
+    }
+
     public function getallSales($fechas)
     {
         $where = "";

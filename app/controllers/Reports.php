@@ -415,6 +415,7 @@ class Reports extends MY_Controller
         $tableRC = "";
         $tableRS = "";
         $tableS = "";
+        $tableAP = "";
         $rango = "";
         $tablaExis = "";
         if ($arrayfiltros[0] == "Reporte de existencia de productos") {
@@ -535,7 +536,7 @@ class Reports extends MY_Controller
                     ';
                 }
 
-                if($productos[$i]->codemovement == "return-supplier"){
+                if($productos[$i]->codemovement == "buy-supplier-return"){
                     $tableRS .= '
                         <tr>
                             <td style="text-align:center">' . $productos[$i]->codeproducts . '</td>
@@ -548,8 +549,21 @@ class Reports extends MY_Controller
                     ';
                 }
 
-                if($productos[$i]->codemovement == "return-customer"){
+                if($productos[$i]->codemovement == "sale-return"){
                     $tableRC .= '
+                        <tr>
+                            <td style="text-align:center">' . $productos[$i]->codeproducts . '</td>
+                            <td style="text-align:center;">' . $productos[$i]->quantity . '</td>
+                            <td style="text-align:center;">' . $productos[$i]->productname . '</td>
+                            <td style="text-align:center;">' . $this->tec->formatMoney($productos[$i]->price) . '</td>
+                            <td style="text-align:center;">' . $productos[$i]->date . '</td>
+                            <td style="text-align:center;">' . $productos[$i]->description . '</td>
+                        </tr>
+                    ';
+                }
+
+                if($productos[$i]->codemovement == "apart"){
+                    $tableAP .= '
                         <tr>
                             <td style="text-align:center">' . $productos[$i]->codeproducts . '</td>
                             <td style="text-align:center;">' . $productos[$i]->quantity . '</td>
@@ -565,7 +579,7 @@ class Reports extends MY_Controller
 
         if ($arrayfiltros[0] == "Reporte de movimientos de productos") {
             $rango = '<br><label>De la fecha "'.$arrayfiltros[1].'" a la fecha "'.$arrayfiltros[2].'"</label>';
-            if(isset($tableIA)){
+            if($tableIA){
                 $tablaExis .= '
                     <h3>E-INV</h3>
                     <table class="blueTable floatedTable" style="width:100%;text-align:center;">
@@ -576,7 +590,7 @@ class Reports extends MY_Controller
                     </table>
                 ';
             }
-            if(isset($tableBS)){
+            if($tableBS){
                 $tablaExis .= '
                     <h3>E-COM</h3>
                     <table class="blueTable floatedTable" style="width:100%;text-align:center;">
@@ -587,7 +601,7 @@ class Reports extends MY_Controller
                     </table>
                 ';
             }
-            if(isset($tableS)){
+            if($tableS){
                 $tablaExis .= '
                     <h3>S-VEN</h3>
                     <table class="blueTable floatedTable" style="width:100%;text-align:center;">
@@ -598,7 +612,7 @@ class Reports extends MY_Controller
                     </table>
                 ';
             }
-            if(isset($tableRS)){
+            if($tableRS){
                 $tablaExis .= '
                     <h3>S-PRO</h3>
                     <table class="blueTable floatedTable" style="width:100%;text-align:center;">
@@ -609,13 +623,25 @@ class Reports extends MY_Controller
                     </table>
                 ';
             }
-            if(isset($tableRC)){
+            if($tableRC){
                 $tablaExis .= '
                     <h3>E-CLI</h3>
                     <table class="blueTable floatedTable" style="width:100%;text-align:center;">
                         <tbody>
                             ' . $header . '
                             ' . $tableRC . '
+                        </tbody>
+                    </table>
+                ';
+            }
+
+            if($tableAP){
+                $tablaExis .= '
+                    <h3>E-CLI</h3>
+                    <table class="blueTable floatedTable" style="width:100%;text-align:center;">
+                        <tbody>
+                            ' . $header . '
+                            ' . $tableAP . '
                         </tbody>
                     </table>
                 ';
@@ -768,6 +794,32 @@ class Reports extends MY_Controller
                 ';
             }
             
+        } else if($arrayfiltros[0] == "Reporte de ventas por comision") {
+            $sales = $this->reports_model->getComisiones($arrayfiltros);
+
+            //var_dump($sales);exit;
+            $header = '
+                    <tr class="header" >
+                        <td style="text-align:center;">#</td>
+                        <td style="text-align:center;">Vendedor</td>
+                        <td style="text-align:center;">Contado</td>
+                        <td style="text-align:center;">Crédito</td>
+                        <td style="text-align:center;">Total</td>
+                    </tr>
+            ';
+            for($i=0;$i<=count($sales)-1;$i++){
+                $item = $i + 1;
+
+                $table.='
+                    <tr>
+                        <td style="text-align:center;">'.$item.'</td>
+                        <td style="text-align:center;">'.$sales[$i]->first_name.' '.$sales[$i]->last_name.'</td>
+                        <td style="text-align:center;">'.$this->tec->formatMoney( $sales[$i]->contado).'</td>
+                        <td style="text-align:center;">'.$this->tec->formatMoney( $sales[$i]->tarjeta).'</td>
+                        <td style="text-align:center;">'.$this->tec->formatMoney($sales[$i]->contado + $sales[$i]->tarjeta).'</td>
+                    </tr>
+                ';
+            }
         }
         
         $html='

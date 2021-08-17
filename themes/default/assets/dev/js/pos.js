@@ -9,7 +9,6 @@ function add_invoice_item(item) {
   }
 
   var item_id = Settings.item_addition == 1 ? item.item_id : item.id;
-
   if (spositems[item_id]) {
     spositems[item_id].row.qty = parseFloat(spositems[item_id].row.qty) + parseFloat(item.row.qty || 1);
   } else {
@@ -78,7 +77,7 @@ function loadItems() {
         item_type = item.row.type,
         item_ds = item.row.discount,
         item_code = item.row.code,
-        item_name = (item.row.name || '').replace(/"/g, '&#034;').replace(/'/g, '&#039;');
+        item_name = item.row.name.replace(/"/g, '&#034;').replace(/'/g, '&#039;');
       var unit_price = parseFloat(item.row.real_unit_price);
       var net_price = unit_price;
       var item_comment = item.row.comment;
@@ -114,10 +113,7 @@ function loadItems() {
       var newTr = $('<tr id="' + row_no + '" class="' + item_id + '" data-item-id="' + item_id + '" data-id="' + item.row.id + '"></tr>');
       tr_html = `
         <td>
-          ${item.row.code !== 'Concepto'
-          ? `<img class="img-open-modal" width="100" height="100" src="/uploads/thumbs/${item.row.image}" />`
-          : ''
-        }
+          <img class="img-open-modal" width="100" height="100" src="/uploads/thumbs/${item.row.image}" />
         </td>
       `
       tr_html +=
@@ -1196,42 +1192,6 @@ $(document).ready(function () {
   const multiply = function () {
     console.log("sdsd");
   }
-
-  $("#add_concept").click(function (e) {
-    e.preventDefault()
-    $("#addConceptModal").modal('show')
-  })
-
-  $("#addConceptToList").click(function () {
-    const concept = $("#addConceptModal input#concept")
-    const price = $("#addConceptModal input#price")
-
-    if (concept && price) {
-      function getRandomInt(min, max) {
-        return Math.floor(Math.random() * (max - min)) + min;
-      }
-
-      const id = getRandomInt(100000000, 1000000000)
-      add_invoice_item({
-        id,
-        item_id: id,
-        row: {
-          id,
-          type: 'concept',
-          name: concept.val(),
-          qty: 1,
-          code: 'Concepto',
-          real_unit_price: price.val()
-        }
-      })
-
-      concept.val('')
-      price.val('')
-      $("#addConceptModal").modal('hide')
-    } else {
-      alert('Favor de completar los campos')
-    }
-  })
 
   $("body").delegate(".pago", "change", function (e) {
     const bank = $(this).parent().find('select.bank')
