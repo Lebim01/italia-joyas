@@ -1165,6 +1165,43 @@ $(document).ready(function () {
     $('#amount').val('').change();
   });
 
+  $("#add_concept").click(function (e) {
+    e.preventDefault()
+    $("#addConceptModal").modal('show')
+  })
+
+  $("#addConceptToList").click(function () {
+    const concept = $("#addConceptModal input#concept")
+    const price = $("#addConceptModal input#price")
+
+    if (concept && price) {
+      function getRandomInt(min, max) {
+        return Math.floor(Math.random() * (max - min)) + min;
+      }
+
+      const id = getRandomInt(100000000, 1000000000)
+      add_invoice_item({
+        id,
+        item_id: id,
+        row: {
+          id,
+          type: 'concept',
+          name: concept.val(),
+          qty: 1,
+          code: 'Concepto',
+          real_unit_price: price.val()
+        }
+      })
+
+      concept.val('')
+      price.val('')
+      $("#addConceptModal").modal('hide')
+    } else {
+      alert('Favor de completar los campos')
+    }
+  })
+
+
   $('#amount').change(function (e) {
     var total_paying = $('.amount').val();
     $('#total_paying').text(formatMoney(total_paying));
