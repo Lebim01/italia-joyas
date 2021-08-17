@@ -441,7 +441,7 @@ class Pos extends MY_Controller
                 $available = $this->customers_model->getAvailableCredit($customer_id);
 
                 if($total > $available){
-                    $this->session->set_flashdata('error', "El cliente <b>$customer</b> no cuenta con el crédito disponible suficiente para realizar esta compra, disponible: ${$available}");
+                    $this->session->set_flashdata('error', "El cliente <b>$customer</b> no cuenta con el crédito disponible suficiente para realizar esta compra, disponible: $ {$available}");
                     redirect($_SERVER['HTTP_REFERER']);
                 }
             }
@@ -502,15 +502,12 @@ class Pos extends MY_Controller
             $round_total = $this->tec->roundNumber($grand_total, $this->Settings->rounding);
             $rounding    = $this->tec->formatDecimal(($round_total - $grand_total));
             
-            if (!$eid) {
-                $status = 'due';
-                if ($this->tec->formatDecimal($round_total) <= $this->tec->formatDecimal($paid)) {
-                    $status = 'paid';
-                } elseif ($this->tec->formatDecimal($round_total) > $this->tec->formatDecimal($paid) && $paid > 0) {
-                    $status = 'partial';
-                }
+            $status = 'due';
+            if ($this->tec->formatDecimal($round_total) <= $this->tec->formatDecimal($paid)) {
+                $status = 'paid';
+            } elseif ($this->tec->formatDecimal($round_total) > $this->tec->formatDecimal($paid) && $paid > 0) {
+                $status = 'partial';
             }
-
 
             $totalpagos = $this->input->post('total_pagos');
 

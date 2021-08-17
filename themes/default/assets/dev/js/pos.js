@@ -1143,7 +1143,18 @@ $(document).ready(function () {
     }
   });
   $("#payModal").delegate('#transaction_type', 'change', function () {
-    $("input#transaction_type").val($(this).val())
+    const type = $(this).val()
+    $("input#transaction_type").val(type)
+
+    if (type === 'credit') {
+      spositems = {}
+      $("#methods").hide()
+      $("#no-methods").show()
+      $("#campos").empty()
+    } else {
+      $("#methods").show()
+      $("#no-methods").hide()
+    }
   })
   $('#payModal').on('shown.bs.modal', function (e) {
     $('#amount').focus().val(0);
@@ -1442,7 +1453,7 @@ $(document).ready(function () {
 
   //pagar
   $('#submit-sale').click(function () {
-    console.log(window.location.href.match(/edit=/),window.location.href.indexOf('edit='))
+    console.log(window.location.href.match(/edit=/), window.location.href.indexOf('edit='))
     let edit = window.location.href.indexOf('edit=')
     console.log(edit)
 

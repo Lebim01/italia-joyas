@@ -91,7 +91,43 @@ $v = "?v=1";
         });
 
         $("#PayRData").delegate('.physical-inv', 'change', function(e){
+            const val = $(this).val()
+            if(val){
+                $(this).addClass('border-success')
+            }else{
+                $(this).removeClass('border-success')
+            }
             $("#apply").show()
+        })
+
+        $("#apply").click(function(){
+            if(confirm('¿Esta seguro de aplicar los cambios? Esta accion es irreversible')){
+                $("#apply").prop('disabled', true);
+                $("#apply").html('Aplicando...');
+
+                const items = []
+
+                $("input.border-success").each(function(index){
+                    const code = $(this).parent().parent().find('> :first-child').html()
+                    const quantity = $(this).val()
+                    items.push({
+                        code,
+                        quantity
+                    })
+                })
+
+                $.ajax({
+                    url: '<?= site_url('reports/aplpy_ajust_inventory/'); ?>',
+                    method: 'POST',
+                    data: {
+                        items,
+                        "<?= $this->security->get_csrf_token_name(); ?>": "<?= $this->security->get_csrf_hash() ?>"
+                    },
+                    success: function(){
+                        window.location.reload()      
+                    }
+                })
+            }
         })
 
     });
@@ -111,6 +147,9 @@ $v = "?v=1";
     .table td:nth-child(4),
     .table td:nth-child(5) {
         text-align: right;
+    }
+    .border-success {
+        border: 1px solid #28a745 !important;
     }
 </style>
 <section class="content">
