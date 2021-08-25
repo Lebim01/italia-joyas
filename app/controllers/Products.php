@@ -374,7 +374,7 @@ class Products extends MY_Controller
 
                 $config['upload_path']   = 'uploads/';
                 $config['allowed_types'] = 'csv';
-                $config['max_size']      = '500';
+                #$config['max_size']      = '500';
                 $config['overwrite']     = true;
 
                 $this->upload->initialize($config);

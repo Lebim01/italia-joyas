@@ -130,7 +130,7 @@
                             <div class="modal-dialog modal-sm">
                                 <div class="modal-content">
                                     <div class="modal-body text-center">
-                                        <img id="product_image" src="" alt="" />
+                                        <img id="product_image" style="max-width: 100%;" src="" alt="" />
                                     </div>
                                 </div>
                             </div>
