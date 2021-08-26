@@ -39,7 +39,7 @@
                         </div>
                         <div class="form-group">
                             <?= lang('email', 'email'); ?>
-                            <?= form_input('email', set_value('email'), 'class="form-control tip" id="email"  required="required"'); ?>
+                            <?= form_input('email', set_value('email'), 'class="form-control tip" id="email"'); ?>
                         </div>
                         <div class="form-group">
                             <?= lang('username', 'username'); ?>

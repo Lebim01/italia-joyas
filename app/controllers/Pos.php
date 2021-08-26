@@ -306,6 +306,7 @@ class Pos extends MY_Controller
             $tax_rate  = 'tax_rate';
 
             $date             = $eid ? $this->input->post('date') : date('Y-m-d H:i:s');
+            $split_payments   = $this->input->post('split_payments');
             $customer_id      = $this->input->post('customer_id');
             $customer_details = $this->pos_model->getCustomerByID($customer_id);
             $customer         = $customer_details->name;
@@ -534,6 +535,7 @@ class Pos extends MY_Controller
                 'note'              => $note,
                 'hold_ref'          => $this->input->post('hold_ref'),
                 'transaction_type'  => $this->input->post('transaction_type'),
+                'split_payments'    => $this->tec->formatDecimal($split_payments, 4),
                 'delivered'         => $this->input->post('transaction_type') == 'apart' ? 0 : 1
             ];
 
@@ -558,7 +560,7 @@ class Pos extends MY_Controller
                     $payment[$r] = [
                         'date'        => $date,
                         'amount'      => $cantidad[$r],
-                        'banks'      => $bancos[$r],
+                        'banks'       => $bancos[$r],
                         'customer_id' => $customer_id,
                         'paid_by'     => $metodos[$r],
                         'cheque_no'   => $this->input->post('cheque_no'),

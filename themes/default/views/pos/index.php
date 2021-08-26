@@ -486,6 +486,7 @@
                                     <input type="hidden" name="bancos" id="bancos" value="" />
                                     <input type="hidden" name="cantidad" id="cantidad" value="0" />
                                     <input type="hidden" name="transaction_type" id="transaction_type" value="liquidate" />
+                                    <input type="hidden" name="split_payments" id="split_payments_val" value="0" />
                                 </div>
                                 <input type="hidden" name="customer" id="customer" value="<?= $Settings->default_customer ?>" />
                                 <input type="hidden" name="order_tax" id="tax_val" value="" />
@@ -910,14 +911,14 @@
                                 </table>
                                 <div class="clearfix"></div>
                             </div>
-                            <!-- <div class="row">
+                            <div class="row">
                             <div class="col-xs-12">
                                 <div class="form-group">
-                                    <?= lang('  ', 'note'); ?>
-                                    <textarea name="note" id="note" class="pa form-control kb-text"></textarea>
+                                    Comentarios:
+                                    <textarea name="note" id="payment_note" class="pa form-control kb-text"></textarea>
                                 </div>
                             </div>
-                        </div> -->
+                        </div>
                             <div style="border: white 1px solid; border-radius:5px; padding:10px;">
                                 <!-- <div class="row">
                                 <div class="col-xs-12">
@@ -931,8 +932,12 @@
                                 <div class="row">
                                     <div class="col-xs-6">
                                         
-                                        <div class="form-group" id="no-methods" style="display: none;">
+                                        <div class="form-group no-methods" style="display: none;">
                                             <label>En este tipo de transacción no puedes agregar metodos de pago</label>
+                                        </div>
+                                        <div class="form-group no-methods" style="display: none;">
+                                            Abonos:
+                                            <input name="split_payments" type="number" id="split_payments" class="pa form-control kb-pad"/>
                                         </div>
                                     </div>
                                 </div>
