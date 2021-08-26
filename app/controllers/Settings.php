@@ -92,9 +92,9 @@ class Settings extends MY_Controller
 
                 $config['upload_path']   = 'uploads/';
                 $config['allowed_types'] = 'gif|jpg|png';
-                $config['max_size']      = '500';
-                $config['max_width']     = '300';
-                $config['max_height']    = '100';
+                #$config['max_size']      = '500';
+                #$config['max_width']     = '300';
+                #$config['max_height']    = '100';
                 $config['overwrite']     = false;
                 $config['encrypt_name']  = true;
                 $this->upload->initialize($config);
@@ -373,9 +373,9 @@ class Settings extends MY_Controller
 
                 $config['upload_path']   = 'uploads/';
                 $config['allowed_types'] = 'gif|jpg|png';
-                $config['max_size']      = '500';
-                $config['max_width']     = '1000';
-                $config['max_height']    = '1000';
+                #$config['max_size']      = '500';
+                #$config['max_width']     = '1000';
+                #$config['max_height']    = '1000';
                 $config['overwrite']     = false;
                 $config['encrypt_name']  = true;
                 $this->upload->initialize($config);
@@ -550,9 +550,9 @@ class Settings extends MY_Controller
                     $this->load->library('upload');
                     $config['upload_path']   = 'uploads/';
                     $config['allowed_types'] = 'gif|jpg|png';
-                    $config['max_size']      = '300';
-                    $config['max_width']     = '300';
-                    $config['max_height']    = '80';
+                    #$config['max_size']      = '300';
+                    #$config['max_width']     = '300';
+                    #$config['max_height']    = '80';
                     $config['overwrite']     = true;
                     $config['file_name']     = "logo";
                     $this->upload->initialize($config);

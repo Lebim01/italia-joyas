@@ -109,7 +109,7 @@
                 <h4 class="modal-title" id="myModalLabel">Modal title</h4>
             </div>
             <div class="modal-body text-center">
-                <img id="product_image" src="" alt="" />
+                <img id="product_image" style="max-width: 100%;" src="" alt="" />
             </div>
         </div>
     </div>
