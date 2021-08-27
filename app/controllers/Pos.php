@@ -539,6 +539,8 @@ class Pos extends MY_Controller
                 'delivered'         => $this->input->post('transaction_type') == 'apart' ? 0 : 1
             ];
 
+            //var_dump($data['created_by']);exit;
+
             if (!$eid) {
                 $data['store_id'] = $this->session->userdata('store_id');
             }

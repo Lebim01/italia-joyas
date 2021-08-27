@@ -415,6 +415,37 @@ class Reports_model extends CI_Model
         return $data;
     }
 
+    public function getallPurchases($fechas)
+    {
+
+        $data = $this->db->query("SELECT 
+                                        tec_products.name,
+                                        tec_products.code,
+                                        tec_purchase_items.quantity,
+                                        tec_purchase_items.cost,
+                                        tec_purchase_items.subtotal,
+                                        tec_purchases.date,
+                                        tec_users.first_name,
+                                        tec_users.last_name,
+                                        tec_suppliers.name AS supplier 
+                                    FROM
+                                        tec_purchase_items 
+                                        LEFT JOIN tec_purchases 
+                                        ON tec_purchase_items.purchase_id = tec_purchases.id 
+                                        LEFT JOIN tec_products 
+                                        ON tec_purchase_items.product_id = tec_products.id 
+                                        LEFT JOIN tec_users 
+                                        ON tec_purchases.created_by = tec_users.id 
+                                        LEFT JOIN tec_suppliers 
+                                        ON tec_purchases.supplier_id = tec_suppliers.id 
+                                    WHERE tec_purchases.store_id = ".$fechas[3]." 
+                                        AND tec_purchases.date >= '" . $fechas[1] . " 00:00:00' 
+                                        AND tec_purchases.date <= '" . $fechas[2] . " 23:59:59' 
+                                    ORDER BY tec_purchases.date ASC 
+                                    ")->result();
+        return $data;
+    }
+
     public function getallSalesFiscal($fechas)
     {
         $data = $this->db->query("SELECT 
@@ -441,13 +472,10 @@ class Reports_model extends CI_Model
     public function getallItemSales($fechas)
     {   
         $where = "";
-        if($fechas[4] == "cash"){
+        if($fechas[4] != "todos"){
             $where = "AND tec_payments.paid_by = '".$fechas[4]."'";
         }
 
-        if($fechas[4] == "CC"){
-            $where = "AND tec_payments.paid_by = '".$fechas[4]."'";
-        }
         $data = $this->db->query("SELECT 
                                         product_code,
                                         product_name,
@@ -462,7 +490,7 @@ class Reports_model extends CI_Model
                                         CASE
                                         WHEN tec_payments.paid_by = 'cash' THEN 'Efectivo'
                                         WHEN tec_payments.paid_by = 'CC' THEN 'Pago con tarjeta'
-                                        ELSE 'NA'
+                                        ELSE 'Credito/Pago con Tarjeta'
                                         END AS tipopago
                                     FROM
                                     tec_sale_items 

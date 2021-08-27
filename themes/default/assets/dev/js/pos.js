@@ -1545,6 +1545,7 @@ $(document).ready(function () {
     $('#metodos').val(metodos);
     $('#cantidad').val(cantidad);
     $('#bancos').val(bancos);
+    $('#created_by_val').val($('#created_by').val());
     $('#split_payments_val').val($('#split_payments').val());
     $('#submit').click();
     total_cantidad = 0

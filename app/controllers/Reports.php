@@ -144,6 +144,23 @@ class Reports extends MY_Controller
         $this->page_construct('reports/sales', $this->data, $meta);
     }
 
+    function purchase()
+    {
+        if ($this->input->post('customer')) {
+            $start_date = $this->input->post('start_date') ? $this->input->post('start_date') : NULL;
+            $end_date = $this->input->post('end_date') ? $this->input->post('end_date') : NULL;
+            $user = $this->input->post('user') ? $this->input->post('user') : NULL;
+            $this->data['total_sales'] = $this->reports_model->getTotalCustomerSales($this->input->post('customer'), $user, $start_date, $end_date);
+        }
+        $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
+        $this->data['customers'] = $this->reports_model->getAllCustomers();
+        $this->data['users'] = $this->reports_model->getAllStaff();
+        $this->data['page_title'] = $this->lang->line("purchase_report");
+        $bc = array(array('link' => '#', 'page' => lang('reports')), array('link' => '#', 'page' => lang('sales_report')));
+        $meta = array('page_title' => lang('purchase_report'), 'bc' => $bc);
+        $this->page_construct('reports/purchase', $this->data, $meta);
+    }
+
     function get_sales()
     {
         $customer = $this->input->get('customer') ? $this->input->get('customer') : NULL;
@@ -817,6 +834,85 @@ class Reports extends MY_Controller
                         <td style="text-align:center;">'.$this->tec->formatMoney( $sales[$i]->contado).'</td>
                         <td style="text-align:center;">'.$this->tec->formatMoney( $sales[$i]->tarjeta).'</td>
                         <td style="text-align:center;">'.$this->tec->formatMoney($sales[$i]->contado + $sales[$i]->tarjeta).'</td>
+                    </tr>
+                ';
+            }
+        }
+        
+        $html='
+            <p>"ITALIA JOYAS"</p> 
+            <p>'.$arrayfiltros[0].'</p>
+            <p>De la fecha "'.$arrayfiltros[1].'" a la fecha "'.$arrayfiltros[2].'"</p>
+            <hr style="text-align:left;margin-left:0">
+            <hr style="text-align:left;margin-left:0">
+            <style>
+                .floatedTable{
+                border-collapse: collapse;
+                width: 100%;
+                }
+
+                .floatedTable th, .floatedTable td {
+                text-align: left;
+                padding: 8px;
+                }
+
+                .floatedTable tr:nth-child(even) {
+                background-color: #D8D8D8;
+                }
+            </style>
+            <table class="blueTable floatedTable" style="width:100%;text-align:center;">
+                <tbody>
+                    '.$header.'
+                    '.$table.'
+                </tbody>
+            </table>
+            
+        ';
+        $dompdf = new DOMPDF();
+        $dompdf->loadHtml($html);
+        if ($arrayfiltros[0] == "Reporte de ventas por producto") {
+            $dompdf->set_paper("A4", "landscape"); 
+        }
+        $dompdf->render();
+        $dompdf->stream($arrayfiltros[0].".pdf", array("Attachment"=>0)); 
+    }
+
+    public function reportspurchase()
+    {
+        $filtros = $_GET['filtros'];
+        $arrayfiltros = explode(",", $filtros);
+        $purchase = [];
+        $header = "";
+        $table = "";
+
+        if($arrayfiltros[0] == "Reporte de compras"){
+            $purchase = $this->reports_model->getallPurchases($arrayfiltros);
+            $header = '
+                    <tr class="header" >
+                        <td style="">#</td>
+                        <td style="">Clave</td>
+                        <td style="">Producto</td>
+                        <td style="">Fecha venta</td>
+                        <td style="">Vendedor</td>
+                        <td style="">Proveedor</td>
+                        <td style="">Cantidad</td>
+                        <td style="">Costo</td>
+                        <td style="">Total</td>
+                    </tr>
+            ';
+            for($i=0;$i<=count($purchase)-1;$i++){
+                $item = $i + 1;
+                $table.='
+                    <tr>
+                        <td style="text-align:center;">'.$item.'</td>
+                        <td style="text-align:center;">'.$purchase[$i]->code.'</td>
+                        <td style="text-align:center;">'.$purchase[$i]->name.'</td>
+                        <td style="text-align:center;">'.$purchase[$i]->date.'</td>
+                        <td style="text-align:center;">'.$purchase[$i]->first_name.' '.$purchase[$i]->last_name.'</td>
+                        <td style="text-align:center;">'.$purchase[$i]->supplier.'</td>
+                        <td style="text-align:center;">'.$this->tec->formatMoney($purchase[$i]->quantity).'</td>
+                        <td style="text-align:center;">'.$this->tec->formatMoney($purchase[$i]->cost).'</td>
+                        <td style="text-align:center;">'.$this->tec->formatMoney($purchase[$i]->subtotal).'</td>
                     </tr>
                 ';
             }
