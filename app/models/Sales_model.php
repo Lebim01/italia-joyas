@@ -252,4 +252,29 @@ class Sales_model extends MY_Model
 
         return $data;
     }
+
+    public function getAllApartsSales(){
+        $sql = "SELECT *
+                FROM tec_sales
+                WHERE status = 'partial' AND transaction_type = 'apart'";
+        $data = $this->db->query($sql)->result();
+
+        foreach($data as $row){
+            $sql_customer = "SELECT * FROM tec_customers WHERE id = {$row->customer_id}";
+            $row->customer = $this->db->query($sql_customer)->row();
+        }
+
+        return $data;
+    }
+
+    public function getAllCreditsClients(){
+        $sql = "SELECT customers.id as customer_id, customers.name as customer, SUM(sales.grand_total - sales.paid) as grand_total
+                FROM tec_sales sales
+                INNER JOIN tec_customers customers ON sales.customer_id = customers.id
+                WHERE sales.status = 'partial' AND sales.transaction_type = 'credit'
+                GROUP BY customers.id";
+        $data = $this->db->query($sql)->result();
+
+        return $data;
+    }
 }

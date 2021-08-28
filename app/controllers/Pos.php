@@ -734,7 +734,8 @@ class Pos extends MY_Controller
             $this->data['categories']      = $this->site->getAllCategories();
             $this->data['message']         = $this->session->flashdata('message');
             $this->data['suspended_sales'] = $this->site->getUserSuspenedSales();
-            $this->data['partialOrders']   = $this->sales_model->getAllPartialSales();
+            $this->data['apartsOrders']    = $this->sales_model->getAllApartsSales();
+            $this->data['creditsClients']  = $this->sales_model->getAllCreditsClients();
             $this->data['user_id']         = $this->session->userdata('user_id');
 
             $this->data['printer'] = $this->site->getPrinterByID($this->Settings->printer);

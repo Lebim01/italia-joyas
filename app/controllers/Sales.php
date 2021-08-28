@@ -95,6 +95,78 @@ class Sales extends MY_Controller
         }
     }
 
+    public function add_payment_credit($customer_id = null)
+    {
+        $this->load->helper('security');
+        if ($this->input->get('id')) {
+            $id = $this->input->get('id');
+        }
+
+        $this->form_validation->set_rules('amount-paid', lang('amount'), 'required');
+        $this->form_validation->set_rules('paid_by', lang('paid_by'), 'required');
+        $this->form_validation->set_rules('userfile', lang('attachment'), 'xss_clean');
+        
+        if ($this->form_validation->run() == true) {
+            if ($this->Admin) {
+                $date = $this->input->post('date');
+            } else {
+                $date = date('Y-m-d H:i:s');
+            }
+
+            $payment = [
+                'date'        => $date,
+                'sale_id'     => $id,
+                'customer_id' => $cid,
+                'reference'   => $this->input->post('reference'),
+                'amount'      => $this->input->post('amount-paid'),
+                'paid_by'     => $this->input->post('paid_by'),
+                'cheque_no'   => $this->input->post('cheque_no'),
+                'gc_no'       => $this->input->post('gift_card_no'),
+                'cc_no'       => $this->input->post('pcc_no'),
+                'cc_holder'   => $this->input->post('pcc_holder'),
+                'cc_month'    => $this->input->post('pcc_month'),
+                'cc_year'     => $this->input->post('pcc_year'),
+                'cc_type'     => $this->input->post('pcc_type'),
+                'note'        => $this->input->post('note'),
+                'created_by'  => $this->session->userdata('user_id'),
+                'store_id'    => $this->session->userdata('store_id'),
+            ];
+
+            if ($_FILES['userfile']['size'] > 0) {
+                $this->load->library('upload');
+                $config['upload_path']   = 'files/';
+                $config['allowed_types'] = $this->digital_file_types;
+                $config['max_size']      = 2048;
+                $config['overwrite']     = false;
+                $config['encrypt_name']  = true;
+                $this->upload->initialize($config);
+                if (!$this->upload->do_upload()) {
+                    $error = $this->upload->display_errors();
+                    $this->session->set_flashdata('error', $error);
+                    redirect($_SERVER['HTTP_REFERER']);
+                }
+                $photo                 = $this->upload->file_name;
+                $payment['attachment'] = $photo;
+            }
+
+            // $this->tec->print_arrays($payment);
+        } elseif ($this->input->post('add_payment')) {
+            $this->session->set_flashdata('error', validation_errors());
+            $this->tec->dd();
+        }
+
+        if ($this->form_validation->run() == true && $this->sales_model->addPayment($payment)) {
+            $this->session->set_flashdata('message', lang('payment_added'));
+            redirect($_SERVER['HTTP_REFERER']);
+        } else {
+            $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
+            $sale                = $this->sales_model->getSaleByID($id);
+            $this->data['inv']   = $sale;
+
+            $this->load->view($this->theme . 'sales/add_payment', $this->data);
+        }
+    }
+
     public function delete($id = null)
     {
         if (DEMO) {

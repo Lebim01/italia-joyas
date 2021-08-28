@@ -1025,33 +1025,33 @@ $(document).ready(function () {
     return false;
   });
 
-  $('#register_payment').click(function () {
-    $("#paymentModal #makePayment").attr('disabled', true)
-    $("#paymentModal input").val(0)
-    $("#paymentModal").modal('show')
-    $("#paymentModal").delegate('select', 'change', function () {
+  $('#register_payment_apart').click(function () {
+    $("#paymentModalApart #makePaymentApart").attr('disabled', true)
+    $("#paymentModalApart input").val(0)
+    $("#paymentModalApart").modal('show')
+    $("#paymentModalApart").delegate('select', 'change', function () {
       const selected_value = $(this).val()
 
       if (selected_value) {
         const option = $(this).find(`option[value=${selected_value}]`)
         const data = $(option).data('row')
 
-        $("#paymentModal #grand_total").html(formatDecimal(parseFloat(data.grand_total)))
-        $("#paymentModal #paid").html(formatDecimal(parseFloat(data.paid)))
-        $("#paymentModal #remaining ").html(formatDecimal(parseFloat(data.grand_total) - parseFloat(data.paid)))
-        $("#paymentModal #makePayment").attr('disabled', false)
+        $("#paymentModalApart #grand_total").html(formatMoney(parseFloat(data.grand_total)))
+        $("#paymentModalApart #paid").html(formatMoney(parseFloat(data.paid)))
+        $("#paymentModalApart #remaining ").html(formatMoney(parseFloat(data.grand_total) - parseFloat(data.paid)))
+        $("#paymentModalApart #makePaymentApart").attr('disabled', false)
       } else {
-        $("#paymentModal #grand_total").html('')
-        $("#paymentModal #paid").html('')
-        $("#paymentModal #remaining ").html('')
-        $("#paymentModal #makePayment").attr('disabled', true)
+        $("#paymentModalApart #grand_total").html('')
+        $("#paymentModalApart #paid").html('')
+        $("#paymentModalApart #remaining ").html('')
+        $("#paymentModalApart #makePaymentApart").attr('disabled', true)
       }
     })
   });
 
-  $("#paymentModal #makePayment").click(function () {
-    const selected_sale = $("#paymentModal select").val()
-    const amount = parseFloat($("#paymentModal input").val()) || 0
+  $("#paymentModalApart #makePaymentApart").click(function () {
+    const selected_sale = $("#paymentModalApart select").val()
+    const amount = parseFloat($("#paymentModalApart input").val()) || 0
 
     if (!amount > 0) {
       alert('El monto no puede ser 0')
@@ -1063,11 +1063,63 @@ $(document).ready(function () {
       return;
     }
 
-    const option = $("#paymentModal select").find(`option[value=${selected_sale}]`)
+    const option = $("#paymentModalApart select").find(`option[value=${selected_sale}]`)
     const sale_data = $(option).data('row')
 
     $.ajax({
       url: base_url + `sales/add_payment/${sale_data.id}/${sale_data.customer_id}`,
+      method: 'POST',
+      data: {
+        'amount-paid': amount,
+        paid_by: 'cash'
+      },
+      success: function () {
+        //$("#paymentModalApart").modal('hide')
+        alert('Abono hecho correctamente')
+        window.location.reload()
+      }
+    })
+  })
+
+  $('#register_payment_credit').click(function () {
+    $("#paymentModalCredit #makePaymentCredit").attr('disabled', true)
+    $("#paymentModalCredit input").val(0)
+    $("#paymentModalCredit").modal('show')
+    $("#paymentModalCredit").delegate('select', 'change', function () {
+      const selected_value = $(this).val()
+
+      if (selected_value) {
+        const option = $(this).find(`option[value=${selected_value}]`)
+        const data = $(option).data('row')
+
+        $("#paymentModalCredit #grand_total").html(formatMoney(parseFloat(data.grand_total)))
+        $("#paymentModalCredit #makePaymentCredit").attr('disabled', false)
+      } else {
+        $("#paymentModalCredit #grand_total").html('')
+        $("#paymentModalCredit #makePaymentCredit").attr('disabled', true)
+      }
+    })
+  });
+
+  $("#paymentModalCredit #makePaymentCredit").click(function () {
+    const selected_sale = $("#paymentModalCredit select").val()
+    const amount = parseFloat($("#paymentModalCredit input").val()) || 0
+
+    if (!amount > 0) {
+      alert('El monto no puede ser 0')
+      return;
+    }
+
+    if (!selected_sale) {
+      alert('Seleccione una cuenta')
+      return;
+    }
+
+    const option = $("#paymentModalCredit select").find(`option[value=${selected_sale}]`)
+    const sale_data = $(option).data('row')
+
+    $.ajax({
+      url: base_url + `sales/add_payment_credit/${sale_data.customer_id}`,
       method: 'POST',
       data: {
         'amount-paid': amount,

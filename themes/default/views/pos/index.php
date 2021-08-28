@@ -436,28 +436,34 @@
                                 </div>
                                 <div id="botbuttons" class="col-xs-12 text-center">
                                     <div class="row">
-                                        <div class="col-xs-4" style="padding: 0;">
+                                        <div class="col-xs-3" style="padding: 0;">
                                             <div class="btn-group-vertical btn-block">
                                                 <button type="button" class="btn btn-warning btn-block btn-flat" id="suspend"><?= lang('hold'); ?></button>
                                                 <button type="button" class="btn btn-danger btn-block btn-flat" id="reset"><?= lang('cancel'); ?></button>
                                             </div>
-
                                         </div>
-                                        <div class="col-xs-4" style="padding: 0 5px;">
+                                        <div class="col-xs-3" style="padding: 0;">
+                                            <div class="btn-group-vertical btn-block">
+                                                <button type="button" class="btn bg-purple btn-block btn-flat" id="register_payment_apart">
+                                                    Abono apartado
+                                                </button>
+                                                <button type="button" class="btn bg-teal btn-block btn-flat" id="register_payment_credit">
+                                                    Abono crédito
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-3" style="padding: 0 5px;">
                                             <div class="btn-group-vertical btn-block">
                                                 <!--
                                                 <button type="button" class="btn bg-purple btn-block btn-flat" id="print_order"><?= lang('print_order'); ?></button>
                                                 <button type="button" class="btn bg-navy btn-block btn-flat" id="print_bill"><?= lang('print_bill'); ?></button>
                                                 -->
-                                                <button type="button" class="btn bg-purple btn-block btn-flat" id="register_payment">
-                                                    Registrar abono
-                                                </button>
                                                 <button type="button" class="btn bg-navy btn-block btn-flat" onclick="window.location.href = '<?= site_url('purchases/add_expense'); ?>'">
                                                     Registrar gasto
                                                 </button>
                                             </div>
                                         </div>
-                                        <div class="col-xs-4" style="padding: 0;">
+                                        <div class="col-xs-3" style="padding: 0;">
                                             <button type="button" class="btn btn-success btn-block btn-flat" id="<?= $eid ? 'submit-sale' : 'payment'; ?>" style="height:67px;"><?= $eid ? lang('submit') : lang('payment'); ?></button>
                                         </div>
                                     </div>
@@ -725,7 +731,7 @@
         </div>
     </div>
 
-    <div class="modal" data-easein="flipYIn" id="paymentModal" tabindex="-1" role="dialog" aria-labelledby="paymentModalLabel" aria-hidden="true">
+    <div class="modal" data-easein="flipYIn" id="paymentModalApart" tabindex="-1" role="dialog" aria-labelledby="paymentModalApartLabel" aria-hidden="true">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
                 <div class="modal-header">
@@ -734,8 +740,8 @@
                 </div>
                 <div class="modal-body">
                     <select class="form-control input-md">
-                        <option value="">Seleccionar cuenta</option>
-                        <?php foreach($partialOrders as $order): ?>
+                        <option value="">Seleccionar cuenta cliente</option>
+                        <?php foreach($apartsOrders as $order): ?>
                             <option data-row='<?= json_encode($order) ?>' value="<?= $order->id ?>"><?= $order->customer->name ?> (<?= $order->id ?>)</option>
                         <?php endforeach; ?>
                     </select>
@@ -771,7 +777,43 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal"><?= lang('close') ?></button>
-                    <button type="button" id="makePayment" class="btn btn-primary btn-sm">Aceptar</button>
+                    <button type="button" id="makePaymentApart" class="btn btn-primary btn-sm">Aceptar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" data-easein="flipYIn" id="paymentModalCredit" tabindex="-1" role="dialog" aria-labelledby="paymentModalCreditLabel" aria-hidden="true">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+                    <h4 class="modal-title" id="tsModalLabel">Abonar crédito</h4>
+                </div>
+                <div class="modal-body">
+                    <select class="form-control input-md">
+                        <option value="">Seleccionar cuenta cliente</option>
+                        <?php foreach($creditsClients as $order): ?>
+                            <option data-row='<?= json_encode($order) ?>' value="<?= $order->customer_id ?>"><?= $order->customer ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <br />
+                    <fieldset>
+                        <div class="row">
+                            <div class="col-sm-3">
+                                <label class="label-control">Cuenta total:</label>
+                            </div>
+                            <div class="col-sm-9">
+                                <span id="grand_total"></span>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <br />
+                    <input type='number' class='form-control input-md' value='' placeholder="Monto">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal"><?= lang('close') ?></button>
+                    <button type="button" id="makePaymentApart" class="btn btn-primary btn-sm">Aceptar</button>
                 </div>
             </div>
         </div>
