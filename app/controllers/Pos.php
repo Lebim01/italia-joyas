@@ -503,7 +503,7 @@ class Pos extends MY_Controller
             $round_total = $this->tec->roundNumber($grand_total, $this->Settings->rounding);
             $rounding    = $this->tec->formatDecimal(($round_total - $grand_total));
             
-            $status = 'due';
+            $status = 'partial';
             if ($this->tec->formatDecimal($round_total) <= $this->tec->formatDecimal($paid)) {
                 $status = 'paid';
             } elseif ($this->tec->formatDecimal($round_total) > $this->tec->formatDecimal($paid) && $paid > 0) {
@@ -587,6 +587,8 @@ class Pos extends MY_Controller
 
         if ($this->form_validation->run() == true && !empty($products)) {
             if ($suspend) {
+                D("aqui");
+                die();
                 unset($data['status'], $data['rounding'], $data['transaction_type'], $data['delivered']);
                 if ($this->pos_model->suspendSale($data, $products, $did)) {
                     $this->session->set_userdata('rmspos', 1);
@@ -597,6 +599,8 @@ class Pos extends MY_Controller
                     redirect('pos/' . $did);
                 }
             } elseif ($eid) {
+                D("aqui 2");
+                die();
                 unset($data['status'], $data['paid']);
                 if (!$this->Admin) {
                     unset($data['date']);
@@ -612,7 +616,8 @@ class Pos extends MY_Controller
                     redirect('pos/?edit=' . $eid);
                 }
             } else {
-
+                D($data);
+                die();
                 if ($sale = $this->pos_model->addSale($data, $products, $payment, $did)) {
                     $this->session->set_userdata('rmspos', 1);
                     $msg = lang('sale_added');
