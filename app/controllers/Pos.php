@@ -587,8 +587,6 @@ class Pos extends MY_Controller
 
         if ($this->form_validation->run() == true && !empty($products)) {
             if ($suspend) {
-                D("aqui");
-                die();
                 unset($data['status'], $data['rounding'], $data['transaction_type'], $data['delivered']);
                 if ($this->pos_model->suspendSale($data, $products, $did)) {
                     $this->session->set_userdata('rmspos', 1);
@@ -599,8 +597,6 @@ class Pos extends MY_Controller
                     redirect('pos/' . $did);
                 }
             } elseif ($eid) {
-                D("aqui 2");
-                die();
                 unset($data['status'], $data['paid']);
                 if (!$this->Admin) {
                     unset($data['date']);
@@ -616,8 +612,6 @@ class Pos extends MY_Controller
                     redirect('pos/?edit=' . $eid);
                 }
             } else {
-                D($data);
-                die();
                 if ($sale = $this->pos_model->addSale($data, $products, $payment, $did)) {
                     $this->session->set_userdata('rmspos', 1);
                     $msg = lang('sale_added');
