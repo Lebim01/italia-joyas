@@ -33,6 +33,16 @@ class Customers_model extends CI_Model
         return false;
     }
 
+    public function getCustomers()
+    {
+        $q = $this->db->get('customers');
+        return $q;
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return false;
+    }
+
     public function updateCustomer($id, $data = [])
     {
         if ($this->db->update('customers', $data, ['id' => $id])) {

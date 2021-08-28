@@ -337,13 +337,6 @@
                             <?= form_open('pos', 'id="pos-sale-form"'); ?>
                             <div class="well well-sm" id="leftdiv">
                                 <div id="lefttop" style="margin-bottom:5px;">
-                                    <div class="form-group" style="margin-bottom:5px; display: flex; gap: 10px; align-items: center;">
-                                        <?php foreach ($cashiers as $cashier) {
-                                            $cashiers_options[$cashier->id] = $cashier->first_name.' '.$cashier->last_name;
-                                        } ?>
-                                        <label class="control-label">Cajero</label>
-                                        <?= form_dropdown('created_by', $cashiers_options, set_value('created_by', $user_id), 'id="spos_cashier" data-placeholder="' . lang('select') . ' Cajero" required="required" class="form-control select2" style="width:100%;position:absolute;"'); ?>
-                                    </div>
                                     <div class="form-group" style="margin-bottom:5px;">
                                         <div class="input-group">
                                             <?php foreach ($customers as $customer) {
@@ -491,7 +484,9 @@
                                     <input type="hidden" name="total_pagos" id="total_pagos" value="0" />
                                     <input type="hidden" name="bancos" id="bancos" value="" />
                                     <input type="hidden" name="cantidad" id="cantidad" value="0" />
+                                    <input type="hidden" name="created_by" id="created_by_val" value="0" />
                                     <input type="hidden" name="transaction_type" id="transaction_type" value="liquidate" />
+                                    <input type="hidden" name="split_payments" id="split_payments_val" value="0" />
                                 </div>
                                 <input type="hidden" name="customer" id="customer" value="<?= $Settings->default_customer ?>" />
                                 <input type="hidden" name="order_tax" id="tax_val" value="" />
@@ -931,6 +926,16 @@
                     </h4>
                 </div>
                 <div class="modal-body">
+                    <div class="form-group" style="align-items: center;">
+
+                        <select id="created_by" class="form-control paid_by select2" style="width:100%;">
+                            <?php
+                            foreach ($cashiers as $cashier) {
+                                echo '<option value="' . $cashier->id . '">' . $cashier->first_name . ' '. $cashier->last_name. ' </option>">';
+                            }
+                            ?>
+                        </select>
+                    </div>
                     <div class="row">
                         <div class="col-xs-12">
                             <div class="font16">
@@ -952,14 +957,15 @@
                                 </table>
                                 <div class="clearfix"></div>
                             </div>
-                            <!-- <div class="row">
+                            <div class="row">
                             <div class="col-xs-12">
                                 <div class="form-group">
-                                    <?= lang('  ', 'note'); ?>
-                                    <textarea name="note" id="note" class="pa form-control kb-text"></textarea>
+                                    Comentarios:
+                                    <textarea name="note" id="payment_note" class="pa form-control kb-text"></textarea>
                                 </div>
                             </div>
-                        </div> -->
+                            
+                        </div>
                             <div style="border: white 1px solid; border-radius:5px; padding:10px;">
                                 <!-- <div class="row">
                                 <div class="col-xs-12">
@@ -973,8 +979,12 @@
                                 <div class="row">
                                     <div class="col-xs-6">
                                         
-                                        <div class="form-group" id="no-methods" style="display: none;">
+                                        <div class="form-group no-methods" style="display: none;">
                                             <label>En este tipo de transacción no puedes agregar metodos de pago</label>
+                                        </div>
+                                        <div class="form-group no-methods" style="display: none;">
+                                            Abonos:
+                                            <input name="split_payments" type="number" id="split_payments" class="pa form-control kb-pad"/>
                                         </div>
                                     </div>
                                 </div>

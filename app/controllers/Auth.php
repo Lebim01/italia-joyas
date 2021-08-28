@@ -573,9 +573,9 @@ class Auth extends MY_Controller
                 $this->load->library('upload');
                 $config['upload_path']   = 'uploads/avatars';
                 $config['allowed_types'] = 'gif|jpg|png';
-                $config['max_size']      = 1024;
-                $config['max_width']     = 600;
-                $config['max_height']    = 600;
+                #$config['max_size']      = 1024;
+                #$config['max_width']     = 600;
+                #$config['max_height']    = 600;
                 $config['overwrite']     = false;
                 $config['encrypt_name']  = true;
                 $config['max_filename']  = 25;

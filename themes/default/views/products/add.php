@@ -100,7 +100,7 @@
                                         </div>
                                     </div>
                                 </div>
-                                <?php if ($Settings->multi_store) {
+                                <!-- <?php if ($Settings->multi_store) {
                                     foreach ($stores as $store) { ?>
                                         <div class="">
                                             <div class="well well-sm">
@@ -123,7 +123,7 @@
                                             <?= form_input('quantity', set_value('quantity', 0), 'class="form-control tip" id="quantity" required="required"'); ?>
                                         </div>
                                     </div>
-                                <?php } ?>
+                                <?php } ?> -->
                             </div>
                         </div>
                         <div class="form-group">

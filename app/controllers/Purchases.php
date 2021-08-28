@@ -79,7 +79,7 @@ class Purchases extends MY_Controller
                 $this->load->library('upload');
                 $config['upload_path']   = 'uploads/';
                 $config['allowed_types'] = $this->allowed_types;
-                $config['max_size']      = '2000';
+                #$config['max_size']      = '2000';
                 $config['overwrite']     = false;
                 $config['encrypt_name']  = true;
                 $this->upload->initialize($config);
@@ -138,7 +138,7 @@ class Purchases extends MY_Controller
                 $this->load->library('upload');
                 $config['upload_path']   = 'uploads/';
                 $config['allowed_types'] = $this->allowed_types;
-                $config['max_size']      = '2000';
+                #$config['max_size']      = '2000';
                 $config['overwrite']     = false;
                 $config['encrypt_name']  = true;
                 $this->upload->initialize($config);
@@ -271,7 +271,7 @@ class Purchases extends MY_Controller
                 $this->load->library('upload');
                 $config['upload_path']   = 'uploads/';
                 $config['allowed_types'] = $this->allowed_types;
-                $config['max_size']      = '2000';
+                #$config['max_size']      = '2000';
                 $config['overwrite']     = false;
                 $config['encrypt_name']  = true;
                 $this->upload->initialize($config);
@@ -344,7 +344,7 @@ class Purchases extends MY_Controller
                 $this->load->library('upload');
                 $config['upload_path']   = 'uploads/';
                 $config['allowed_types'] = $this->allowed_types;
-                $config['max_size']      = '2000';
+                #$config['max_size']      = '2000';
                 $config['overwrite']     = false;
                 $config['encrypt_name']  = true;
                 $this->upload->initialize($config);

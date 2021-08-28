@@ -32,9 +32,9 @@ class Categories extends MY_Controller
 
                 $config['upload_path']   = 'uploads/';
                 $config['allowed_types'] = 'gif|jpg|png';
-                $config['max_size']      = '500';
-                $config['max_width']     = '800';
-                $config['max_height']    = '800';
+                #$config['max_size']      = '500';
+                #$config['max_width']     = '800';
+                #$config['max_height']    = '800';
                 $config['overwrite']     = false;
                 $config['encrypt_name']  = true;
                 $this->upload->initialize($config);
@@ -118,9 +118,9 @@ class Categories extends MY_Controller
 
                 $config['upload_path']   = 'uploads/';
                 $config['allowed_types'] = 'gif|jpg|png';
-                $config['max_size']      = '500';
-                $config['max_width']     = '800';
-                $config['max_height']    = '800';
+                #$config['max_size']      = '500';
+                #$config['max_width']     = '800';
+                #$config['max_height']    = '800';
                 $config['overwrite']     = false;
                 $config['encrypt_name']  = true;
                 $this->upload->initialize($config);

@@ -64,7 +64,7 @@ class Sales extends MY_Controller
                 $this->load->library('upload');
                 $config['upload_path']   = 'files/';
                 $config['allowed_types'] = $this->digital_file_types;
-                $config['max_size']      = 2048;
+                #$config['max_size']      = 2048;
                 $config['overwrite']     = false;
                 $config['encrypt_name']  = true;
                 $this->upload->initialize($config);
@@ -263,7 +263,7 @@ class Sales extends MY_Controller
                 $this->load->library('upload');
                 $config['upload_path']   = 'files/';
                 $config['allowed_types'] = $this->digital_file_types;
-                $config['max_size']      = 2048;
+                #$config['max_size']      = 2048;
                 $config['overwrite']     = false;
                 $config['encrypt_name']  = true;
                 $this->upload->initialize($config);

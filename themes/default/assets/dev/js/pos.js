@@ -1200,11 +1200,11 @@ $(document).ready(function () {
     if (type === 'credit') {
       spositems = {}
       $("#methods").hide()
-      $("#no-methods").show()
+      $(".no-methods").show()
       $("#campos").empty()
     } else {
       $("#methods").show()
-      $("#no-methods").hide()
+      $(".no-methods").hide()
     }
   })
   $('#payModal').on('shown.bs.modal', function (e) {
@@ -1310,7 +1310,7 @@ $(document).ready(function () {
                 <option value="CC">Tarjeta de crédito o débito</option>
             </select>
             <input placeholder="Cantidad" style="margin-left:3px;width:25%; display:inline-block" class="form-control input-cantidad" type="text" size="20" id="cantidad_${nextinput}" name="campo_' + ${nextinput} + '"; />
-            <select class="form-control paid_by select2 bank" style="width:30%; display:inline-block;visibility:hidden">
+            <select class="form-control paid_by select2 bank" style="width:30%; display:inline-block;visibility:hidden" id="banco_${nextinput}">
                 <option value="seleccione">Seleccione una opción</option>
                 <option value="BBVA">BBVA</option>
                 <option value="Santander">Santander</option>
@@ -1332,6 +1332,7 @@ $(document).ready(function () {
     $(this).parent().remove()
 
     update_payment_amount()
+    nextinput--;
   });
 
   $('#payModal').on('change', '#paid_by', function () {
@@ -1541,34 +1542,38 @@ $(document).ready(function () {
 
   //pagar
   $('#submit-sale').click(function () {
-    console.log(window.location.href.match(/edit=/), window.location.href.indexOf('edit='))
     let edit = window.location.href.indexOf('edit=')
-    console.log(edit)
 
     let transaction_type = $("#transaction_type").val()
-
-    for (i = 0; i < nextinput; i++) {
-      if (($('#metodo_' + i).val() == "cash" || $('#metodo_' + i).val() == "CC") && parseFloat($("#cantidad_" + i).val()) > 0) {
-        if ($('#metodo_' + i).val() == "cash") {
-          bancos[i] = null
-        } else {
-          if ($('#banco_' + i).val() != "seleccione") {
-            bancos[i] = $('#banco_' + i).val()
+    if (transaction_type === "liquidate" || transaction_type === "apart"){
+      for (i = 0; i < nextinput; i++) {
+        if (($('#metodo_' + i).val() === "cash" || $('#metodo_' + i).val() === "CC") && parseFloat($("#cantidad_" + i).val()) > 0) { 
+          if ($('#metodo_' + i).val() == "cash") {
+            bancos[i] = ""
+            console.log("nulldd")
+            console.log(bancos)
+            
           } else {
-            alert("Por favor, seleccione un banco")
-            return;
+            if ($('#banco_' + i).val() != "seleccione") {
+              bancos[i] = $('#banco_' + i).val()
+              console.log("valor",bancos)
+            } else {
+              alert("Por favor, seleccione un banco")
+              return;
+            }
           }
+          console.log(bancos)
+          //bancos[i] = $('#banco_'+i).val()
+          metodos[i] = $('#metodo_' + i).val()
+          cantidad[i] = $("#cantidad_" + i).val()
+          total_cantidad = total_cantidad + parseFloat(cantidad[i]);
+        } else {
+          alert("Llene correctamente los campos", metodos[i], cantidad[i])
+          return;
         }
-
-        //bancos[i] = $('#banco_'+i).val()
-        metodos[i] = $('#metodo_' + i).val()
-        cantidad[i] = $("#cantidad_" + i).val()
-        total_cantidad = total_cantidad + parseFloat(cantidad[i]);
-      } else {
-        alert("Llene correctamente los campos", metodos[i], cantidad[i])
-        return;
       }
     }
+    
 
     if (transaction_type === 'liquidate' && edit < 0) {
       if (total_cantidad < g_total) {
@@ -1590,6 +1595,8 @@ $(document).ready(function () {
     $('#metodos').val(metodos);
     $('#cantidad').val(cantidad);
     $('#bancos').val(bancos);
+    $('#created_by_val').val($('#created_by').val());
+    $('#split_payments_val').val($('#split_payments').val());
     $('#submit').click();
     total_cantidad = 0
 

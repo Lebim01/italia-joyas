@@ -143,30 +143,49 @@ if ($modal) {
                                         }
                                       ?>
                                        <tr>
-                                            <th class="text-left" colspan="2">Métodos de pago</th>
+                                            <th class="text-left" colspan="2">Métodos de pago </th>
                                             <th colspan="3" class="text-right"></th>
                                         </tr>
-                                      <?php
-                                        foreach ($payments as $payment) {
+                                    <?php
+                                        if ($inv->transaction_type == "liquidate") {
                                       ?>
-                                        <tr>
-                                            <th class="text-left" colspan="2"></th>
-                                            <th colspan="3" class="text-right"><?= lang($payment->paid_by);?>  <?= $payment->banks;?> : <?= $this->tec->formatMoney($payment->amount);?></th>
-                                        </tr>
-                                      <?php
-                                        }
-                                      ?>
-                                        
+                                        <?php
+                                            foreach ($payments as $payment) {
+                                        ?>
+                                            <tr>
+                                                <th class="text-left" colspan="2"></th>
+                                                <th colspan="3" class="text-right"><?= lang($payment->paid_by);?>  <?= $payment->banks;?> : <?= $this->tec->formatMoney($payment->amount);?></th>
+                                            </tr>
+                                        <?php
+                                            }
+                                        ?>
                                         <tr>
                                             <th class="text-left" colspan="2">Cambio</th>
                                             <th colspan="3" class="text-right"><?= $this->tec->formatMoney($inv->paid); ?></th>
                                         </tr>
-                                        <?php if($inv->paid >= $inv->grand_total): ?>
+                                      <?php
+                                        } else if($inv->transaction_type == "apart"){
+                                      ?>
+                                             <th class="text-left" colspan="2"></th>
+                                            <th colspan="3" class="text-right">Apartado</th>
+                                      <?php
+                                        } else if($inv->transaction_type == "credit"){
+                                      ?>
+                                            <th class="text-left" colspan="2"></th>
+                                            <th colspan="3" class="text-right">Crédito </th>
+                                            <tr>
+                                                <th class="text-left" colspan="2">Abonos de:</th>
+                                                <th colspan="3" class="text-right"><?= $this->tec->formatMoney($inv->split_payments); ?> </th>
+                                            </tr>
+                                      <?php
+                                        } 
+                                      ?>
+                                       <!--  <?php if($inv->paid >= $inv->grand_total): ?>
                                         <tr>
-                                            <th class="text-left" colspan="2">Cambio</th>
+                                            <th class="text-left" colspan="2">Total</th>
                                             <th colspan="3" class="text-right"><?= $this->tec->formatMoney($inv->paid - $inv->grand_total); ?></th>
                                         </tr>
-                                        <?php endif; ?>
+                                        <?php endif; ?> -->
                                         
                                     </tfoot>
                                 </table>

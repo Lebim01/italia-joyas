@@ -249,6 +249,8 @@
                                 <li id="reports_daily_sales"><a href="<?= site_url('reports/daily_sales'); ?>"><i class="fa fa-circle-o"></i> <?= lang('daily_sales'); ?></a></li>
                                 <li id="reports_monthly_sales"><a href="<?= site_url('reports/monthly_sales'); ?>"><i class="fa fa-circle-o"></i> <?= lang('monthly_sales'); ?></a></li>
                                 <li id="reports_index"><a href="<?= site_url('reports'); ?>"><i class="fa fa-circle-o"></i> <?= lang('sales_report'); ?></a></li>
+                                <li id="reports_purchase"><a href="<?= site_url('reports/purchase'); ?>"><i class="fa fa-circle-o"></i> <?= lang('purchase_report'); ?></a></li>
+                                <li id="reports_customer"><a href="<?= site_url('reports/customer'); ?>"><i class="fa fa-circle-o"></i> <?= lang('customer_report'); ?></a></li>
                                 <li class="divider"></li>
                                 <li id="reports_inventory"><a href="<?= site_url('reports/inventory'); ?>"><i class="fa fa-circle-o"></i> <?= lang('inventory_report'); ?></a></li>
                                 <li class="divider"></li>
