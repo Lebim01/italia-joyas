@@ -1066,8 +1066,6 @@ $(document).ready(function () {
     const option = $("#paymentModal select").find(`option[value=${selected_sale}]`)
     const sale_data = $(option).data('row')
 
-    console.log(sale_data)
-
     $.ajax({
       url: base_url + `sales/add_payment/${sale_data.id}/${sale_data.customer_id}`,
       method: 'POST',

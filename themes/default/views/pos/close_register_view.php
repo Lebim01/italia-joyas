@@ -84,7 +84,7 @@ if ($suspended_bills) {
 
 ?>
 <hr>
-<div class="row">
+<!--<div class="row">
     <div class="col-sm-6">
         <div class="form-group">
             <?= lang("total_cash", "total_cash_submitted"); ?>
@@ -120,7 +120,7 @@ if ($suspended_bills) {
             <?= form_input('total_cc_slips_submitted', (isset($_POST['total_cc_slips_submitted']) ? $_POST['total_cc_slips_submitted'] : $ccsales->total_cc_slips), 'class="form-control input-tip" id="total_cc_slips_submitted" required="required"'); ?>
         </div>
     </div>
-</div>
+</div>-->
 <div class="form-group">
     <label for="note"><?= lang("note"); ?></label>
     <?= form_textarea('note', (isset($_POST['note']) ? $_POST['note'] : ""), 'class="form-control redactor" id="note" style="margin-top: 10px; height: 100px;"'); ?>
