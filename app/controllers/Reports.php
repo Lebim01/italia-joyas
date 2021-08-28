@@ -20,6 +20,7 @@ class Reports extends MY_Controller
         }
 
         $this->load->model('reports_model');
+        $this->load->model('customers_model');
     }
 
     function daily_sales($year = NULL, $month = NULL)
@@ -159,6 +160,14 @@ class Reports extends MY_Controller
         $bc = array(array('link' => '#', 'page' => lang('reports')), array('link' => '#', 'page' => lang('sales_report')));
         $meta = array('page_title' => lang('purchase_report'), 'bc' => $bc);
         $this->page_construct('reports/purchase', $this->data, $meta);
+    }
+
+    function customer()
+    {
+        
+        $bc = array(array('link' => '#', 'page' => lang('reports')), array('link' => '#', 'page' => lang('sales_report')));
+        $meta = array('page_title' => lang('customer_report'), 'bc' => $bc);
+        $this->page_construct('reports/customer', $this->data, $meta);
     }
 
     function get_sales()
@@ -969,6 +978,23 @@ class Reports extends MY_Controller
                     $this->session->userdata('user_id')
                 );
             }
+        }
+    }
+    
+    public function suggestions()
+    {
+        $term = $this->tec->parse_scale_barcode($this->input->get('term', true));
+
+        $rows   = $this->reports_model->getCustomers($term);
+        if ($rows) {
+            foreach ($rows as $row) {
+
+                $pr[] = ['id' => str_replace('.', '', microtime(true)), 'item_id' => $row->id, 'label' => $row->name .' '. '('. $row->phone . ')'  , 'row' => $row];
+            }
+            echo json_encode($pr);
+
+        } else {
+            echo json_encode([['id' => 0, 'label' => lang('no_match_found'), 'value' => $term]]);
         }
     }
 }

@@ -446,6 +446,36 @@ class Reports_model extends CI_Model
         return $data;
     }
 
+
+    /* public function getCustomers()
+    {
+
+        $data = $this->db->query("SELECT 
+                                        *
+                                    FROM
+                                        tec_customers
+                                    ")->result();
+        return $data;
+    } */
+
+    public function getCustomers($term, $limit = 10)
+    {
+        if ($this->db->dbdriver == 'sqlite3') {
+            $this->db->where("name LIKE '%" . $term . "%'");
+        } else {
+            $this->db->where("name LIKE '%" . $term . "%'");
+        }
+        $this->db->limit($limit);
+        $q = $this->db->get('customers');
+        if ($q->num_rows() > 0) {
+            foreach (($q->result()) as $row) {
+                $data[] = $row;
+            }
+            return $data;
+        }
+        return false;
+    }
+
     public function getallSalesFiscal($fechas)
     {
         $data = $this->db->query("SELECT 
