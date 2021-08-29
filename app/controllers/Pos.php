@@ -718,7 +718,7 @@ class Pos extends MY_Controller
              * Validar que la caja que esta abierta sigue valida (solo vigente el mismo dia)
              * Obligarlo a cerrarla para volver a abrirla
              */
-            $datetime1 = new DateTime($this->session->userdata('register_open_time'));
+            $datetime1 = new DateTime(substr($this->session->userdata('register_open_time'), 0, 10));
             $datetime2 = new DateTime(date('Y-m-d'));
             $interval = $datetime1->diff($datetime2);
             if($this->session->userdata('register_id') && $interval->days > 0){
