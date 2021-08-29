@@ -113,57 +113,47 @@ class Sales extends MY_Controller
                 $date = date('Y-m-d H:i:s');
             }
 
-            $payment = [
-                'date'        => $date,
-                'sale_id'     => $id,
-                'customer_id' => $cid,
-                'reference'   => $this->input->post('reference'),
-                'amount'      => $this->input->post('amount-paid'),
-                'paid_by'     => $this->input->post('paid_by'),
-                'cheque_no'   => $this->input->post('cheque_no'),
-                'gc_no'       => $this->input->post('gift_card_no'),
-                'cc_no'       => $this->input->post('pcc_no'),
-                'cc_holder'   => $this->input->post('pcc_holder'),
-                'cc_month'    => $this->input->post('pcc_month'),
-                'cc_year'     => $this->input->post('pcc_year'),
-                'cc_type'     => $this->input->post('pcc_type'),
-                'note'        => $this->input->post('note'),
-                'created_by'  => $this->session->userdata('user_id'),
-                'store_id'    => $this->session->userdata('store_id'),
-            ];
+            $this->load->model('customers_model');
 
-            if ($_FILES['userfile']['size'] > 0) {
-                $this->load->library('upload');
-                $config['upload_path']   = 'files/';
-                $config['allowed_types'] = $this->digital_file_types;
-                $config['max_size']      = 2048;
-                $config['overwrite']     = false;
-                $config['encrypt_name']  = true;
-                $this->upload->initialize($config);
-                if (!$this->upload->do_upload()) {
-                    $error = $this->upload->display_errors();
-                    $this->session->set_flashdata('error', $error);
-                    redirect($_SERVER['HTTP_REFERER']);
-                }
-                $photo                 = $this->upload->file_name;
-                $payment['attachment'] = $photo;
+            $sales = $this->customers_model->getPartialSales($customer_id);
+            $total_paid = (float) $this->input->post('amount-paid');
+
+            $rest_paid = $total_paid;
+
+            foreach($sales as $sale){
+                $isLiquidate = (float) $sale->grand_total <= $total_paid;
+
+                $paid = (float) $isLiquidate == true ? $sale->grand_total : $rest_paid;
+
+                $payment = [
+                    'date'        => $date,
+                    'sale_id'     => $sale->id,
+                    'customer_id' => $customer_id,
+                    'reference'   => $this->input->post('reference'),
+                    'amount'      => $paid,
+                    'paid_by'     => $this->input->post('paid_by'),
+                    'cheque_no'   => $this->input->post('cheque_no'),
+                    'gc_no'       => $this->input->post('gift_card_no'),
+                    'cc_no'       => $this->input->post('pcc_no'),
+                    'cc_holder'   => $this->input->post('pcc_holder'),
+                    'cc_month'    => $this->input->post('pcc_month'),
+                    'cc_year'     => $this->input->post('pcc_year'),
+                    'cc_type'     => $this->input->post('pcc_type'),
+                    'note'        => $this->input->post('note'),
+                    'created_by'  => $this->session->userdata('user_id'),
+                    'store_id'    => $this->session->userdata('store_id'),
+                ];
+    
+                $this->sales_model->addPayment($payment);
+
+                $rest_paid -= $paid;
+
+                if($rest_paid == 0) break;
             }
 
-            // $this->tec->print_arrays($payment);
-        } elseif ($this->input->post('add_payment')) {
-            $this->session->set_flashdata('error', validation_errors());
-            $this->tec->dd();
-        }
-
-        if ($this->form_validation->run() == true && $this->sales_model->addPayment($payment)) {
-            $this->session->set_flashdata('message', lang('payment_added'));
-            redirect($_SERVER['HTTP_REFERER']);
+            echo "Abono realizado";
         } else {
-            $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
-            $sale                = $this->sales_model->getSaleByID($id);
-            $this->data['inv']   = $sale;
-
-            $this->load->view($this->theme . 'sales/add_payment', $this->data);
+            status(400);
         }
     }
 

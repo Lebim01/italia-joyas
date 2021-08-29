@@ -503,7 +503,7 @@ class Pos extends MY_Controller
             $round_total = $this->tec->roundNumber($grand_total, $this->Settings->rounding);
             $rounding    = $this->tec->formatDecimal(($round_total - $grand_total));
             
-            $status = 'due';
+            $status = 'partial';
             if ($this->tec->formatDecimal($round_total) <= $this->tec->formatDecimal($paid)) {
                 $status = 'paid';
             } elseif ($this->tec->formatDecimal($round_total) > $this->tec->formatDecimal($paid) && $paid > 0) {
@@ -612,7 +612,6 @@ class Pos extends MY_Controller
                     redirect('pos/?edit=' . $eid);
                 }
             } else {
-
                 if ($sale = $this->pos_model->addSale($data, $products, $payment, $did)) {
                     $this->session->set_userdata('rmspos', 1);
                     $msg = lang('sale_added');

@@ -445,7 +445,7 @@
                                                 </button>
                                             </div>
                                         </div>
-                                        <div class="col-xs-3" style="padding: 0 5px;">
+                                        <div class="col-xs-3" style="padding: 0;">
                                             <div class="btn-group-vertical btn-block">
                                                 <!--
                                                 <button type="button" class="btn bg-purple btn-block btn-flat" id="print_order"><?= lang('print_order'); ?></button>
@@ -456,7 +456,7 @@
                                                 </button>
                                             </div>
                                         </div>
-                                        <div class="col-xs-3" style="padding: 0;">
+                                        <div class="col-xs-3" style="padding: 5 0;">
                                             <button type="button" class="btn btn-success btn-block btn-flat" id="<?= $eid ? 'submit-sale' : 'payment'; ?>" style="height:67px;"><?= $eid ? lang('submit') : lang('payment'); ?></button>
                                         </div>
                                     </div>
@@ -808,7 +808,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal"><?= lang('close') ?></button>
-                    <button type="button" id="makePaymentApart" class="btn btn-primary btn-sm">Aceptar</button>
+                    <button type="button" id="makePaymentCredit" class="btn btn-primary btn-sm">Aceptar</button>
                 </div>
             </div>
         </div>

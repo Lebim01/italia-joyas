@@ -68,4 +68,13 @@ class Customers_model extends CI_Model
         
         return $limit - $total;
     }
+
+    public function getPartialSales($customer_id){
+        $this->db->where('customer_id', $customer_id);
+        $this->db->where('status', 'partial');
+        $this->db->where('transaction_type', 'credit');
+        $sales = $this->db->get('sales')->result();
+
+        return $sales;
+    }
 }
