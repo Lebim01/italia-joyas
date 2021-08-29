@@ -63,7 +63,7 @@ if ($modal) {
                                 <div style="text-align:center;">
                                     <?php
                                     if ($store) {
-                                        echo '<img src="' . base_url('uploads/' . $store->logo) . '" alt="' . $store->name . '">';
+                                        echo '<img width="100px" src="' . base_url('uploads/' . $store->logo) . '" alt="' . $store->name . '">';
                                         echo '<p style="text-align:center;">';
                                         echo '<strong>' . $store->name . '</strong><br>';
                                         echo $store->address1 . '<br>' . $store->address2;
