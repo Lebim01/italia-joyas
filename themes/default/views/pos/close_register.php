@@ -16,73 +16,145 @@
                             <span><?= $this->tec->formatMoney($this->session->userdata('cash_in_hand')); ?></span></h4>
                     </td>
                 </tr>
+
+                <tr><td colspan="2"><div style="height: 10px"></div></td></tr>
+
                 <tr>
                     <td style="border-bottom: 1px solid #EEE;"><h4><?= lang('cash_sale'); ?>:</h4></td>
-                    <td style="text-align:right; border-bottom: 1px solid #EEE;"><h4>
-                            <span><?= $this->tec->formatMoney($cashsales->paid ? $cashsales->paid : '0.00') . ' (' . $this->tec->formatMoney($cashsales->total ? $cashsales->total : '0.00') . ')'; ?></span>
-                        </h4></td>
+                    <td style="text-align:right; border-bottom: 1px solid #EEE;">
+                        <h4>
+                            <span>
+                                <?= $this->tec->formatMoney($cashsales->paid ? $cashsales->paid : '0.00') ?> 
+                                <?php /* '('. $this->tec->formatMoney($cashsales->total ? $cashsales->total : '0.00') . ')' */ ?>
+                            </span>
+                        </h4>
+                    </td>
                 </tr>
                 <tr>
+                    <td style="border-bottom: 1px solid #EEE;"><h4>Ventas con tarjeta:</h4></td>
+                    <td style="text-align:right; border-bottom: 1px solid #EEE;">
+                        <h4>
+                            <span>
+                                <?= $this->tec->formatMoney($ccsales->paid ? $ccsales->paid : '0.00') ?> 
+                                <?php /* '('. $this->tec->formatMoney($cashsales->total ? $cashsales->total : '0.00') . ')' */ ?>
+                            </span>
+                        </h4>
+                    </td>
+                </tr>
+                <tr><td colspan="2"><div style="height: 10px"></div></td></tr>
+                <?php /*<tr>
                     <td style="border-bottom: 1px solid #EEE;"><h4><?= lang('ch_sale'); ?>:</h4></td>
                     <td style="text-align:right;border-bottom: 1px solid #EEE;"><h4>
                             <span><?= $this->tec->formatMoney($chsales->paid ? $chsales->paid : '0.00') . ' (' . $this->tec->formatMoney($chsales->total ? $chsales->total : '0.00') . ')'; ?></span>
                         </h4></td>
-                </tr>
-                <tr>
+                </tr> */ ?>
+                <?php /*<tr>
                     <td style="border-bottom: 1px solid #EEE;"><h4><?= lang('gc_sale'); ?>:</h4></td>
                     <td style="text-align:right;border-bottom: 1px solid #EEE;"><h4>
                             <span><?= $this->tec->formatMoney($gcsales->paid ? $gcsales->paid : '0.00') . ' (' . $this->tec->formatMoney($gcsales->total ? $gcsales->total : '0.00') . ')'; ?></span>
                         </h4></td>
-                </tr>
-                <tr>
+                </tr>*/ ?>
+                
+                <?php /* <tr>
                     <td style="border-bottom: 1px solid <?= (!isset($Settings->stripe)) ? '#DDD' : '#EEE'; ?>;"><h4><?= lang('cc_sale'); ?>:</h4></td>
                     <td style="text-align:right;border-bottom: 1px solid <?= (!isset($Settings->stripe)) ? '#DDD' : '#EEE'; ?>;"><h4>
                             <span><?= $this->tec->formatMoney($ccsales->paid ? $ccsales->paid : '0.00') . ' (' . $this->tec->formatMoney($ccsales->total ? $ccsales->total : '0.00') . ')'; ?></span>
                         </h4></td>
+                </tr> */ ?>
+
+                <tr>
+                    <td style="border-bottom: 1px solid #DDD;"><h4>Ventas a crédito:</h4></td>
+                    <td style="text-align:right;border-bottom: 1px solid #DDD;">
+                        <h4>
+                            <span><?= $this->tec->formatMoney($creditsales->total ? $creditsales->total : '0.00') ?></span>
+                        </h4>
+                    </td>
+                </tr>
+                <tr>
+                    <td style="border-bottom: 1px solid #DDD;"><h4>Ventas apartados:</h4></td>
+                    <td style="text-align:right;border-bottom: 1px solid #DDD;">
+                        <h4>
+                            <span><?= $this->tec->formatMoney($apartssales->total ? $apartssales->total : '0.00') ?></span>
+                        </h4>
+                    </td>
                 </tr>
 
-                <?php if (isset($Settings->stripe)) { ?>
+                <tr><td colspan="2"><div style="height: 10px"></div></td></tr>
+
+                <tr>
+                    <td style="border-bottom: 1px solid #DDD;"><h4>Abonos apartados:</h4></td>
+                    <td style="text-align:right;border-bottom: 1px solid #DDD;">
+                        <h4>
+                            <span><?= $this->tec->formatMoney($cashaparts->paid ? $cashaparts->paid : '0.00') ?></span>
+                        </h4>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td style="border-bottom: 1px solid #DDD;"><h4>Abonos creditos:</h4></td>
+                    <td style="text-align:right;border-bottom: 1px solid #DDD;">
+                        <h4>
+                            <span><?= $this->tec->formatMoney($cashcredits->paid ? $cashcredits->paid : '0.00') ?></span>
+                        </h4>
+                    </td>
+                </tr>
+
+                <tr style="border-bottom: 2px solid #000;"><td colspan="2"><div style="height: 10px"></div></td></tr>
+
+                <?php /* if (isset($Settings->stripe)) { ?>
                     <tr>
                         <td style="border-bottom: 1px solid #DDD;"><h4><?= lang('stripe'); ?>:</h4></td>
                         <td style="text-align:right;border-bottom: 1px solid #DDD;"><h4>
                                 <span><?= $this->tec->formatMoney($stripesales->paid ? $stripesales->paid : '0.00') . ' (' . $this->tec->formatMoney($stripesales->total ? $stripesales->total : '0.00') . ')'; ?></span>
                             </h4></td>
                     </tr>
-                <?php } ?>
+                <?php }*/ ?>
 
-                <tr>
+                <?php /* <tr>
                     <td style="border-bottom: 1px solid #008d4c;"><h4><?= lang('other_sale'); ?>:</h4></td>
-                    <td style="text-align:right;border-bottom: 1px solid #008d4c;"><h4>
+                    <td style="text-align:right;border-bottom: 1px solid #008d4c;">
+                        <h4>
                             <span><?= $this->tec->formatMoney($other_sales->paid ? $other_sales->paid : '0.00') . ' (' . $this->tec->formatMoney($other_sales->total ? $other_sales->total : '0.00') . ')'; ?></span>
-                        </h4></td>
-                </tr>
+                        </h4>
+                    </td>
+                </tr> */ ?>
 
                 <tr>
                     <td width="300px;" style="font-weight:bold;"><h4><?= lang('total_sales'); ?>:</h4></td>
-                    <td width="200px;" style="font-weight:bold;text-align:right;"><h4>
-                            <span><?= $this->tec->formatMoney($totalsales->paid ? $totalsales->paid : '0.00') . ' (' . $this->tec->formatMoney($totalsales->total ? $totalsales->total : '0.00') . ')'; ?></span>
-                        </h4></td>
+                    <td width="200px;" style="font-weight:bold;text-align:right;">
+                        <h4>
+                            <span>
+                                <?= $this->tec->formatMoney($totalsales->paid ? $totalsales->paid : '0.00') . ' (' . $this->tec->formatMoney($totalsales->total ? $totalsales->total : '0.00') . ')'; ?>
+                            </span>
+                        </h4>
+                    </td>
                 </tr>
 
                 <tr>
-                    <td width="300px;" style="font-weight:bold;"><h4><?= lang('expenses'); ?>:</h4></td>
-                    <td width="200px;" style="font-weight:bold;text-align:right;"><h4>
+                    <td width="300px;" style="font-weight:bold;"><h4><?= lang('expenses'); ?>:
+                        </h4>
+                    </td>
+                    <td width="200px;" style="font-weight:bold;text-align:right;">
+                        <h4>
                             <span><?= $this->tec->formatMoney($expenses->total ? $expenses->total : '0.00'); ?></span>
-                        </h4></td>
+                        </h4>
+                    </td>
                 </tr>
-                <?php $total_cash = ($cashsales->paid ? $cashsales->paid + ($cash_in_hand ? $cash_in_hand : $this->session->userdata('cash_in_hand')) : (($cash_in_hand ? $cash_in_hand : $this->session->userdata('cash_in_hand'))));
-                $total_cash -= ($expenses->total ? $expenses->total : 0.00);
+
+                <?php 
+                    // TOTAL DE DINERO EN CAJA
+                    $total_cash = ($cashinhand->paid ? $cashinhand->paid + ($cash_in_hand ? $cash_in_hand : $this->session->userdata('cash_in_hand')) : (($cash_in_hand ? $cash_in_hand : $this->session->userdata('cash_in_hand'))));
+                    $total_cash -= ($expenses->total ? $expenses->total : 0.00);
                 ?>
                 <tr>
-                    <td width="300px;" style="font-weight:bold;"><h4><strong><?= lang('total_cash'); ?></strong>:</h4>
-                    </td>
-                    <td style="text-align:right;"><h4>
+                    <td width="300px;" style="font-weight:bold;"><h4><strong><?= lang('total_cash'); ?></strong>:</h4></td>
+                    <td style="text-align:right;">
+                        <h4>
                             <span><strong><?= $this->tec->formatMoney($total_cash); ?></strong></span>
-                        </h4></td>
+                        </h4>
+                    </td>
                 </tr>
             </table>
-
-
                 <?php
 
                 if ($suspended_bills) {
@@ -93,9 +165,17 @@
                     echo '</tbody></table>';
                 }
 
+                if ($aparts) {
+                    echo '<hr><h4>Apartados</h4><table class="table table-hovered table-bordered"><thead><tr><th>' . lang('customer') . '</th><th>' . lang('date') . '</th><th>' . lang('reference') . '</th><th>' . lang('amount') . '</th></tr></thead><tbody>';
+                    foreach ($aparts as $apart) {
+                        echo '<tr><td>' . $apart->customer_name . '</td><td>' . $this->tec->hrld($apart->date) . '</td><td class="col-xs-4">' . $apart->id . '</td><td class="text-right">' . $apart->total . '</td></tr>';
+                    }
+                    echo '</tbody></table>';
+                }
+
                 ?>
                 <hr>
-                <!--<div class="row">
+                <?php /* <div class="row">
                     <div class="col-sm-6">
                         <div class="form-group">
                             <?= lang("total_cash", "total_cash_submitted"); ?>
@@ -131,7 +211,7 @@
                             <?= form_input('total_cc_slips_submitted', (isset($_POST['total_cc_slips_submitted']) ? $_POST['total_cc_slips_submitted'] : $ccsales->total_cc_slips), 'class="form-control input-tip" id="total_cc_slips_submitted" required="required"'); ?>
                         </div>
                     </div>
-                </div>-->
+                </div> */ ?>
                 <div class="form-group">
                     <label for="note"><?= lang("note"); ?></label>
                     <?= form_textarea('note', (isset($_POST['note']) ? $_POST['note'] : ""), 'class="form-control redactor" id="note" style="margin-top: 10px; height: 100px;"'); ?>

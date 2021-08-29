@@ -170,16 +170,23 @@ class Pos extends MY_Controller
                 $this->data['register_open_time'] = null;
             }
             $this->data['error']           = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
+            $this->data['cashinhand']       = $this->pos_model->getRegisterCashSales($register_open_time, $user_id);
+
             $this->data['ccsales']         = $this->pos_model->getRegisterCCSales($register_open_time, $user_id);
-            $this->data['cashsales']       = $this->pos_model->getRegisterCashSales($register_open_time, $user_id);
+            $this->data['cashsales']       = $this->pos_model->getRegisterCashLiquidate($register_open_time, $user_id);
+            $this->data['cashcredits']     = $this->pos_model->getRegisterCashCredits($register_open_time, $user_id);
+            $this->data['cashaparts']      = $this->pos_model->getRegisterCashAparts($register_open_time, $user_id);
             $this->data['chsales']         = $this->pos_model->getRegisterChSales($register_open_time, $user_id);
             $this->data['other_sales']     = $this->pos_model->getRegisterOtherSales($register_open_time, $user_id);
             $this->data['gcsales']         = $this->pos_model->getRegisterGCSales($register_open_time, $user_id);
             $this->data['stripesales']     = $this->pos_model->getRegisterStripeSales($register_open_time, $user_id);
             $this->data['totalsales']      = $this->pos_model->getRegisterSales($register_open_time, $user_id);
+            $this->data['creditsales']     = $this->pos_model->getRegisterCreditSales($register_open_time, $user_id);
+            $this->data['apartssales']     = $this->pos_model->getRegisterApartsSales($register_open_time, $user_id);
             $this->data['expenses']        = $this->pos_model->getRegisterExpenses($register_open_time);
             $this->data['users']           = $this->tec->getUsers($user_id);
             $this->data['suspended_bills'] = $this->pos_model->getSuspendedsales($user_id);
+            $this->data['aparts']          = $this->pos_model->getRegisterAparts($user_id);
             $this->data['user_id']         = $user_id;
             $this->load->view($this->theme . 'pos/close_register', $this->data);
         }

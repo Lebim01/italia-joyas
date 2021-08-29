@@ -256,6 +256,28 @@ class Pos_model extends CI_Model
         return false;
     }
 
+    public function getRegisterCashLiquidate($date = null, $user_id = null)
+    {
+        if (!$date) {
+            $date = $this->session->userdata('register_open_time');
+        }
+        if (!$user_id) {
+            $user_id = $this->session->userdata('user_id');
+        }
+        $this->db->select('SUM( COALESCE( grand_total, 0 ) ) AS total, SUM( COALESCE( amount, 0 ) ) AS paid', false)
+            ->join('sales', 'sales.id=payments.sale_id', 'left')
+            ->where('payments.date >', $date)
+            ->where("{$this->db->dbprefix('payments')}.paid_by", 'cash')
+            ->where('sales.transaction_type', 'liquidate');
+        $this->db->where('payments.created_by', $user_id);
+
+        $q = $this->db->get('payments');
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return false;
+    }
+
     public function getRegisterCashSales($date = null, $user_id = null)
     {
         if (!$date) {
@@ -266,7 +288,51 @@ class Pos_model extends CI_Model
         }
         $this->db->select('SUM( COALESCE( grand_total, 0 ) ) AS total, SUM( COALESCE( amount, 0 ) ) AS paid', false)
             ->join('sales', 'sales.id=payments.sale_id', 'left')
-            ->where('payments.date >', $date)->where("{$this->db->dbprefix('payments')}.paid_by", 'cash');
+            ->where('payments.date >', $date)
+            ->where("{$this->db->dbprefix('payments')}.paid_by", 'cash');
+        $this->db->where('payments.created_by', $user_id);
+
+        $q = $this->db->get('payments');
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return false;
+    }
+
+    public function getRegisterCashAparts($date = null, $user_id = null)
+    {
+        if (!$date) {
+            $date = $this->session->userdata('register_open_time');
+        }
+        if (!$user_id) {
+            $user_id = $this->session->userdata('user_id');
+        }
+        $this->db->select('SUM( COALESCE( grand_total, 0 ) ) AS total, SUM( COALESCE( amount, 0 ) ) AS paid', false)
+            ->join('sales', 'sales.id=payments.sale_id', 'left')
+            ->where('sales.transaction_type', 'apart')
+            ->where('payments.date >', $date);
+        $this->db->where('payments.created_by', $user_id);
+
+        $q = $this->db->get('payments');
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return false;
+    }
+
+    public function getRegisterCashCredits($date = null, $user_id = null)
+    {
+        if (!$date) {
+            $date = $this->session->userdata('register_open_time');
+        }
+        if (!$user_id) {
+            $user_id = $this->session->userdata('user_id');
+        }
+        $this->db->select('SUM( COALESCE( grand_total, 0 ) ) AS total, SUM( COALESCE( amount, 0 ) ) AS paid', false)
+            ->join('sales', 'sales.id=payments.sale_id', 'left')
+            ->where('sales.transaction_type', 'credit')
+            ->where('payments.date >', $date)
+            ->where('sales.date <', $date);
         $this->db->where('payments.created_by', $user_id);
 
         $q = $this->db->get('payments');
@@ -407,6 +473,7 @@ class Pos_model extends CI_Model
         }
         $this->db->select('SUM( COALESCE( grand_total, 0 ) ) AS total, SUM( COALESCE( amount, 0 ) ) AS paid', false)
             ->join('sales', 'sales.id=payments.sale_id', 'left')
+            ->where('sales.date >', $date)
             ->where('payments.date >', $date);
         $this->db->where('payments.created_by', $user_id);
 
@@ -415,6 +482,61 @@ class Pos_model extends CI_Model
             return $q->row();
         }
         return false;
+    }
+
+    public function getRegisterCreditSales($date = null, $user_id = null){
+        if (!$date) {
+            $date = $this->session->userdata('register_open_time');
+        }
+        if (!$user_id) {
+            $user_id = $this->session->userdata('user_id');
+        }
+        $this->db->select('SUM( COALESCE( grand_total, 0 ) ) AS total, SUM( COALESCE( amount, 0 ) ) AS paid', false)
+            ->join('sales', 'sales.id=payments.sale_id', 'left')
+            ->where('payments.date >', $date)
+            ->where('sales.transaction_type', 'credit');
+        $this->db->where('payments.created_by', $user_id);
+
+        $q = $this->db->get('payments');
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return false;
+    }
+
+    public function getRegisterApartsSales($date = null, $user_id = null){
+        if (!$date) {
+            $date = $this->session->userdata('register_open_time');
+        }
+        if (!$user_id) {
+            $user_id = $this->session->userdata('user_id');
+        }
+        $this->db->select('SUM( COALESCE( grand_total, 0 ) ) AS total, SUM( COALESCE( amount, 0 ) ) AS paid', false)
+            ->join('sales', 'sales.id=payments.sale_id', 'left')
+            ->where('payments.date >', $date)
+            ->where('sales.transaction_type', 'apart');
+        $this->db->where('payments.created_by', $user_id);
+
+        $q = $this->db->get('payments');
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return false;
+    }
+
+    public function getRegisterAparts($date = null, $user_id = null){
+        if (!$date) {
+            $date = $this->session->userdata('register_open_time');
+        }
+        if (!$user_id) {
+            $user_id = $this->session->userdata('user_id');
+        }
+        $this->db->select('id, customer_name, date, COALESCE( grand_total, 0 ) AS total, COALESCE( paid, 0 ) AS paid', false)
+            ->where('sales.date >', $date)
+            ->where('sales.transaction_type', 'apart');
+        $this->db->where('created_by', $user_id);
+
+        return $this->db->get('sales')->result();
     }
 
     public function getRegisterStripeSales($date = null, $user_id = null)
