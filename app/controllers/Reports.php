@@ -21,6 +21,7 @@ class Reports extends MY_Controller
 
         $this->load->model('reports_model');
         $this->load->model('customers_model');
+        $this->load->model('sales_model');
     }
 
     function daily_sales($year = NULL, $month = NULL)
@@ -702,7 +703,7 @@ class Reports extends MY_Controller
 
                 .floatedTable th, .floatedTable td {
                 text-align: left;
-                padding: 8px;
+                padding:4px;
                 }
 
                 .floatedTable tr:nth-child(even) {
@@ -862,7 +863,7 @@ class Reports extends MY_Controller
 
                 .floatedTable th, .floatedTable td {
                 text-align: left;
-                padding: 8px;
+                padding:4px;
                 }
 
                 .floatedTable tr:nth-child(even) {
@@ -941,7 +942,7 @@ class Reports extends MY_Controller
 
                 .floatedTable th, .floatedTable td {
                 text-align: left;
-                padding: 8px;
+                padding:4px;
                 }
 
                 .floatedTable tr:nth-child(even) {
@@ -956,6 +957,130 @@ class Reports extends MY_Controller
             </table>
             
         ';
+        $dompdf = new DOMPDF();
+        $dompdf->loadHtml($html);
+        $dompdf->render();
+        $dompdf->stream($arrayfiltros[0].".pdf", array("Attachment"=>0)); 
+    }
+
+    public function statusAccount()
+    {
+        $filtros = $_GET['filtros'];
+        $arrayfiltros = explode(",", $filtros);
+        $sales = [];
+        $itemSales = [];
+        $header = "";
+        $table = "";
+        $headerItem = "";
+        $tableItem = "";
+        $masterTable = "";
+        $itemItem=0;
+
+        if($arrayfiltros[0] == "Estado de cuenta"){
+            $sales = $this->reports_model->getStatusAccount($arrayfiltros);
+            
+            $header = '
+                <tr class="header" >
+                    <td style="">Fecha</td>
+                    <td style="">Total</td>
+                    <td style="">Pagado</td>
+                    <td style="">Tipo de transaccion</td>
+                </tr>
+            ';
+
+            $headerItem = '
+                <tr class="header" >
+                    <td style="">#</td>
+                    <td style="">Codigo</td>
+                    <td style="">Nombre</td>
+                    <td style="">Cantidad venta</td>
+                    <td style="">Precio</td>
+                    <td style="">Descuento</td>
+                </tr>
+            ';
+
+
+            for($i=0;$i<=count($sales)-1;$i++){
+                $itemSales = $this->sales_model->getallItemSalesByID($sales[$i]->id);
+                //var_dump($itemSales);exit;
+                $item = $i + 1;
+                $table.='
+                    <tr>
+                        <td style="text-align:center;">'.$sales[$i]->date.'</td>
+                        <td style="text-align:center;">'.$this->tec->formatMoney($sales[$i]->grand_total).'</td>
+                        <td style="text-align:center;">'.$this->tec->formatMoney($sales[$i]->paid).'</td>
+                        <td style="text-align:center;">'.$sales[$i]->transaction_type.'</td>
+                    </tr>
+                ';
+
+                $masterTable.='
+                    <table class="blueTable floatedTable" style="width:100%;text-align:center;">
+                        <caption><h3>Transaccion</h3></caption>
+                        <tbody style"">
+                            '.$header.'
+                            '.$table.'
+                        </tbody>
+                    </table>
+                    <br>
+                ';
+                for($j=0;$j<=count($itemSales)-1;$j++){
+                    $itemItem = $j + 1;
+                    $tableItem.='
+                        <tr>
+                            <td style="text-align:center;">'.$itemItem.'</td>
+                            <td style="text-align:center;">'.$itemSales[$j]->product_code.'</td>
+                            <td style="text-align:center;">'.$itemSales[$j]->product_name.'</td>
+                            <td style="text-align:center;">'.$this->tec->formatMoney($itemSales[$j]->quantity).'</td>
+                            <td style="text-align:center;">'.$this->tec->formatMoney($itemSales[$j]->unit_price).'</td>
+                            <td style="text-align:center;">'.$this->tec->formatMoney($itemSales[$j]->discount).'</td>
+                        </tr>
+                    ';
+                }
+                $masterTable.='
+                    <table class="blueTable floatedTable" style="width:100%;text-align:center;">
+                        <caption><h3>Detalle de transaccion</h3></caption>
+                        <tbody>
+                            '.$headerItem.'
+                            '.$tableItem.'
+                        </tbody>
+                    </table>
+                    <br><br><br>
+                    <hr>
+                ';
+                $itemItem=0;
+                $table = "";
+                $tableItem = "";
+                $itemsSales =[];
+            }
+            
+            
+
+        }
+        
+        $html='
+            <p>"ITALIA JOYAS"</p> 
+            <p>'.$arrayfiltros[0].': '.$sales[0]->name.'</p>
+            <hr style="text-align:left;margin-left:0">
+            <hr style="text-align:left;margin-left:0">
+            <style>
+                .floatedTable{
+                border-collapse: collapse;
+                width: 100%;
+                }
+
+                .floatedTable th, .floatedTable td {
+                text-align: left;
+                padding:4px;
+                }
+
+                .floatedTable tr:nth-child(even) {
+                background-color: #D8D8D8;
+                }
+            </style>
+                    '.$masterTable.'
+            
+        ';
+        //echo $html;exit;
         $dompdf = new DOMPDF();
         $dompdf->loadHtml($html);
         if ($arrayfiltros[0] == "Reporte de ventas por producto") {

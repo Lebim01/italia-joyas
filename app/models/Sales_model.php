@@ -239,6 +239,27 @@ class Sales_model extends MY_Model
         return $data;
     }
 
+    public function getallItemSalesByID($id)
+    {
+        $data = $this->db->query("SELECT 
+                                    product_code,
+                                    product_name,
+                                    unit_price,
+                                    discount,
+                                    quantity,
+                                    subtotal 
+                                FROM
+                                    tec_sale_items 
+                                    LEFT JOIN tec_sales 
+                                    ON tec_sale_items.sale_id = tec_sales.id
+                                    WHERE tec_sales.id = ".$id."
+                                    ORDER BY tec_sales.date ASC
+                                    ")->result();
+                                    //echo $this->db->last_query();
+                                    
+        return $data;
+    }
+
     public function getAllPartialSales(){
         $sql = "SELECT *
                 FROM tec_sales

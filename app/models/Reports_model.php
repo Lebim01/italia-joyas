@@ -577,5 +577,29 @@ class Reports_model extends CI_Model
         return $data;
     }
 
+    public function getStatusAccount($phone)
+    {
+        $data = $this->db->query("SELECT 
+                                    tec_customers.name,
+                                    tec_sales.date,
+                                    tec_sales.grand_total,
+                                    tec_sales.paid,
+                                    tec_sales.transaction_type,
+                                    tec_sales.status,
+                                    tec_sales.id
+                                FROM
+                                    tec_sales 
+                                    LEFT JOIN tec_customers 
+                                    ON tec_customers.id = tec_sales.customer_id 
+                                WHERE (tec_sales.status = 'partial')
+                                    AND (
+                                    tec_sales.transaction_type = 'credit' 
+                                    OR tec_sales.transaction_type = 'apart'
+                                    ) 
+                                    AND tec_customers.phone = ".$phone[1]." 
+        ")->result();
+        return $data;
+    }
+
     
 }
