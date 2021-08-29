@@ -1119,7 +1119,7 @@ $(document).ready(function () {
     const sale_data = $(option).data('row')
 
     $.ajax({
-      url: base_url + `sales/add_payment_credit/${sale_data.customer_id}`,
+      url: base_url + `pos/add_payment_credit/${sale_data.customer_id}`,
       method: 'POST',
       data: {
         'amount-paid': amount,

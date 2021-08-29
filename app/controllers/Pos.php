@@ -1356,4 +1356,127 @@ class Pos extends MY_Controller
             }
         }
     }
+
+    public function view_payment_credit(){
+
+        $this->data['payments'] = [];
+        
+        $this->load->view($this->theme . 'pos/view_payment_credit', $this->data);
+    }
+
+    public function ticket_payment_credit($customer_id, $date, $before_payment, $payment, $after_payment){
+        $sale = $this->pos_model->getSaleFromPayment($payment_id);
+        $customer = $this->pos_model->getCustomerByID($customer_id);
+
+        $this->data['error']   = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
+        $this->data['message'] = $this->session->flashdata('message');
+
+        $inv                   = $this->pos_model->getSaleByID($sale->id);
+        if (!$this->session->userdata('store_id')) {
+            $this->session->set_flashdata('warning', lang('please_select_store'));
+            redirect('stores');
+        }
+        $store_id = $this->session->userdata('store_id');
+
+        $this->tec->view_rights($inv->created_by);
+        $this->load->helper('text');
+        $this->data['customer']   = $customer;
+        $this->data['store']      = $this->site->getStoreByID($store_id);
+        $this->data['inv']        = $inv;
+        $this->data['sid']        = $sale->id;
+        $this->data['noprint']    = $noprint;
+        $this->data['modal']      = $noprint ? true : false;
+        $this->data['payments']   = $this->pos_model->getAllSalePayments($sale->id);
+        $this->data['created_by'] = $this->site->getUser($inv->created_by);
+        $this->data['printer']    = $this->site->getPrinterByID($this->Settings->printer);
+        $this->data['page_title'] = "Abono de crédito";
+
+        $this->data['debt'] = $before_payment;
+        $this->data['payment'] = $payment;
+        $this->data['debt_rest'] = $after_payment;
+        $this->data['date'] = $date;
+
+        $this->load->view($this->theme . 'pos/view_payment_credit', $this->data);
+    }
+
+    public function add_payment_credit($ticket = null)
+    {
+        $this->load->helper('security');
+        if ($this->input->get('id')) {
+            $id = $this->input->get('id');
+        }
+
+        $this->form_validation->set_rules('customer_id', 'Cliente', 'required');
+        $this->form_validation->set_rules('amount-paid', lang('amount'), 'required');
+        #$this->form_validation->set_rules('paid_by', lang('paid_by'), 'required');
+        #$this->form_validation->set_rules('userfile', lang('attachment'), 'xss_clean');
+        
+        if ($this->form_validation->run() == true) {
+            if ($this->Admin && $this->input->post('date')) {
+                $date = $this->input->post('date');
+            } else {
+                $date = date('Y-m-d H:i:s');
+            }
+
+            $this->load->model('customers_model');
+
+            $sales = $this->customers_model->getPartialSales($this->input->post('customer_id'));
+            $total_paid = (float) $this->input->post('amount-paid');
+
+            $rest_paid = $total_paid;
+            $debt = 0;
+
+            foreach($sales as $sale){
+                $debt += ((float) $sale->grand_total - (float) $sale->paid);
+            }
+
+            foreach($sales as $sale){
+                $isLiquidate = (float) $sale->grand_total <= $total_paid;
+
+                $paid = (float) $isLiquidate == true ? $sale->grand_total : $rest_paid;
+
+                $payment = [
+                    'date'        => $date,
+                    'sale_id'     => $sale->id,
+                    'customer_id' => $this->input->post('customer_id'),
+                    'reference'   => $this->input->post('reference'),
+                    'amount'      => $paid,
+                    'paid_by'     => 'cash',
+                    'cheque_no'   => $this->input->post('cheque_no'),
+                    'gc_no'       => $this->input->post('gift_card_no'),
+                    'cc_no'       => $this->input->post('pcc_no'),
+                    'cc_holder'   => $this->input->post('pcc_holder'),
+                    'cc_month'    => $this->input->post('pcc_month'),
+                    'cc_year'     => $this->input->post('pcc_year'),
+                    'cc_type'     => $this->input->post('pcc_type'),
+                    'note'        => $this->input->post('note'),
+                    'created_by'  => $this->session->userdata('user_id'),
+                    'store_id'    => $this->session->userdata('store_id'),
+                ];
+    
+                $this->sales_model->addPayment($payment);
+
+                $rest_paid -= $paid;
+
+                if($rest_paid == 0) break;
+            }
+
+            
+            if($ticket){
+                $this->ticket_payment_credit(
+                    $this->input->post('customer_id'), 
+                    $date,
+                    $debt, // before payment
+                    $total_paid, // total payment
+                    $debt - $total_paid // after payment
+                );
+            }else{
+                $this->session->set_flashdata('message', 'Abono agregado');
+                redirect('pos');
+            }
+        } else {
+            $this->session->set_flashdata('error', 'Error al procesar el pago');
+            redirect('pos');
+        }
+    }
 }

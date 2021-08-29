@@ -42,25 +42,35 @@
                     </td>
                 </tr>
                 <tr><td colspan="2"><div style="height: 10px"></div></td></tr>
-                <?php /*<tr>
+
+                <?php /*
+                <tr>
                     <td style="border-bottom: 1px solid #EEE;"><h4><?= lang('ch_sale'); ?>:</h4></td>
-                    <td style="text-align:right;border-bottom: 1px solid #EEE;"><h4>
+                    <td style="text-align:right;border-bottom: 1px solid #EEE;">
+                        <h4>
                             <span><?= $this->tec->formatMoney($chsales->paid ? $chsales->paid : '0.00') . ' (' . $this->tec->formatMoney($chsales->total ? $chsales->total : '0.00') . ')'; ?></span>
-                        </h4></td>
-                </tr> */ ?>
-                <?php /*<tr>
+                        </h4>
+                    </td>
+                </tr> 
+
+                <tr>
                     <td style="border-bottom: 1px solid #EEE;"><h4><?= lang('gc_sale'); ?>:</h4></td>
-                    <td style="text-align:right;border-bottom: 1px solid #EEE;"><h4>
+                    <td style="text-align:right;border-bottom: 1px solid #EEE;">
+                        <h4>
                             <span><?= $this->tec->formatMoney($gcsales->paid ? $gcsales->paid : '0.00') . ' (' . $this->tec->formatMoney($gcsales->total ? $gcsales->total : '0.00') . ')'; ?></span>
-                        </h4></td>
-                </tr>*/ ?>
+                        </h4>
+                    </td>
+                </tr>
                 
-                <?php /* <tr>
+                <tr>
                     <td style="border-bottom: 1px solid <?= (!isset($Settings->stripe)) ? '#DDD' : '#EEE'; ?>;"><h4><?= lang('cc_sale'); ?>:</h4></td>
-                    <td style="text-align:right;border-bottom: 1px solid <?= (!isset($Settings->stripe)) ? '#DDD' : '#EEE'; ?>;"><h4>
+                    <td style="text-align:right;border-bottom: 1px solid <?= (!isset($Settings->stripe)) ? '#DDD' : '#EEE'; ?>;">
+                        <h4>
                             <span><?= $this->tec->formatMoney($ccsales->paid ? $ccsales->paid : '0.00') . ' (' . $this->tec->formatMoney($ccsales->total ? $ccsales->total : '0.00') . ')'; ?></span>
-                        </h4></td>
-                </tr> */ ?>
+                        </h4>
+                    </td>
+                </tr>
+                */ ?>
 
                 <tr>
                     <td style="border-bottom: 1px solid #DDD;"><h4>Ventas a crédito:</h4></td>
@@ -175,7 +185,9 @@
 
                 ?>
                 <hr>
-                <?php /* <div class="row">
+
+                <?php /** NO COMENTAR PORQUE FALLA EL CERRAR CAJA, esta oculto con d-none */ ?>
+                <div class="row d-none">
                     <div class="col-sm-6">
                         <div class="form-group">
                             <?= lang("total_cash", "total_cash_submitted"); ?>
@@ -211,7 +223,8 @@
                             <?= form_input('total_cc_slips_submitted', (isset($_POST['total_cc_slips_submitted']) ? $_POST['total_cc_slips_submitted'] : $ccsales->total_cc_slips), 'class="form-control input-tip" id="total_cc_slips_submitted" required="required"'); ?>
                         </div>
                     </div>
-                </div> */ ?>
+                </div>
+
                 <div class="form-group">
                     <label for="note"><?= lang("note"); ?></label>
                     <?= form_textarea('note', (isset($_POST['note']) ? $_POST['note'] : ""), 'class="form-control redactor" id="note" style="margin-top: 10px; height: 100px;"'); ?>

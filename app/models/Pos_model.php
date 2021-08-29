@@ -964,4 +964,11 @@ class Pos_model extends CI_Model
         $this->db->where('id', $sale_id);
         $this->db->update('sales', ['status' => 'closed']);
     }
+
+    public function getSaleFromPayment($payment_id){
+        $this->db->select('sales.*')
+            ->join('sales', 'sales.id=payments.sale_id', 'left')
+            ->where('payments.id', $payment_id);
+        return $this->db->get('payments')->row();
+    }
 }

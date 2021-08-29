@@ -781,35 +781,38 @@
     <div class="modal" data-easein="flipYIn" id="paymentModalCredit" tabindex="-1" role="dialog" aria-labelledby="paymentModalCreditLabel" aria-hidden="true">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
-                <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
-                    <h4 class="modal-title" id="tsModalLabel">Abonar crédito</h4>
-                </div>
-                <div class="modal-body">
-                    <select class="form-control input-md">
-                        <option value="">Seleccionar cuenta cliente</option>
-                        <?php foreach($creditsClients as $order): ?>
-                            <option data-row='<?= json_encode($order) ?>' value="<?= $order->customer_id ?>"><?= $order->customer ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                    <br />
-                    <fieldset>
-                        <div class="row">
-                            <div class="col-sm-3">
-                                <label class="label-control">Cuenta total:</label>
+                <?= form_open('pos/add_payment_credit/1', 'id="form_add_payment_credit"') ?>
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+                        <h4 class="modal-title" id="tsModalLabel">Abonar crédito</h4>
+                    </div>
+                    <div class="modal-body">
+                        <select class="form-control input-md" name="customer_id" required>
+                            <option value="">Seleccionar cuenta cliente</option>
+                            <?php foreach($creditsClients as $order): ?>
+                                <option data-row='<?= json_encode($order) ?>' value="<?= $order->customer_id ?>"><?= $order->customer ?></option>
+                            <?php endforeach; ?>
+                        </select>
+                        <br />
+                        <fieldset>
+                            <div class="row">
+                                <div class="col-sm-3">
+                                    <label class="label-control">Cuenta total:</label>
+                                </div>
+                                <div class="col-sm-9">
+                                    <span id="grand_total"></span>
+                                </div>
                             </div>
-                            <div class="col-sm-9">
-                                <span id="grand_total"></span>
-                            </div>
-                        </div>
-                    </fieldset>
-                    <br />
-                    <input type='number' class='form-control input-md' value='' placeholder="Monto">
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal"><?= lang('close') ?></button>
-                    <button type="button" id="makePaymentCredit" class="btn btn-primary btn-sm">Aceptar</button>
-                </div>
+                        </fieldset>
+
+                        <br />
+                        <input type='number' name='amount-paid' class='form-control input-md' value='' placeholder="Monto" required>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal"><?= lang('close') ?></button>
+                        <button type="submmit" <?php /* id="makePaymentCredit" */ ?> class="btn btn-primary btn-sm">Aceptar</button>
+                    </div>
+                <?= form_close() ?>
             </div>
         </div>
     </div>

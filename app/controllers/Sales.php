@@ -95,68 +95,6 @@ class Sales extends MY_Controller
         }
     }
 
-    public function add_payment_credit($customer_id = null)
-    {
-        $this->load->helper('security');
-        if ($this->input->get('id')) {
-            $id = $this->input->get('id');
-        }
-
-        $this->form_validation->set_rules('amount-paid', lang('amount'), 'required');
-        $this->form_validation->set_rules('paid_by', lang('paid_by'), 'required');
-        $this->form_validation->set_rules('userfile', lang('attachment'), 'xss_clean');
-        
-        if ($this->form_validation->run() == true) {
-            if ($this->Admin) {
-                $date = $this->input->post('date');
-            } else {
-                $date = date('Y-m-d H:i:s');
-            }
-
-            $this->load->model('customers_model');
-
-            $sales = $this->customers_model->getPartialSales($customer_id);
-            $total_paid = (float) $this->input->post('amount-paid');
-
-            $rest_paid = $total_paid;
-
-            foreach($sales as $sale){
-                $isLiquidate = (float) $sale->grand_total <= $total_paid;
-
-                $paid = (float) $isLiquidate == true ? $sale->grand_total : $rest_paid;
-
-                $payment = [
-                    'date'        => $date,
-                    'sale_id'     => $sale->id,
-                    'customer_id' => $customer_id,
-                    'reference'   => $this->input->post('reference'),
-                    'amount'      => $paid,
-                    'paid_by'     => $this->input->post('paid_by'),
-                    'cheque_no'   => $this->input->post('cheque_no'),
-                    'gc_no'       => $this->input->post('gift_card_no'),
-                    'cc_no'       => $this->input->post('pcc_no'),
-                    'cc_holder'   => $this->input->post('pcc_holder'),
-                    'cc_month'    => $this->input->post('pcc_month'),
-                    'cc_year'     => $this->input->post('pcc_year'),
-                    'cc_type'     => $this->input->post('pcc_type'),
-                    'note'        => $this->input->post('note'),
-                    'created_by'  => $this->session->userdata('user_id'),
-                    'store_id'    => $this->session->userdata('store_id'),
-                ];
-    
-                $this->sales_model->addPayment($payment);
-
-                $rest_paid -= $paid;
-
-                if($rest_paid == 0) break;
-            }
-
-            echo "Abono realizado";
-        } else {
-            status(400);
-        }
-    }
-
     public function delete($id = null)
     {
         if (DEMO) {
