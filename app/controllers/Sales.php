@@ -254,16 +254,17 @@ class Sales extends MY_Controller
     {
         $this->load->library('datatables');
         if ($this->db->dbdriver == 'sqlite3') {
-            $this->datatables->select("id, transaction_type, strftime('%Y-%m-%d %H:%M', date) as date, '' cashier_name, customer_name, total, total_tax, total_discount, grand_total, paid, status");
+            $this->datatables->select("sales.id, transaction_type, strftime('%Y-%m-%d %H:%M', date) as date, CONCAT(first_name, ' ', last_name) as cashier_name, customer_name, total, total_tax, total_discount, grand_total, paid, status");
         } else {
-            $this->datatables->select("id, transaction_type, DATE_FORMAT(date, '%Y-%m-%d %H:%i') as date, '' cashier_name, customer_name, total, total_tax, total_discount, grand_total, paid, status");
+            $this->datatables->select("sales.id, transaction_type, DATE_FORMAT(date, '%Y-%m-%d %H:%i') as date, CONCAT(first_name, ' ', last_name) as cashier_name, customer_name, total, total_tax, total_discount, grand_total, paid, status");
         }
+        $this->datatables->join('users', 'users.id = sales.created_by', 'left');
         $this->datatables->from('sales');
         
         if (!$this->Admin && !$this->session->userdata('view_right')) {
             $this->datatables->where('created_by', $this->session->userdata('user_id'));
         }
-        $this->datatables->where('store_id', $this->session->userdata('store_id'));
+        $this->datatables->where('sales.store_id', $this->session->userdata('store_id'));
 
         $actions = "";
         if($this->Admin){
