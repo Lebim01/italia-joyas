@@ -183,6 +183,36 @@
                         <div class="row">
                             <div class="col-lg-12">
                                 <div class="well well-sm">
+                                    <p>Notas de ticket por defecto</p>
+
+                                    <div class="form-group">
+                                        <label for="note_ticket_liquidate">
+                                            Contado
+                                        </label>
+                                        <?= form_textarea('note_ticket_liquidate', $settings->note_ticket_liquidate, 'class="form-control tip" id="note_ticket_liquidate"', 3); ?>
+                                    </div>
+                                    
+                                    <div class="form-group">
+                                        <label for="note_ticket_credit">
+                                            Crédito
+                                        </label>
+                                        <?= form_textarea('note_ticket_credit', $settings->note_ticket_credit, 'class="form-control tip" id="note_ticket_credit" required="required"', 3); ?>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="note_ticket_apart">
+                                            Apartado
+                                        </label>
+                                        <?= form_textarea('note_ticket_apart', $settings->note_ticket_apart, 'class="form-control tip" id="note_ticket_apart"', 3); ?>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-lg-12">
+                                <div class="well well-sm">
                                     <p>Apartados</p>
                                     
                                     <div class="form-group">

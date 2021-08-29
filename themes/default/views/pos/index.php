@@ -963,8 +963,8 @@
                             <div class="row">
                             <div class="col-xs-12">
                                 <div class="form-group">
-                                    Comentarios:
-                                    <textarea name="note" id="payment_note" class="pa form-control kb-text"></textarea>
+                                    Nota de ticket:
+                                    <textarea name="note" id="payment_note" class="pa form-control kb-text" rows="5"></textarea>
                                 </div>
                             </div>
                             
@@ -1127,8 +1127,16 @@
     <script type="text/javascript">
         var base_url = '<?= base_url(); ?>',
             assets = '<?= $assets ?>';
+
         var dateformat = '<?= $Settings->dateformat; ?>',
             timeformat = '<?= $Settings->timeformat ?>';
+
+        var ticket_notes = {
+            liquidate : `<?= $Settings->note_ticket_liquidate ?>`,
+            credit : `<?= $Settings->note_ticket_credit ?>`,
+            apart : `<?= $Settings->note_ticket_apart ?>`
+        };
+        
         <?php unset($Settings->protocol, $Settings->smtp_host, $Settings->smtp_user, $Settings->smtp_pass, $Settings->smtp_port, $Settings->smtp_crypto, $Settings->mailpath, $Settings->timezone, $Settings->setting_id, $Settings->default_email, $Settings->version, $Settings->stripe, $Settings->stripe_secret_key, $Settings->stripe_publishable_key); ?>
         var Settings = <?= json_encode($Settings); ?>;
         var sid = false,

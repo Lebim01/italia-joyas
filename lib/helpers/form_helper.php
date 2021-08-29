@@ -299,12 +299,12 @@ if ( ! function_exists('form_textarea'))
 	 * @param	mixed	$extra
 	 * @return	string
 	 */
-	function form_textarea($data = '', $value = '', $extra = '')
+	function form_textarea($data = '', $value = '', $extra = '', $rows = '10')
 	{
 		$defaults = array(
 			'name' => is_array($data) ? '' : $data,
 			'cols' => '40',
-			'rows' => '10'
+			'rows' => $rows
 		);
 
 		if ( ! is_array($data) OR ! isset($data['value']))

@@ -1,6 +1,7 @@
 <?php (defined('BASEPATH')) or exit('No direct script access allowed'); ?>
 
 <?php
+
 if ($modal) {
     ?>
     <div class="modal-dialog" role="document"<?= $Settings->rtl ? ' dir="rtl"' : ''; ?>>
@@ -228,7 +229,22 @@ if ($modal) {
 
                                 ?>
 
-                                <?= $inv->note ? '<p style="margin-top:10px; text-align: center;">' . $this->tec->decode_html($inv->note) . '</p>' : ''; ?>
+                                <?php
+
+                                function replaceNote($note, $tec, $Settings, $store, $round_total){
+                                    $note = str_replace("{{store}}", $Settings->site_name, $note);
+                                    $note = str_replace("{{address}}", $store->city.', '.$store->state, $note);
+                                    $note = str_replace("{{price}}", '$'. $tec->formatMoney($round_total), $note);
+                                    $note = str_replace("\n", "<br />", $note);
+
+                                    return $note;
+                                }
+                                
+                                echo $inv->note 
+                                    ? '<p style="margin-top:10px; text-align: center;">' . replaceNote($this->tec->decode_html($inv->note), $this->tec, $Settings, $store, $round_total) . '</p>' 
+                                    : ''; 
+                                ?>
+
                                 <?php if (!empty($store->receipt_footer)) { ?>
                                 <div class="well well-sm"  style="margin-top:10px;">
                                     <div style="text-align: center;"><?= nl2br($store->receipt_footer); ?></div>

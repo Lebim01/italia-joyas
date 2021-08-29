@@ -1193,9 +1193,18 @@ $(document).ready(function () {
       $('#payModal').modal({ backdrop: 'static' });
     }
   });
+
+  $("body").delegate('#payment_note', 'change', function () {
+    const input = $(this)
+    $("#spos_note").val(input.val())
+  })
+
   $("#payModal").delegate('#transaction_type', 'change', function () {
     const type = $(this).val()
     $("input#transaction_type").val(type)
+
+    $("#payment_note").val(ticket_notes[type])
+    $("#spos_note").val(ticket_notes[type])
 
     if (type === 'credit') {
       spositems = {}
@@ -1545,18 +1554,18 @@ $(document).ready(function () {
     let edit = window.location.href.indexOf('edit=')
 
     let transaction_type = $("#transaction_type").val()
-    if (transaction_type === "liquidate" || transaction_type === "apart"){
+    if (transaction_type === "liquidate" || transaction_type === "apart") {
       for (i = 0; i < nextinput; i++) {
-        if (($('#metodo_' + i).val() === "cash" || $('#metodo_' + i).val() === "CC") && parseFloat($("#cantidad_" + i).val()) > 0) { 
+        if (($('#metodo_' + i).val() === "cash" || $('#metodo_' + i).val() === "CC") && parseFloat($("#cantidad_" + i).val()) > 0) {
           if ($('#metodo_' + i).val() == "cash") {
             bancos[i] = ""
             console.log("nulldd")
             console.log(bancos)
-            
+
           } else {
             if ($('#banco_' + i).val() != "seleccione") {
               bancos[i] = $('#banco_' + i).val()
-              console.log("valor",bancos)
+              console.log("valor", bancos)
             } else {
               alert("Por favor, seleccione un banco")
               return;
@@ -1573,7 +1582,7 @@ $(document).ready(function () {
         }
       }
     }
-    
+
 
     if (transaction_type === 'liquidate' && edit < 0) {
       if (total_cantidad < g_total) {
