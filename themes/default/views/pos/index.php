@@ -349,9 +349,9 @@
                                         </div>
                                         <div style="clear:both;"></div>
                                     </div>
-                                    <?php if ($eid && $Admin) { ?>
+                                    <?php if ($Admin) { ?>
                                         <div class="form-group" style="margin-bottom:5px;">
-                                            <?= form_input('date', set_value('date', $sale->date), 'id="date" required="required" class="form-control"'); ?>
+                                            <?= form_input('date', set_value('date', $sale->date), 'id="date" required="required" class="form-control datetimepicker" placeholder="Fecha (dejarla vacia si quiere que sea la fecha y hora actual)"'); ?>
                                         </div>
                                     <?php } ?>
                                     <div class="form-group" style="margin-bottom:5px;">
@@ -1336,8 +1336,17 @@
         });
     </script>
 
+    <script src="<?= $assets ?>plugins/bootstrap-datetimepicker/js/moment.min.js" type="text/javascript"></script>
+    <script src="<?= $assets ?>plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
+
     <script type="text/javascript">
         var socket = null;
+
+        $('.datetimepicker').datetimepicker({
+            format: 'YYYY-MM-DD HH:mm',
+            showClear: true
+        });
+
         <?php
         if ($Settings->remote_printing == 2) {
         ?>

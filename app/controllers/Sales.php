@@ -424,4 +424,50 @@ class Sales extends MY_Controller
         $dompdf->render();
         $dompdf->stream($arrayfiltros[0].".pdf", array("Attachment"=>0)); 
     }
+
+    public function get_sales_refolio()
+    {
+        $this->load->library('datatables');
+        if ($this->db->dbdriver == 'sqlite3') {
+            $this->datatables->select("sales.id, invoice, transaction_type, strftime('%Y-%m-%d %H:%M', date) as date, CONCAT(first_name, ' ', last_name) as cashier_name, customer_name, total, total_tax, total_discount, grand_total, paid, status");
+        } else {
+            $this->datatables->select("sales.id, invoice, transaction_type, DATE_FORMAT(date, '%Y-%m-%d %H:%i') as date, CONCAT(first_name, ' ', last_name) as cashier_name, customer_name, total, total_tax, total_discount, grand_total, paid, status");
+        }
+        $this->datatables->join('users', 'users.id = sales.created_by', 'left');
+        $this->datatables->from('sales');
+        
+        if (!$this->Admin && !$this->session->userdata('view_right')) {
+            $this->datatables->where('created_by', $this->session->userdata('user_id'));
+        }
+        $this->datatables->where('sales.store_id', $this->session->userdata('store_id'));
+
+
+        $actions = "
+            <div class='text-center'>
+                <input type='checkbox' title='Agregar al refolio' />
+            </div>
+        ";
+        #$this->datatables->add_column('Actions', $actions, 'id, status, invoice');
+
+        $datatable = (object) json_decode($this->datatables->generate());
+        foreach($datatable->data as $row){
+            if(!$row->invoice){
+                $row->Actions = $actions;
+            }else{
+                $row->Actions = "";
+            }
+        }
+
+        echo json_encode($datatable);
+    }
+
+    public function refolio()
+    {
+        $this->data['error']      = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
+        $this->data['page_title'] = 'Refolio';
+        $this->data['transaction_types'] = $this->sales_model->enum_select('tec_sales', 'transaction_type');
+        $bc                       = [['link' => '#', 'page' => 'Refolio']];
+        $meta                     = ['page_title' => 'Refolio', 'bc' => $bc];
+        $this->page_construct('sales/refolio', $this->data, $meta);
+    }
 }
