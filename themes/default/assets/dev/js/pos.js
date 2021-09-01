@@ -52,7 +52,7 @@ function loadItems() {
       var style = '<style>.bb td, .bb th { border-bottom: 1px solid #DDD; }</style>';
       var pos_head = '<span style="text-align:center;"><h3>' + Settings.site_name + '</h3>';
       // var pos_customer = ''; // remove this line and uncomment below to display customer
-      var pos_customer = '<h5>C: ' + $('#select2-spos_customer-container').text() + '</h5>';
+      var pos_customer = '<h5>C: ' + $('#-spos_customer-container').text() + '</h5>';
       var hr = '<h5>R: ' + $('#hold_ref').val() + '</h5>';
       var user = '<h5>U: ' + username + '</h5>';
       var pos_curr_time = '<h5>T: ' + date(Settings.dateformat + ' ' + Settings.timeformat, time) + '</h5>';
@@ -1025,6 +1025,49 @@ $(document).ready(function () {
     return false;
   });
 
+  $("#printLate").click(function() {
+    let phone = $('#customer_name').val().substring($('#customer_name').val().indexOf("(") + 1, $('#customer_name').val().lastIndexOf(")"))
+    console.log(phone)
+    let payments = "";
+    $.ajax({
+      type: 'get',
+      url: base_url + 'pos/getLatePayments',
+      data:{phone:phone},
+      dataType: 'json',
+      success: function (data) {          
+        console.log(data)
+          $('#late_payments_details').html(data);
+      },
+  })
+  });    
+
+
+  $( "#customer_name" ).autocomplete({
+    source:  base_url + 'reports/suggestions',
+    autoFocus: true
+  });
+
+  $('#customer_name').bind('keypress', function (e) {
+    if (e.keyCode == 13) {
+      e.preventDefault();
+      $(this).autocomplete('search');
+    }
+  });
+  
+
+  $('#late_payments').click(function () {
+    
+    $('#latePaymentsModal').modal('show')
+    $( "#customer_name" ).focus();
+  });
+
+  $('#cerrarLateModal').click(function () {
+    
+    $( "#customer_name" ).val("");
+    $('#late_payments_details').html("");
+  });
+
+
   $('#register_payment_apart').click(function () {
     $("#paymentModalApart #makePaymentApart").attr('disabled', true)
     $("#paymentModalApart input").val(0)
@@ -1048,6 +1091,7 @@ $(document).ready(function () {
       }
     })
   });
+  
 
   $("#paymentModalApart #makePaymentApart").click(function () {
     const selected_sale = $("#paymentModalApart select").val()
@@ -1080,6 +1124,7 @@ $(document).ready(function () {
       }
     })
   })
+
 
   $('#register_payment_credit').click(function () {
     $("#paymentModalCredit #makePaymentCredit").attr('disabled', true)
@@ -1747,6 +1792,7 @@ $(document).ready(function () {
   $(document).on('click', '#print-modal-close', function (e) {
     $('#printModal').hide();
   });
+  
 });
 function Popup(data, type) {
   $('#print-title').text(lang.print + ' ' + lang[type]);
@@ -1823,6 +1869,7 @@ $.extend($.keyboard.keyaction, {
 });
 
 $(document).ready(function () {
+  
   posScreen();
   if (Settings.display_kb == 1) {
     display_keyboards();
