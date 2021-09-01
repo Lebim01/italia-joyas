@@ -971,4 +971,29 @@ class Pos_model extends CI_Model
             ->where('payments.id', $payment_id);
         return $this->db->get('payments')->row();
     }
+
+    public function getLatePayments($phone)
+    {
+        $data = $this->db->query("SELECT 
+                                    tec_customers.name AS customer_name,
+                                    tec_payments.date AS last_payment,
+                                    tec_sales.transaction_type,
+                                    tec_sales.status,
+                                    tec_payments.amount 
+                                FROM
+                                    tec_customers 
+                                    INNER JOIN tec_sales 
+                                    ON tec_sales.customer_id = tec_customers.id 
+                                    AND tec_sales.transaction_type = 'credit' 
+                                    AND tec_sales.status = 'partial' 
+                                    INNER JOIN tec_payments 
+                                    ON tec_payments.sale_id = tec_sales.id 
+                                WHERE tec_payments.date < CURRENT_DATE
+                                    AND tec_customers.phone = ".$phone." 
+                                    AND tec_payments.amount > 0 
+                                ORDER BY tec_payments.date DESC 
+                                LIMIT 1      
+        ")->result();
+        return $data;
+    }
 }

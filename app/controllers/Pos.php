@@ -1479,4 +1479,26 @@ class Pos extends MY_Controller
             redirect('pos');
         }
     }
+
+    public function getLatePayments(){
+        $phone = $this->input->get('phone');
+        $latePayments = $this->pos_model->getLatePayments($phone);
+        $payments = "";
+        //echo $latePayments[0]->last_payment. "    ";
+        //var_dump(date("Y-m-d",strtotime(date("Y-m-d")."- 15 days")));exit;
+        $dateVerify = date("Y-m-d",strtotime(date("Y-m-d")."- 15 days"));
+        if( $latePayments[0]->last_payment < $dateVerify){
+            
+            $payments = "
+            <h3 style='color:red'>El cliente tiene pagos pendiente</h3>
+            <p>Último pago el día: ".$latePayments[0]->last_payment."</p>
+            <p>Monto de: ".$latePayments[0]->amount."</p>
+          ";
+        } else {
+            $payments = "<h3 style='color:green'>El cliente está al corriente con sus pagos</h3>";
+        }
+
+        echo json_encode($payments);
+        
+    }
 }

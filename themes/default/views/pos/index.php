@@ -443,6 +443,7 @@
                                                 <button type="button" class="btn bg-teal btn-block btn-flat" id="register_payment_credit">
                                                     Abono crédito
                                                 </button>
+                                                
                                             </div>
                                         </div>
                                         <div class="col-xs-3" style="padding: 0;">
@@ -453,6 +454,9 @@
                                                 -->
                                                 <button type="button" class="btn bg-navy btn-block btn-flat" onclick="window.location.href = '<?= site_url('purchases/add_expense'); ?>'">
                                                     Registrar gasto
+                                                </button>
+                                                <button type="button" class="btn bg-maroon btn-block btn-flat" id="late_payments">
+                                                    Pagos atrasados
                                                 </button>
                                             </div>
                                         </div>
@@ -814,6 +818,39 @@
                         <button type="submmit" <?php /* id="makePaymentCredit" */ ?> class="btn btn-primary btn-sm">Aceptar</button>
                     </div>
                 <?= form_close() ?>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" data-easein="flipYIn" id="latePaymentsModal" tabindex="-1" role="dialog" aria-labelledby="cModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header modal-primary">
+                    <h4 class="modal-title" id="cModalLabel">
+                       Pagos atrasados
+                    </h4>
+                </div>
+                
+                <div class="modal-body">
+                    <div id="c-alert" class="alert alert-danger" style="display:none;"></div>
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <div class="form-group">
+                                <div class="form-group" style="margin-bottom:5px;">
+                                    <input type="text" name="code" id="customer_name" class="form-control" placeholder="Nombre del cliente" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="late_payments_details">
+                            
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin-top:0;">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal" id="cerrarLateModal"> Cerrar </button>
+                    <button type="submit" class="btn btn-primary" id="printLate">Imprimir </button>
+                </div>
+                <?= form_close(); ?>
             </div>
         </div>
     </div>
@@ -1525,6 +1562,10 @@
             overflow: unset;
             height: unset;
         }
+        .ui-autocomplete { 
+        z-index: 9999999 ; 
+        display: inline-block ;
+    }
     </style>
 </body>
 
