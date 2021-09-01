@@ -1094,6 +1094,8 @@ $(document).ready(function () {
 
   $('#paymentModalApart').on('hidden.bs.modal', function (e) {
     $("#paymentModalApart select").val('')
+    $('#paymentModalApart select').trigger('change');
+
     $("#paymentModalApart input").val(0)
     $("#paymentModalApart #grand_total").html('')
   })
@@ -1156,6 +1158,8 @@ $(document).ready(function () {
 
   $('#paymentModalCredit').on('hidden.bs.modal', function (e) {
     $("#paymentModalCredit select").val('')
+    $("#paymentModalCredit select").tigger('change')
+
     $("#paymentModalCredit input").val(0)
     $("#paymentModalCredit #grand_total").html('')
   })
