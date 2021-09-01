@@ -1092,6 +1092,11 @@ $(document).ready(function () {
     })
   });
 
+  $('#paymentModalApart').on('hidden.bs.modal', function (e) {
+    $("#paymentModalApart select").val('')
+    $("#paymentModalApart input").val(0)
+    $("#paymentModalApart #grand_total").html('')
+  })
 
   $("#paymentModalApart #makePaymentApart").click(function () {
     const selected_sale = $("#paymentModalApart select").val()
@@ -1149,6 +1154,12 @@ $(document).ready(function () {
     })
   });
 
+  $('#paymentModalCredit').on('hidden.bs.modal', function (e) {
+    $("#paymentModalCredit select").val('')
+    $("#paymentModalCredit input").val(0)
+    $("#paymentModalCredit #grand_total").html('')
+  })
+
   $("#paymentModalCredit #makePaymentCredit").click(function () {
     const selected_sale = $("#paymentModalCredit select").val()
     const amount = parseFloat($("#paymentModalCredit input").val()) || 0
@@ -1179,6 +1190,10 @@ $(document).ready(function () {
         window.location.reload()
       }
     })
+  })
+
+  $("#paymentModalCredit select").select2({
+    dropdownParent: $('#paymentModalCredit')
   })
 
   $('#suspend').click(function () {

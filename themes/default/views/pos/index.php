@@ -792,12 +792,13 @@
                         <h4 class="modal-title" id="tsModalLabel">Abonar crédito</h4>
                     </div>
                     <div class="modal-body">
-                        <select class="form-control input-md" name="customer_id" required>
+                        <select class="form-control input-md" name="customer_id" required style="width: 100%;">
                             <option value="">Seleccionar cuenta cliente</option>
                             <?php foreach($creditsClients as $order): ?>
                                 <option data-row='<?= json_encode($order) ?>' value="<?= $order->customer_id ?>"><?= $order->customer ?></option>
                             <?php endforeach; ?>
                         </select>
+                        <br />
                         <br />
                         <fieldset>
                             <div class="row">
