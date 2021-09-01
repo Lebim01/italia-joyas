@@ -21,7 +21,7 @@
 <body class="login-page login-page-<?= $Settings->theme_style; ?> rtl rtl-inv">
     <div class="login-box">
         <div class="login-logo">
-            <a href="<?= base_url(); ?>"><?= $Settings->site_name == 'SimplePOS' ? 'Simple<b>POS</b>' : '<img src="' . base_url('uploads/' . $Settings->logo) . '" alt="' . $Settings->site_name . '" />'; ?></a>
+            <a href="<?= base_url(); ?>"><?= $Settings->site_name == 'SimplePOS' ? 'Simple<b>POS</b>' : '<img height="200" src="' . base_url('uploads/' . $Settings->logo) . '" alt="' . $Settings->site_name . '" />'; ?></a>
         </div>
         <div class="login-box-body">
             <?php if ($error) { ?>
