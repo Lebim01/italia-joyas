@@ -734,12 +734,13 @@
                     <h4 class="modal-title" id="tsModalLabel">Abonar apartado</h4>
                 </div>
                 <div class="modal-body">
-                    <select class="form-control input-md">
+                    <select class="form-control input-md select2" style="width: 100%;">
                         <option value="">Seleccionar cuenta cliente</option>
                         <?php foreach($apartsOrders as $order): ?>
                             <option data-row='<?= json_encode($order) ?>' value="<?= $order->id ?>"><?= $order->customer->name ?> (<?= $order->id ?>)</option>
                         <?php endforeach; ?>
                     </select>
+                    <br />
                     <br />
                     <fieldset>
                         <div class="row">

@@ -1081,6 +1081,10 @@ $(document).ready(function () {
     })
   })
 
+  $("#paymentModalApart select").select2({
+    dropdownParent: $('#paymentModalApart')
+  })
+
   $('#register_payment_credit').click(function () {
     $("#paymentModalCredit #makePaymentCredit").attr('disabled', true)
     $("#paymentModalCredit input").val(0)
