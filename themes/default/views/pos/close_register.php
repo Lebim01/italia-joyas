@@ -31,8 +31,8 @@
                     </td>
                 </tr>
                 <tr>
-                    <td style="border-bottom: 1px solid #EEE;"><h4>Ventas con tarjeta:</h4></td>
-                    <td style="text-align:right; border-bottom: 1px solid #EEE;">
+                    <td style=""><h4>Ventas con tarjeta:</h4></td>
+                    <td style="text-align:right;">
                         <h4>
                             <span>
                                 <?= $this->tec->formatMoney($ccsales->paid ? $ccsales->paid : '0.00') ?> 
@@ -41,6 +41,12 @@
                         </h4>
                     </td>
                 </tr>
+                <?php
+                    foreach ($terminals as $terminal) {
+                        echo "<tr><td  style=''>". $terminal->banks."</td><td style='text-align:right; '>". $terminal->paid."</td></tr>";
+                    }
+                ?>
+                 <td style="border-bottom: 1px solid #EEE;"></h4></td> <td style="text-align:right;border-bottom: 1px solid #EEE;"></h4></td>
                 <tr><td colspan="2"><div style="height: 10px"></div></td></tr>
 
                 <?php /*
@@ -71,6 +77,7 @@
                     </td>
                 </tr>
                 */ ?>
+                
 
                 <tr>
                     <td style="border-bottom: 1px solid #DDD;"><h4>Ventas a crédito:</h4></td>
@@ -80,6 +87,7 @@
                         </h4>
                     </td>
                 </tr>
+                        
                 <tr>
                     <td style="border-bottom: 1px solid #DDD;"><h4>Ventas apartados:</h4></td>
                     <td style="text-align:right;border-bottom: 1px solid #DDD;">

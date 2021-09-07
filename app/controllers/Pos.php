@@ -175,7 +175,9 @@ class Pos extends MY_Controller
             $this->data['ccsales']         = $this->pos_model->getRegisterCCSales($register_open_time, $user_id);
             $this->data['cashsales']       = $this->pos_model->getRegisterCashLiquidate($register_open_time, $user_id);
             $this->data['cashcredits']     = $this->pos_model->getRegisterCashCredits($register_open_time, $user_id);
+            $this->data['terminals']       = $this->pos_model->getRegisterCardsPayments($register_open_time, $user_id);
             $this->data['cashaparts']      = $this->pos_model->getRegisterCashAparts($register_open_time, $user_id);
+            $this->data['creditaparts']    = $this->pos_model->getRegisterCardAparts($register_open_time, $user_id);
             $this->data['chsales']         = $this->pos_model->getRegisterChSales($register_open_time, $user_id);
             $this->data['other_sales']     = $this->pos_model->getRegisterOtherSales($register_open_time, $user_id);
             $this->data['gcsales']         = $this->pos_model->getRegisterGCSales($register_open_time, $user_id);

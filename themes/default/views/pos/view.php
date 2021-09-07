@@ -125,10 +125,7 @@ if ($modal) {
                                         if ($Settings->rounding) {
                                             $round_total = $this->tec->roundNumber($inv->grand_total, $Settings->rounding);
                                             $rounding    = $this->tec->formatDecimal($round_total - $inv->grand_total); ?>
-                                            <tr>
-                                                <th class="text-left" colspan="2"><?= lang('rounding'); ?></th>
-                                                <th colspan="3" class="text-right"><?= $this->tec->formatMoney($rounding); ?></th>
-                                            </tr>
+                                            
                                             <tr>
                                                 <th class="text-left" colspan="2"><?= lang('grand_total'); ?></th>
                                                 <th colspan="3" class="text-right"><?= $this->tec->formatMoney($inv->grand_total + $rounding); ?></th>

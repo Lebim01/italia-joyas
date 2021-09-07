@@ -310,7 +310,30 @@ class Pos_model extends CI_Model
         $this->db->select('SUM( COALESCE( grand_total, 0 ) ) AS total, SUM( COALESCE( amount, 0 ) ) AS paid', false)
             ->join('sales', 'sales.id=payments.sale_id', 'left')
             ->where('sales.transaction_type', 'apart')
-            ->where('payments.date >', $date);
+            ->where('payments.date >', $date)
+            ->where('payments.paid_by ', 'cash');
+        $this->db->where('payments.created_by', $user_id);
+
+        $q = $this->db->get('payments');
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return false;
+    }
+
+    public function getRegisterCardAparts($date = null, $user_id = null)
+    {
+        if (!$date) {
+            $date = $this->session->userdata('register_open_time');
+        }
+        if (!$user_id) {
+            $user_id = $this->session->userdata('user_id');
+        }
+        $this->db->select('SUM( COALESCE( grand_total, 0 ) ) AS total, SUM( COALESCE( amount, 0 ) ) AS paid', false)
+            ->join('sales', 'sales.id=payments.sale_id', 'left')
+            ->where('sales.transaction_type', 'apart')
+            ->where('payments.date >', $date)
+            ->where('payments.paid_by ', 'CC');
         $this->db->where('payments.created_by', $user_id);
 
         $q = $this->db->get('payments');
@@ -361,6 +384,27 @@ class Pos_model extends CI_Model
             return $q->row();
         }
         return false;
+    }
+
+    public function getRegisterCardsPayments($date = null, $user_id = null)
+    {
+        if (!$date) {
+            $date = $this->session->userdata('register_open_time');
+        }
+        if (!$user_id) {
+            $user_id = $this->session->userdata('user_id');
+        }
+        
+        $data = $this->db->query("SELECT 
+                                    SUM(amount) as paid,
+                                    paid_by,
+                                    banks 
+                                FROM
+                                    tec_payments 
+                                WHERE paid_by = 'CC' AND tec_payments.date > '".$date."' AND created_by = ".$user_id."
+                                GROUP BY banks      
+        ")->result();
+        return $data;
     }
 
     public function getRegisterChSales($date = null, $user_id = null)
