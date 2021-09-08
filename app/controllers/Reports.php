@@ -903,8 +903,7 @@ class Reports extends MY_Controller
                         <td style="">Clave</td>
                         <td style="">Producto</td>
                         <td style="">Fecha venta</td>
-                        <td style="">Vendedor</td>
-                        <td style="">Proveedor</td>
+                        <td style="">Usuario</td>
                         <td style="">Cantidad</td>
                         <td style="">Costo</td>
                         <td style="">Total</td>
@@ -919,7 +918,6 @@ class Reports extends MY_Controller
                         <td style="text-align:center;">'.$purchase[$i]->name.'</td>
                         <td style="text-align:center;">'.$purchase[$i]->date.'</td>
                         <td style="text-align:center;">'.$purchase[$i]->first_name.' '.$purchase[$i]->last_name.'</td>
-                        <td style="text-align:center;">'.$purchase[$i]->supplier.'</td>
                         <td style="text-align:center;">'.$this->tec->formatMoney($purchase[$i]->quantity).'</td>
                         <td style="text-align:center;">'.$this->tec->formatMoney($purchase[$i]->cost).'</td>
                         <td style="text-align:center;">'.$this->tec->formatMoney($purchase[$i]->subtotal).'</td>

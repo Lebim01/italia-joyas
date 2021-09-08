@@ -70,7 +70,16 @@ if ($modal) {
                                         echo $store->city . '<br>' . $store->phone;
                                         echo '</p>';
                                         echo '<p>' . nl2br($store->receipt_header) . '</p>';
+                                        
                                     }
+                                    ?>
+
+                                    <?php       
+                                        if($inv->transaction_type == "credit"){
+                                      ?>
+                                       <h2>***********  Crédito ***********</h2>
+                                      <?php
+                                        }
                                     ?>
                                 </div>
                                 <p>
@@ -140,13 +149,14 @@ if ($modal) {
                                             <?php
                                         }
                                       ?>
-                                       <tr>
-                                            <th class="text-left" colspan="2">Métodos de pago </th>
-                                            <th colspan="3" class="text-right"></th>
-                                        </tr>
+                                       
                                     <?php
                                         if ($inv->transaction_type == "liquidate") {
                                       ?>
+                                        <tr>
+                                            <th class="text-left" colspan="2">Métodos de pago </th>
+                                            <th colspan="3" class="text-right"></th>
+                                        </tr>
                                         <?php
                                             foreach ($payments as $payment) {
                                         ?>
@@ -164,6 +174,20 @@ if ($modal) {
                                       <?php
                                         } else if($inv->transaction_type == "apart"){
                                       ?>
+                                        <tr>
+                                            <th class="text-left" colspan="2">Adelanto de apartado</th>
+                                            <th colspan="3" class="text-right"></th>
+                                        </tr>
+                                      <?php
+                                            foreach ($payments as $payment) {
+                                        ?>
+                                            <tr>
+                                                <th class="text-left" colspan="2"></th>
+                                                <th colspan="3" class="text-right"><?= lang($payment->paid_by);?>  <?= $payment->banks;?> : <?= $this->tec->formatMoney($payment->amount);?></th>
+                                            </tr>
+                                        <?php
+                                            }
+                                        ?>
                                              <th class="text-left" colspan="2"></th>
                                             <th colspan="3" class="text-right">Apartado</th>
                                       <?php
@@ -186,6 +210,7 @@ if ($modal) {
                                         <?php endif; ?> -->
                                         
                                     </tfoot>
+                                    
                                 </table>
                                 <?php
                                 if ($payments) {
@@ -240,6 +265,18 @@ if ($modal) {
                                 echo $inv->note 
                                     ? '<p style="margin-top:10px; text-align: center;">' . replaceNote($this->tec->decode_html($inv->note), $this->tec, $Settings, $store, $round_total) . '</p>' 
                                     : ''; 
+                                ?>
+
+                                <?php       
+                                    if($inv->transaction_type == "credit"){
+                                    ?>
+                                        <div style="text-align:center; margin-top 10px">
+                                            <br><br><br>
+                                            <hr style="width:50%;border-bottom: 2px solid #ddd;">
+                                            <span >Firma del cliente</span>
+                                        </div>
+                                    <?php
+                                    }
                                 ?>
 
                                 <?php if (!empty($store->receipt_footer)) { ?>
