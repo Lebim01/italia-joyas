@@ -55,12 +55,13 @@ class Movements_model extends CI_Model
       }
     }
 
-    public function addMovement($store_id, $product_id, $quantity, $code, $ref_id, $description, $created_by){
+    public function addMovement($store_id, $product_id, $quantity, $code, $ref_id, $description, $created_by, $diff = 0){
       if($this->products_model->exists($product_id)){
         $this->db->insert('products_movements', [
           'store_id' => $store_id,
           'product_id' => $product_id,
           'quantity' => $quantity,
+          'adjust_diff' => $diff,
           'code' => $code,
           'description' => $description,
           'created_by' => $created_by,

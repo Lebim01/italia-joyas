@@ -25,7 +25,8 @@ class Inventory_model extends CI_Model
             'inventory-adjust',
             null,
             'Producto inventario ajustado',
-            $created_by
+            $created_by,
+            $newQty - (float) $stock->quantity
           );
 
           $dataUpdate = [
