@@ -133,8 +133,8 @@
                                 <li id="products_add"><a href="<?= site_url('products/add'); ?>"><i class="fa fa-circle-o"></i> <?= lang('add_product'); ?></a></li>
                                 <li id="products_import"><a href="<?= site_url('products/import'); ?>"><i class="fa fa-circle-o"></i> <?= lang('import_products'); ?></a></li>
                                 <li class="divider"></li>
-                                <li id="products_print_barcodes"><a href="<?= site_url('products/print_barcodes'); ?>" data-toggle="ajax"><i class="fa fa-circle-o"></i> <?= lang('print_barcodes'); ?></a></li>
-                                <li id="products_print_labels"><a href="<?= site_url('products/print_labels'); ?>" data-toggle="ajax"><i class="fa fa-circle-o"></i> <?= lang('print_labels'); ?></a></li>
+                                <!-- <li id="products_print_barcodes"><a href="<?= site_url('products/print_barcodes'); ?>" data-toggle="ajax"><i class="fa fa-circle-o"></i> <?= lang('print_barcodes'); ?></a></li>
+                                <li id="products_print_labels"><a href="<?= site_url('products/print_labels'); ?>" data-toggle="ajax"><i class="fa fa-circle-o"></i> <?= lang('print_labels'); ?></a></li> -->
                                 <!-- <li id="products_print_barcodes">
                                     <a onclick="window.open('<?= site_url('products/print_barcodes'); ?>', 'pos_popup', 'width=900,height=600,menubar=yes,scrollbars=yes,status=no,resizable=yes,screenx=0,screeny=0'); return false;" href="#"><i class="fa fa-circle-o"></i> <?= lang('print_barcodes'); ?></a>
                                 </li>

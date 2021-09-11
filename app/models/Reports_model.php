@@ -531,7 +531,7 @@ class Reports_model extends CI_Model
                                     LEFT JOIN tec_payments 
                                     ON tec_sales.id = tec_payments.sale_id 
                                     WHERE tec_sales.store_id = ".$fechas[3]." AND  tec_sales.date >= '" . $fechas[1] . " 00:00:00'  AND tec_sales.date <= '" . $fechas[2] . " 23:59:59' ".$where."
-                                ORDER BY tec_sales.date ASC 
+                                ORDER BY product_code ASC 
                                 ")->result();
         return $data;
     }
