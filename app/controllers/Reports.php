@@ -171,6 +171,16 @@ class Reports extends MY_Controller
         $this->page_construct('reports/customer', $this->data, $meta);
     }
 
+    function collecter()
+    {
+        
+        $bc = array(array('link' => '#', 'page' => lang('reports')), array('link' => '#', 'page' => lang('sales_report')));
+        $meta = array('page_title' => lang('collecter_report'), 'bc' => $bc);
+        $this->data['creditsClients']  = $this->sales_model->getAllCreditsClients();
+        /* var_dump($creditsClients);exit; */
+        $this->page_construct('reports/collecter', $this->data, $meta, $creditsClients);
+    }
+
     function get_sales()
     {
         $customer = $this->input->get('customer') ? $this->input->get('customer') : NULL;

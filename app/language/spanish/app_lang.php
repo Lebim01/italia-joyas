@@ -152,6 +152,7 @@ $lang['monthly_sales']                        = 'Ventas Mensuales';
 $lang['sales_report']                         = 'Reporte de Ventas';
 $lang['purchase_report']                      = 'Reporte de Compras';
 $lang['customer_report']                      = 'Reporte de Clientes';
+$lang['collecter_report']                     = 'Reporte de Cobranza';
 $lang['registers_report']                     = 'Reportes Registrados';
 $lang['top_products']                         = 'Productos Top';
 $lang['products_report']                      = 'Reportes de Productos';

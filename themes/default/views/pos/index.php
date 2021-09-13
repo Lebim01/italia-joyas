@@ -245,6 +245,8 @@
                                 <li id="reports_daily_sales"><a href="<?= site_url('reports/daily_sales'); ?>"><i class="fa fa-circle-o"></i> <?= lang('daily_sales'); ?></a></li>
                                 <li id="reports_monthly_sales"><a href="<?= site_url('reports/monthly_sales'); ?>"><i class="fa fa-circle-o"></i> <?= lang('monthly_sales'); ?></a></li>
                                 <li id="reports_index"><a href="<?= site_url('reports'); ?>"><i class="fa fa-circle-o"></i> <?= lang('sales_report'); ?></a></li>
+                                <li id="reports_purchase"><a href="<?= site_url('reports/purchase'); ?>"><i class="fa fa-circle-o"></i> <?= lang('purchase_report'); ?></a></li>
+                                <li id="reports_customer"><a href="<?= site_url('reports/customer'); ?>"><i class="fa fa-circle-o"></i> <?= lang('customer_report'); ?></a></li>
                                 <li class="divider"></li>
                                 <li id="reports_payments"><a href="<?= site_url('reports/payments'); ?>"><i class="fa fa-circle-o"></i> <?= lang('payments_report'); ?></a></li>
                                 <li class="divider"></li>
@@ -254,6 +256,7 @@
                                 <li class="divider"></li>
                                 <li id="reports_top_products"><a href="<?= site_url('reports/top_products'); ?>"><i class="fa fa-circle-o"></i> <?= lang('top_products'); ?></a></li>
                                 <li id="reports_products"><a href="<?= site_url('reports/products'); ?>"><i class="fa fa-circle-o"></i> <?= lang('products_report'); ?></a></li>
+                                <li id="collecter_report"><a href="<?= site_url('reports/collecter'); ?>"><i class="fa fa-circle-o"></i> <?= lang('collecter_report'); ?></a></li>
                             </ul>
                         </li>
                     <?php } else { ?>
