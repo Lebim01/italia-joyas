@@ -1149,4 +1149,60 @@ class Reports extends MY_Controller
             echo json_encode([['id' => 0, 'label' => lang('no_match_found'), 'value' => $term]]);
         }
     }
+
+    public function add_payment_credit($ticket = null)
+    {
+        $this->load->helper('security');
+        if ($this->input->get('id')) {
+            $id = $this->input->get('id');
+        }
+        #$this->form_validation->set_rules('paid_by', lang('paid_by'), 'required');
+        #$this->form_validation->set_rules('userfile', lang('attachment'), 'xss_clean');
+
+            $date = date('Y-m-d H:i:s');
+            
+
+            $this->load->model('customers_model');
+
+            $sales = $this->customers_model->getPartialSales($this->input->post('customer_id'));
+            $total_paid = (float) $this->input->post('amount-paid');
+
+            $rest_paid = $total_paid;
+            $debt = 0;
+
+            foreach($sales as $sale){
+                $debt += ((float) $sale->grand_total - (float) $sale->paid);
+            }
+
+            foreach($sales as $sale){
+                $isLiquidate = (float) $sale->grand_total <= $total_paid;
+
+                $paid = (float) $isLiquidate == true ? $sale->grand_total : $rest_paid;
+
+                $payment = [
+                    'date'        => $date,
+                    'sale_id'     => $sale->id,
+                    'customer_id' => $this->input->post('customer_id'),
+                    'reference'   => $this->input->post('reference'),
+                    'amount'      => $paid,
+                    'paid_by'     => 'cash',
+                    'created_by'  => $this->session->userdata('user_id'),
+                ];
+    
+                $this->sales_model->addPayment($payment);
+
+                $rest_paid -= $paid;
+
+                if($rest_paid == 0) break;
+            }
+
+            
+            if($ticket){
+                $this->session->set_flashdata('message', 'Abono agregado');
+
+            }else{
+                alert("error");
+            }
+    }
+
 }

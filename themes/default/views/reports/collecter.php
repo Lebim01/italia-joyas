@@ -61,7 +61,7 @@
                         <div class="col-xs-12">
                             <div class="form-group">
                                 Tipo de reporte: <br>
-                                <select id="tipoReporte" class="form-control paid_by select2 bank" style="width:50%; display:inline-block">
+                                <select id="tipoReporte" class="form-control paid_by bank" style="width:50%; display:inline-block">
                                     <option value="seleccione" selected>Seleccione una opción</option>
                                     <option value="statusAccount">Estado de cuenta</option>
                                 </select>
@@ -109,7 +109,7 @@
     <div class="row">
         <div class="col-xs-12">
             <div class="modal-body">
-                <select class="form-control input-md" name="customer_id" id="selectCustomer" required style="width: 100%;">
+                <select class="form-control input-md select2" name="customer_id" id="customer_id" required style="width: 100%;">
                     <option value="">Seleccionar cuenta cliente</option>
                     <?php foreach($creditsClients as $order): ?>
                         <option data-row='<?= json_encode($order) ?>' value="<?= $order->customer_id ?>"><?= $order->customer ?></option>
@@ -129,7 +129,7 @@
                 </fieldset>
 
                 <br />
-                <input type='number' name='amount-paid' class='form-control input-md' value='' placeholder="Monto" required>
+                <input type='number' name='amount-paid' id='amount-paid' class='form-control input-md' value='' placeholder="Monto" required>
                 <br>
                 <button id="makePaymentCredit" class="btn btn-primary btn-sm" style="float:right">Aceptar</button>
             </div>
@@ -141,7 +141,9 @@
 <script src="<?= $assets ?>plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
 <script type="text/javascript">
     $(document).ready(function() {
-        
+
+        $(".select2").select2()
+
         $('.datepicker').datetimepicker({
             format: 'YYYY-MM-DD',
             showClear: true,
@@ -154,11 +156,9 @@
             widgetParent: $('.dataTable tfoot')
         });
 
-        $("#selectCustomer").select2({
-           
-        })
+        
 
-        $('#selectCustomer').change(function (e) {
+        $('#customer_id').change(function (e) {
             const selected_value = $(this).val()
             console.log(selected_value)
             if (selected_value) {
@@ -174,21 +174,37 @@
             }
         });
 
-/*   $("#paymentModalCredit").delegate('select', 'change', function () {
-const selected_value = $(this).val()
+        $("#makePaymentCredit").click(function(){
+            if(confirm('¿Esta seguro de aplicar los cambios? Esta accion es irreversible')){
+                $("#makePaymentCredit").prop('disabled', true);
+                $("#makePaymentCredit").html('Aplicando...');
 
-            if (selected_value) {
-                const option = $(this).find(`option[value=${selected_value}]`)
-                const data = $(option).data('row')
+                const option = $('#customer_id').val()
+                const monto =  formatMoney(parseFloat($('#amount-paid').val()))
 
-                $("#paymentModalCredit #grand_total").html(formatMoney(parseFloat(data.grand_total)))
-                $("#paymentModalCredit #makePaymentCredit").attr('disabled', false)
-                } else {
-                $("#paymentModalCredit #grand_total").html('')
-                $("#paymentModalCredit #makePaymentCredit").attr('disabled', true)
+                $("input.border-success").each(function(index){
+                    const code = $(this).parent().parent().find('> :first-child').html()
+                    const quantity = $(this).val()
+                    items.push({
+                        code,
+                        quantity
+                    })
+                })
+
+                $.ajax({
+                    url: '<?= site_url('reports/add_payment_credit/'); ?>',
+                    method: 'POST',
+                    data: {
+                        amountpaid : monto,
+                        customer_id : option
+                    },
+                    success: function(){
+                        window.location.reload()      
+                    }
+                })
             }
-    })
- */
+        })
+
         $('.datepicker2').datetimepicker({
             format: 'YYYY-MM-DD',
             showClear: true,
@@ -232,8 +248,8 @@ const selected_value = $(this).val()
             } 
 
         });    
-d
-            
+
+            s
  /*        $.ajax({
             url: "",
             type: 'POST',
