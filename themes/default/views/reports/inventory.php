@@ -117,7 +117,7 @@ $v = "?v=1";
                 })
 
                 $.ajax({
-                    url: '<?= site_url('reports/aplpy_ajust_inventory/'); ?>',
+                    url: '<?= site_url('reports/apply_ajust_inventory/'); ?>',
                     method: 'POST',
                     data: {
                         items,
@@ -140,6 +140,37 @@ $v = "?v=1";
             $("#form").slideToggle();
             return false;
         });
+
+        $("#btn-add").click(function(){
+            $("#addProducts").modal('show')
+        })
+
+        $(".select2").select2()
+
+        $("#applyAddProduct").click(function(){
+            const select = $("#addProducts select")
+            const input = $("#addProducts input")
+
+            const product_id = select.val()
+            const quantity = parseFloat(input.val())
+
+            if(product_id && quantity > 0){
+                $.ajax({
+                    url: '<?= site_url('reports/add_inventory/'); ?>',
+                    method: 'POST',
+                    data: {
+                        product_id,
+                        quantity,
+                        "<?= $this->security->get_csrf_token_name(); ?>": "<?= $this->security->get_csrf_hash() ?>"
+                    },
+                    success: function(){
+                        window.location.reload()      
+                    }
+                })
+            }else{
+                alert('Favor de llenar los campos')
+            }
+        })
     });
 </script>
 <style type="text/css">
@@ -166,6 +197,10 @@ $v = "?v=1";
                     </h3>
                 </div>
                 <div class="box-body">
+                    <button class="btn btn-primary" id="btn-add">
+                        Agregar productos
+                    </button>
+
                     <div class="table-responsive">
                         <table id="PayRData" class="table table-bordered table-hover table-striped table-condensed reports-table">
                             <thead>
@@ -197,6 +232,37 @@ $v = "?v=1";
     </div>
     </div>
 </section>
+
+<div class="modal" data-easein="flipYIn" id="addProducts" tabindex="-1" role="dialog" aria-labelledby="addProductsLabel" aria-hidden="true">
+    <div class="modal-dialog modal-md">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+                <h4 class="modal-title" id="tsModalLabel">Agregar productos</h4>
+            </div>
+            <div class="modal-body">
+                <select class="form-control select2" style="width: 100%; margin-bottom: 15px;">
+                    <?php 
+                        foreach($products as $prod): 
+                            if((float) $prod->quantity == 0):
+                    ?>
+                            <option value="<?= $prod->id ?>"><?= $prod->name ?></option>
+                    <?php 
+                            endif;
+                        endforeach; 
+                    ?>
+                </select>
+
+                <br />
+
+                <input class="form-control" placeholder="Cantidad" style="margin-top: 15px;" />
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary btn-sm" id="applyAddProduct">Aceptar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="<?= $assets ?>plugins/bootstrap-datetimepicker/js/moment.min.js" type="text/javascript"></script>
 <script src="<?= $assets ?>plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>

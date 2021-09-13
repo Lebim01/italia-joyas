@@ -335,6 +335,8 @@ class Reports extends MY_Controller
         $this->data['error'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('error');
         $this->data['users'] = $this->reports_model->getAllStaff();
         $this->data['customers'] = $this->reports_model->getAllCustomers();
+        $this->data['products'] = $this->reports_model->getAllProducts();
+
         $bc = array(array('link' => '#', 'page' => lang('reports')), array('link' => '#', 'page' => lang('payments_report')));
         $meta = array('page_title' => lang('inventory_report'), 'bc' => $bc);
         $this->page_construct('reports/inventory', $this->data, $meta);
@@ -1098,7 +1100,7 @@ class Reports extends MY_Controller
         $dompdf->stream($arrayfiltros[0].".pdf", array("Attachment"=>0)); 
     }
 
-    public function aplpy_ajust_inventory(){
+    public function apply_ajust_inventory(){
         $this->load->model('inventory_model');
         $items = $this->input->post('items');
 
@@ -1111,6 +1113,23 @@ class Reports extends MY_Controller
                     $this->session->userdata('user_id')
                 );
             }
+        }
+    }
+
+    public function add_inventory(){
+        $this->load->model('inventory_model');
+        $quantity = $this->input->post('quantity');
+        $product_id = $this->input->post('product_id');
+
+        $product = $this->site->getProductByID($product_id);
+
+        if(count($quantity) > 0 && $product){
+            $this->inventory_model->adjustProduct(
+                $this->session->userdata('store_id'),
+                $product->code,
+                $quantity,
+                $this->session->userdata('user_id')
+            );
         }
     }
     

@@ -347,6 +347,11 @@ class Sales extends MY_Controller
         $this->load->view($this->theme . 'sales/payments', $this->data);
     }
 
+    public function get_payments($id = null)
+    {
+        echo json_encode($this->sales_model->getSalePayments($id));
+    }
+
     public function status()
     {
         if (!$this->Admin) {

@@ -1132,6 +1132,34 @@ $(document).ready(function () {
     })
   })
 
+  $("#paymentModalApart select").change(function () {
+    const selected_sale = $("#paymentModalApart select").val()
+    const option = $("#paymentModalApart select").find(`option[value=${selected_sale}]`)
+    const sale_data = $(option).data('row')
+
+    const tablePayments = $("#paymentModalApart table");
+
+    $.ajax({
+      url: base_url + `sales/get_payments/${sale_data.id}`,
+      method: 'GET',
+      success: function (response) {
+        const payments = JSON.parse(response || '[]')
+        const rowsHtml = [];
+
+        for (const row of payments) {
+          rowsHtml.push(`
+            <tr>
+              <td>${row.date}</td>
+              <td>${formatMoney(parseFloat(row.amount))}</td>
+            </tr>
+          `)
+        }
+
+        tablePayments.find('tbody').html(rowsHtml.join(''))
+      }
+    })
+  })
+
   $("#paymentModalApart select").select2({
     dropdownParent: $('#paymentModalApart')
   })

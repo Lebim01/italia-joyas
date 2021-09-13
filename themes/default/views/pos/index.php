@@ -751,6 +751,20 @@
                     <br />
                     <fieldset>
                         <div class="row">
+                            <div class="col-sm-12">
+                                <table class="table table-sm" id="payments">
+                                    <thead>
+                                        <tr>
+                                            <th>Fecha</th>
+                                            <th>abono</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col-sm-3">
                                 <label class="label-control">Cuenta total:</label>
                             </div>
