@@ -90,7 +90,7 @@ if ($modal) {
                                     <?= lang('date') . ': ' . $this->tec->hrld($inv->date); ?> <br>
                                     <?= lang('sale_no_ref') . ': ' . $inv->id; ?><br>
                                     <?= lang('customer') . ': ' . $inv->customer_name; ?> <br>
-                                    <?= lang('sales_person') . ': ' . $created_by->first_name . ' ' . $created_by->last_name; ?> <br>
+                                    <?= lang('sales_person') . ': ' . $created_by->first_name . ' ' . $created_by->last_name ?> <br>
                                 </p>
                                 <div style="clear:both;"></div>
                                 <table class="table table-striped table-condensed">
@@ -109,7 +109,6 @@ if ($modal) {
                                         foreach ($rows as $row) {
                                             echo '<tr><td>';
                                             echo $row->product_name;
-                                            
                                             // echo $row->comment ? '<br>' . nl2br($row->comment) : '';
                                             echo '</td>';
                                             echo '<td style="text-align:center;">' . $row->product_code . '</td>';
@@ -128,8 +127,14 @@ if ($modal) {
                                         if ($inv->order_tax != 0) {
                                             echo '<tr><th class="text-left" colspan="3">' . lang('order_tax') . '</th><th colspan="3" class="text-right">' . $this->tec->formatMoney($inv->order_tax) . '</th></tr>';
                                         }
-                                        if ($inv->total_discount != 0) {
-                                            echo '<tr><th class="text-left" colspan="3">' . lang('order_discount') . '</th><th colspan="3" class="text-right">' . $this->tec->formatMoney($inv->total_discount) . '</th></tr>';
+                                        if ($inv->order_discount != 0) {
+                                            echo '<tr><th class="text-left" colspan="3">' . lang('order_discount') . '</th><th colspan="3" class="text-right">' . $this->tec->formatMoney($inv->order_discount) . '</th></tr>';
+                                        }
+                                        if ($inv->extra_discount) {
+                                            if(strpos($inv->extra_discount, '%') !== false)
+                                                echo '<tr><th class="text-left" colspan="3">Descuento extra</th><th colspan="3" class="text-right"> (' . $inv->extra_discount . ') ' . $this->tec->formatMoney($inv->total_discount - $inv->order_discount). '</th></tr>';                                                
+                                            else
+                                                echo '<tr><th class="text-left" colspan="3">Descuento extra</th><th colspan="3" class="text-right">' . $this->tec->formatMoney($inv->total_discount - $inv->order_discount) . '</th></tr>';
                                         }
                                         if ($inv->total_tax != 0) {
                                             echo '<tr><th class="text-left" colspan="3">' . lang('tax') . '</th><th colspan="3" class="text-right">' . $this->tec->formatMoney($inv->total_tax) . '</th></tr>';
@@ -137,9 +142,7 @@ if ($modal) {
 
                                       ?>
                                        
-                                    <?php
-                                        if ($inv->transaction_type == "liquidate") {
-                                      ?>
+                                    <?php if ($inv->transaction_type == "liquidate") { ?>
                                         <tr>
                                             <th class="text-left" colspan="2">Métodos de pago </th>
                                             <th colspan="3" class="text-right"></th>

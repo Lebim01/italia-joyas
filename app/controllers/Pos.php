@@ -508,6 +508,22 @@ class Pos extends MY_Controller
 
             $total_tax   = $this->tec->formatDecimal(($product_tax + $order_tax), 4);
             $grand_total = $this->tec->formatDecimal(($total + $total_tax - $order_discount), 4);
+
+            /**
+             * Add extra discount
+             */
+            if($this->input->post('extra_discount')){
+                $extra_discount_input = $this->input->post('extra_discount');
+                if(strpos($extra_discount_input, '%') !== false){
+                    $extra_discount = $grand_total * ((float) str_replace("%", "", $extra_discount_input)/100);
+                }else{
+                    $extra_discount = (float) $extra_discount_input;
+                }
+
+                $grand_total = $this->tec->formatDecimal(($total + $total_tax - $order_discount - $extra_discount), 4);
+                $total_discount += $extra_discount;
+            }
+
             //$paid        = $this->input->post('amount') ? $this->input->post('amount') : 0;
             $round_total = $this->tec->roundNumber($grand_total, $this->Settings->rounding);
             $rounding    = $this->tec->formatDecimal(($round_total - $grand_total));
@@ -530,6 +546,7 @@ class Pos extends MY_Controller
                 'order_discount_id' => $order_discount_id,
                 'order_discount'    => $order_discount,
                 'total_discount'    => $total_discount,
+                'extra_discount'    => $this->input->post('extra_discount'),
                 'product_tax'       => $this->tec->formatDecimal($product_tax, 4),
                 'order_tax_id'      => $order_tax_id,
                 'order_tax'         => $order_tax,

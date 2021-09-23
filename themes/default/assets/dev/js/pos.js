@@ -1,4 +1,5 @@
 var in_stock = true
+var extra_discount = 0
 
 function add_invoice_item(item) {
   if (count == 1) {
@@ -642,7 +643,7 @@ $(document).ready(function () {
   });
 
   $('#updateDiscount').click(async function () {
-    await $.requestAdminPermission()
+    //await $.requestAdminPermission()
 
     var ds = $('#get_ds').val() ? $('#get_ds').val() : '0';
     var apply_to = $('input[name=apply_to]:checked').val();
@@ -1283,6 +1284,36 @@ $(document).ready(function () {
     }
   });
 
+  function applyTotalPay(){
+    const val_extra_discount = $("#extra_discount").val()
+
+    gtotal = total - order_discount + order_tax;
+    extra_discount = 0
+
+    if(val_extra_discount !== ''){
+      if(val_extra_discount.includes('%')){
+        extra_discount = gtotal * (parseFloat(val_extra_discount.replace('%', ''))/100)
+        gtotal = gtotal * (1 - (parseFloat(val_extra_discount.replace('%', ''))/100))
+      }else{
+        extra_discount = parseFloat(val_extra_discount)
+        gtotal = gtotal - parseFloat(val_extra_discount)
+      }
+    }
+
+    g_total = gtotal
+    gtotal = formatDecimal(gtotal)
+
+    if (Settings.rounding != 0) {
+      round_total = roundNumber(gtotal, parseInt(Settings.rounding));
+      var rounding = formatDecimal(round_total - gtotal);
+      $('#twt').text(formatMoney(round_total) + ' (' + formatMoney(rounding) + ')');
+      $('#quick-payable').text(round_total);
+    } else {
+      $('#twt').text(formatMoney(gtotal));
+      $('#quick-payable').text(gtotal);
+    }
+  }
+
   $('#payment').click(function () {
     if (count <= 1) {
       bootbox.alert(lang.please_add_product);
@@ -1294,16 +1325,10 @@ $(document).ready(function () {
         suspend.appendTo('#hidesuspend');
       }
 
-      gtotal = formatDecimal(total - order_discount + order_tax);
-      if (Settings.rounding != 0) {
-        round_total = roundNumber(gtotal, parseInt(Settings.rounding));
-        var rounding = formatDecimal(round_total - gtotal);
-        $('#twt').text(formatMoney(round_total) + ' (' + formatMoney(rounding) + ')');
-        $('#quick-payable').text(round_total);
-      } else {
-        $('#twt').text(formatMoney(gtotal));
-        $('#quick-payable').text(gtotal);
-      }
+      $("#extra_discount").val('')
+
+      applyTotalPay()
+      
       $('#item_count').text(an - 1 + ' (' + (count - 1) + ')');
       $('#order_quantity').val(count - 1);
       $('#order_items').val(an - 1);
@@ -1616,6 +1641,10 @@ $(document).ready(function () {
   $('#payModal').on('change', '#payment_note', function (e) {
     $('#payment_note_val').val($(this).val());
   });
+  $('#payModal').on('change', '#extra_discount', function (e) {
+    $('#extra_discount_val').val($(this).val());
+    applyTotalPay()
+  });
   $('#payModal').on('change', '#note', function (e) {
     var n = $(this).val();
     store('spos_note', n);
@@ -1665,7 +1694,10 @@ $(document).ready(function () {
   }
 
   //pagar
-  $('#submit-sale').click(function () {
+  $('#submit-sale').click(async function () {
+    console.log(extra_discount)
+    if(extra_discount) await $.requestAdminPermission()
+
     let edit = window.location.href.indexOf('edit=')
 
     let transaction_type = $("#transaction_type").val()
@@ -1674,19 +1706,14 @@ $(document).ready(function () {
         if (($('#metodo_' + i).val() === "cash" || $('#metodo_' + i).val() === "CC") && parseFloat($("#cantidad_" + i).val()) > 0) {
           if ($('#metodo_' + i).val() == "cash") {
             bancos[i] = ""
-            console.log("nulldd")
-            console.log(bancos)
-
           } else {
             if ($('#banco_' + i).val() != "seleccione") {
               bancos[i] = $('#banco_' + i).val()
-              console.log("valor", bancos)
             } else {
               alert("Por favor, seleccione un banco")
               return;
             }
           }
-          console.log(bancos)
           //bancos[i] = $('#banco_'+i).val()
           metodos[i] = $('#metodo_' + i).val()
           cantidad[i] = $("#cantidad_" + i).val()
@@ -1697,7 +1724,6 @@ $(document).ready(function () {
         }
       }
     }
-
 
     if (transaction_type === 'liquidate' && edit < 0) {
       if (total_cantidad < g_total) {
