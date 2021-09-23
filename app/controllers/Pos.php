@@ -522,6 +522,8 @@ class Pos extends MY_Controller
 
                 $grand_total = $this->tec->formatDecimal(($total + $total_tax - $order_discount - $extra_discount), 4);
                 $total_discount += $extra_discount;
+            }else{
+                $extra_discount = 0;
             }
 
             //$paid        = $this->input->post('amount') ? $this->input->post('amount') : 0;
@@ -546,7 +548,8 @@ class Pos extends MY_Controller
                 'order_discount_id' => $order_discount_id,
                 'order_discount'    => $order_discount,
                 'total_discount'    => $total_discount,
-                'extra_discount'    => $this->input->post('extra_discount'),
+                'extra_discount_id' => $this->input->post('extra_discount'),
+                'extra_discount'    => $extra_discount,
                 'product_tax'       => $this->tec->formatDecimal($product_tax, 4),
                 'order_tax_id'      => $order_tax_id,
                 'order_tax'         => $order_tax,

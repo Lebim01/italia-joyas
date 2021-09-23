@@ -683,7 +683,7 @@ $(document).ready(function () {
 
   $('#add_discount').click(function () {
     var dval = $('#discount_val').val();
-    $('#get_ds').val(dval);
+    $('#get_ds').val('%');
     $('#dsModal').modal({ backdrop: 'static' });
     return false;
   });

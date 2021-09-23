@@ -710,6 +710,7 @@
                 <div class="modal-body">
                     <input type='text' class='form-control input-sm kb-pad' id='get_ds' onClick='this.select();' value='%'>
 
+                    <!--
                     <label class="checkbox" for="apply_to_order">
                         <input type="radio" name="apply_to" value="order" id="apply_to_order" checked="checked" />
                         <?= lang('apply_to_order') ?>
@@ -718,6 +719,7 @@
                         <input type="radio" name="apply_to" value="products" id="apply_to_products" />
                         <?= lang('apply_to_products') ?>
                     </label>
+                    -->
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal"><?= lang('close') ?></button>
