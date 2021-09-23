@@ -1219,9 +1219,6 @@ $(document).ready(function () {
     const amount = parseFloat($("#paymentModalCredit input").val()) || 0
     const paid_by = $("#paymentModalCredit #paid_by_select").val()
 
-    /* console.log(selected_sale,amount,paid_by)
-    return
- */
     if (!amount > 0) {
       alert('El monto no puede ser 0')
       return;

@@ -1401,17 +1401,9 @@ class Pos extends MY_Controller
         $this->load->view($this->theme . 'pos/view_payment_credit', $this->data);
     }
 
-    public function add_payment_credit($ticket = null)
+    public function add_payment_credit($customer_id = null)
     {
-        $this->load->helper('security');
-        if ($this->input->get('id')) {
-            $id = $this->input->get('id');
-        }
-
-        $this->form_validation->set_rules('customer_id', 'Cliente', 'required');
         $this->form_validation->set_rules('amount-paid', lang('amount'), 'required');
-        #$this->form_validation->set_rules('paid_by', lang('paid_by'), 'required');
-        #$this->form_validation->set_rules('userfile', lang('attachment'), 'xss_clean');
         
         if ($this->form_validation->run() == true) {
             if ($this->Admin && $this->input->post('date')) {
@@ -1422,10 +1414,9 @@ class Pos extends MY_Controller
 
             $this->load->model('customers_model');
 
-            $sales = $this->customers_model->getPartialSales($this->input->post('customer_id'));
+            $sales = $this->customers_model->getPartialSales($customer_id);
             $total_paid = (float) $this->input->post('amount-paid');
             $paid_by = $this->input->post('paid_by');
-            var_dump($paid_by);exit;
             $rest_paid = $total_paid;
             $debt = 0;
 
@@ -1441,7 +1432,7 @@ class Pos extends MY_Controller
                 $payment = [
                     'date'        => $date,
                     'sale_id'     => $sale->id,
-                    'customer_id' => $this->input->post('customer_id'),
+                    'customer_id' => $customer_id,
                     'reference'   => $this->input->post('reference'),
                     'amount'      => $paid,
                     'paid_by'     => $paid_by,
