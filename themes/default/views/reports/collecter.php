@@ -1,50 +1,14 @@
 <?php (defined('BASEPATH')) OR exit('No direct script access allowed'); ?>
 
-<script type="text/javascript">
-    $(document).ready(function() {
-
-        var table = $('#CuData').DataTable({
-
-            'ajax' : { url: '<?=site_url('customers/get_customers');?>', type: 'POST', "data": function ( d ) {
-                d.<?=$this->security->get_csrf_token_name();?> = "<?=$this->security->get_csrf_hash()?>";
-            }},
-            "buttons": [
-                { extend: 'copyHtml5', 'footer': false, exportOptions: { columns: [ 0, 1, 2, 3, 4, 5 ] } },
-                { extend: 'excelHtml5', 'footer': false, exportOptions: { columns: [ 0, 1, 2, 3, 4, 5 ] } },
-                { extend: 'csvHtml5', 'footer': false, exportOptions: { columns: [ 0, 1, 2, 3, 4, 5 ] } },
-                { extend: 'pdfHtml5', orientation: 'landscape', pageSize: 'A4', 'footer': false,
-                exportOptions: { columns: [ 0, 1, 2, 3, 4, 5 ] } },
-                { extend: 'colvis', text: 'Columns'},
-            ],
-            "columns": [
-                { "data": "id", "visible": false },
-                { "data": "name" },
-                { "data": "phone" },
-                { "data": "email" },
-                { "data": "cf1" },
-                { "data": "cf2" },
-                { "data": "Actions", "searchable": false, "orderable": false }
-            ]
-
-        });
-
-        $('#search_table').on( 'keyup change', function (e) {
-            var code = (e.keyCode ? e.keyCode : e.which);
-            if (((code == 13 && table.search() !== this.value) || (table.search() !== '' && this.value === ''))) {
-                table.search( this.value ).draw();
-            }
-        });
-
-    });
-</script>
-
 <section class="content">
-<div class="row">
+    <div class="row">
         <div class="col-xs-12">
             <button type="button" class="btn btn-primary" id="print_report"><i class='fa fa-print'></i> Imprimir reportes</button>
         </div>
     </div>
+
     <br>
+
     <div class="modal" data-easein="flipYIn" id="reportsModal" tabindex="-1" role="dialog" aria-labelledby="cModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -106,33 +70,32 @@
             </div>
         </div>
     </div>
+
     <div class="row">
         <div class="col-xs-12">
-            <div class="modal-body">
-                <select class="form-control input-md select2" name="customer_id" id="customer_id" required style="width: 100%;">
-                    <option value="">Seleccionar cuenta cliente</option>
-                    <?php foreach($creditsClients as $order): ?>
-                        <option data-row='<?= json_encode($order) ?>' value="<?= $order->customer_id ?>"><?= $order->customer ?></option>
-                    <?php endforeach; ?>
-                </select>
-                <br />
-                <br />
-                <fieldset>
-                    <div class="row">
-                        <div class="col-sm-3">
-                            <label class="label-control">Cuenta total:</label>
-                        </div>
-                        <div class="col-sm-9">
-                            <span id="grand_total"></span>
-                        </div>
+            <select class="form-control input-md select2" name="customer_id" id="customer_id" required style="width: 100%;">
+                <option value="">Seleccionar cuenta cliente</option>
+                <?php foreach($creditsClients as $order): ?>
+                    <option data-row='<?= json_encode($order) ?>' value="<?= $order->customer_id ?>"><?= $order->customer ?></option>
+                <?php endforeach; ?>
+            </select>
+            <br />
+            <br />
+            <fieldset>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <label class="label-control">Cuenta total:</label>
                     </div>
-                </fieldset>
+                    <div class="col-sm-9">
+                        <span id="grand_total"></span>
+                    </div>
+                </div>
+            </fieldset>
 
-                <br />
-                <input type='number' name='amount-paid' id='amount-paid' class='form-control input-md' value='' placeholder="Monto" required>
-                <br>
-                <button id="makePaymentCredit" class="btn btn-primary btn-sm" style="float:right">Aceptar</button>
-            </div>
+            <br />
+            <input type='number' name='amount-paid' id='amount-paid' class='form-control input-md' value='' placeholder="Monto" required>
+            <br>
+            <button id="makePaymentCredit" class="btn btn-primary btn-sm" style="float:right">Aceptar</button>
         </div>
     </div>
 </section>
@@ -142,7 +105,7 @@
 <script type="text/javascript">
     $(document).ready(function() {
 
-        $(".select2").select2()
+        $("#customer_id").select2({})
 
         $('.datepicker').datetimepicker({
             format: 'YYYY-MM-DD',
@@ -269,7 +232,7 @@
 </script>
 
 <style>
-    .ui-autocomplete { 
-        z-index: 9999999 !important; 
+    .select2-search--hide {
+        display: unset !important;
     }
 </style>
