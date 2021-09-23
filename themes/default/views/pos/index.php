@@ -1028,7 +1028,7 @@
                     </div>
                     <div class="form-group" style="align-items: center;">
                         <label>Descuento adicional:</label>
-                        <input id="extra_discount" name="extra_discount" class="form-control" placeholder="5 o 5%" />
+                        <input id="extra_discount" name="extra_discount" class="form-control" placeholder="5 o 5% (require permiso)" />
                     </div>
                     <div class="row">
                         <div class="col-xs-12">
