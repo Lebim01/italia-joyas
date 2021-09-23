@@ -345,10 +345,17 @@
                                             <?php foreach ($customers as $customer) {
                                                 $cus[$customer->id] = $customer->name;
                                             } ?>
-                                            <?= form_dropdown('customer_id', $cus, set_value('customer_id', $Settings->default_customer), 'id="spos_customer" data-placeholder="' . lang('select') . ' ' . lang('customer') . '" required="required" class="form-control select2" style="width:100%;position:absolute;"'); ?>
-                                            <div class="input-group-addon no-print" style="padding: 2px 5px;">
+                                            <?= form_dropdown('customer_id', $cus, set_value('customer_id', $Settings->default_customer), 'id="spos_customer" data-placeholder="' . lang('select') . ' ' . lang('customer') . '" required="required" class="form-control select2" style="width:150%"'); ?>
+                                            <!-- <div class="input-group-addon no-print" style="padding: 2px 5px;">
                                                 <a href="#" id="add-customer" class="external" data-toggle="modal" data-target="#myModal"><i class="fa fa-2x fa-plus-circle" id="addIcon"></i></a>
-                                            </div>
+                                            </div> -->
+                                            <!-- <select class="form-control input-md select2" name="customer_id" id="customer_id" required style="width: 100%;" value="<?php echo $Settings->default_customer ?>">
+                                                <option value="">Seleccionar cuenta cliente</option>
+                                                <?php foreach($customers as $customer): ?>
+                                                    <option data-row='<?= json_encode($customer) ?>' value="<?= $customer->id ?>"><?= $customer->name ?></option>
+                                                <?php endforeach; ?>
+                                            </select> -->
+                                            
                                         </div>
                                         <div style="clear:both;"></div>
                                     </div>
@@ -512,10 +519,11 @@
                     </td>
                     <td>
                         <div class="contents" id="right-col">
-                            <div class="col-sm-12">
+                            <!-- <div class="col-sm-12">
                                 <span title="Configurable en ajustes">
                                     Listado de productos (limite <?= $Settings->pro_limit ?> por página)
                                 </span>
+                                <img width="100px" src="' . base_url('uploads/' . $store->logo) . '" alt="' . $store->name . '">
                             </div>
                             <div class="col-sm-3">
                                 <select id="categorias_filter" class="form-control paid_by select2" style="width:100%;">
@@ -547,13 +555,16 @@
                                     <div class="btn-group">
                                         <button style="z-index:10002;" class="btn btn-warning pos-tip btn-flat" type="button" id="previous"><i class="fa fa-chevron-left"></i></button>
                                     </div>
-                                    <!-- <div class="btn-group">
+                                     <div class="btn-group">
                                             <button style="z-index:10003;" class="btn btn-success pos-tip btn-flat" type="button" id="sellGiftCard"><i class="fa fa-credit-card" id="addIcon"></i> <?= lang('sell_gift_card') ?></button>
-                                        </div> -->
+                                        </div> 
                                     <div class="btn-group">
                                         <button style="z-index:10004;" class="btn btn-warning pos-tip btn-flat" type="button" id="next"><i class="fa fa-chevron-right"></i></button>
                                     </div>
                                 </div>
+                            </div> -->
+                            <div class="col-sm-12">
+                                <?php echo '<img width="" src="' . base_url('uploads/logo.png') . '" alt="' . $store->name . '">'; ?>
                             </div>
                         </div>
                     </td>
@@ -696,7 +707,7 @@
                     <h4 class="modal-title" id="dsModalLabel"><?= lang('discount_title'); ?></h4>
                 </div>
                 <div class="modal-body">
-                    <input type='text' class='form-control input-sm kb-pad' id='get_ds' onClick='this.select();' value=''>
+                    <input type='text' class='form-control input-sm kb-pad' id='get_ds' onClick='this.select();' value='%'>
 
                     <label class="checkbox" for="apply_to_order">
                         <input type="radio" name="apply_to" value="order" id="apply_to_order" checked="checked" />
@@ -750,9 +761,25 @@
                     <br />
                     <br />
                     <fieldset>
+                    <div class="row">
+                            <div class="col-sm-12">
+                                <table class="table table-sm" id="items_table">
+                                    <thead>
+                                        <tr>
+                                            <th>Codigo</th>
+                                            <th>Descripción</th>
+                                            <th>Cantidad</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <hr>
                         <div class="row">
                             <div class="col-sm-12">
-                                <table class="table table-sm" id="payments">
+                                <table class="table table-sm" id="payments_table">
                                     <thead>
                                         <tr>
                                             <th>Fecha</th>
@@ -803,17 +830,21 @@
     <div class="modal" data-easein="flipYIn" id="paymentModalCredit" tabindex="-1" role="dialog" aria-labelledby="paymentModalCreditLabel" aria-hidden="true">
         <div class="modal-dialog modal-md">
             <div class="modal-content">
-                <?= form_open('pos/add_payment_credit/1', 'id="form_add_payment_credit"') ?>
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
                         <h4 class="modal-title" id="tsModalLabel">Abonar crédito</h4>
                     </div>
                     <div class="modal-body">
-                        <select class="form-control input-md" name="customer_id" required style="width: 100%;">
+                        <select class="form-control input-md" name="customer_id" required style="width: 100%;" id="cliente_id">
                             <option value="">Seleccionar cuenta cliente</option>
                             <?php foreach($creditsClients as $order): ?>
                                 <option data-row='<?= json_encode($order) ?>' value="<?= $order->customer_id ?>"><?= $order->customer ?></option>
                             <?php endforeach; ?>
+                        </select>
+                        <br> <br> 
+                        <select id="paid_by_select" class="form-control paid_by bank" style="width:50%; display:inline-block">
+                            <option value="cash" selected="selected">Efectivo</option>
+                            <option value="transfer">Transferencia personal</option>
                         </select>
                         <br />
                         <br />
@@ -833,9 +864,8 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-default btn-sm pull-left" data-dismiss="modal"><?= lang('close') ?></button>
-                        <button type="submmit" <?php /* id="makePaymentCredit" */ ?> class="btn btn-primary btn-sm">Aceptar</button>
+                        <button type="submmit"  id="makePaymentCredit"  class="btn btn-primary btn-sm">Aceptar</button>
                     </div>
-                <?= form_close() ?>
             </div>
         </div>
     </div>
@@ -1037,13 +1067,8 @@
                             </div> -->
                                 <div class="row">
                                     <div class="col-xs-6">
-                                        
                                         <div class="form-group no-methods" style="display: none;">
-                                            <label>En este tipo de transacción no puedes agregar metodos de pago</label>
-                                        </div>
-                                        <div class="form-group no-methods" style="display: none;">
-                                            Abonos:
-                                            <input name="split_payments" type="number" id="split_payments" class="pa form-control kb-pad"/>
+                                           Enganche
                                         </div>
                                     </div>
                                 </div>
@@ -1056,6 +1081,14 @@
 
                                         </div>
                                         <!--<button type="button" class="btn btn-danger" id="remove_payment" style="margin-left:15px;display:none"><i class='fa fa-minus'></i> Eliminar método de pago</button>-->
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-xs-6">
+                                        <div class="form-group no-methods" style="display: none;">
+                                            Abonos de:
+                                            <input name="split_payments" type="number" id="split_payments" class="pa form-control kb-pad"/>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1291,6 +1324,8 @@
         lang['merchant_copy'] = '<?= lang('merchant_copy'); ?>';
 
         $(document).ready(function() {
+            console.log("jsdjsh")
+            
             <?php if ($this->session->userdata('rmspos')) { ?>
                 if (get('spositems')) {
                     remove('spositems');

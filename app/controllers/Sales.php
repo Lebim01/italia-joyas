@@ -352,6 +352,11 @@ class Sales extends MY_Controller
         echo json_encode($this->sales_model->getSalePayments($id));
     }
 
+    public function get_items_sales($id = null)
+    {
+        echo json_encode($this->sales_model->getallItemSalesByID($id));
+    }
+
     public function status()
     {
         if (!$this->Admin) {

@@ -218,7 +218,7 @@
                         <div class="col-xs-12">
                             <div class="form-group">
                                 <input id="date_inicio" type="text" class=" datepicker2 col-xs-5" placeholder="Fecha de inicio">
-                                <input id="date_fin" type="text" class=" datepicker2 col-xs-5 col-xs-offset-1" placeholder="Fecha fin">
+                                <input id="date_fin" type="text" class=" datepicker2 col-xs-5 col-xs-offset-1" placeholder="Fecha fin" value="<?php echo date('Y-m-d'); ?>">
                             </div>
                         </div>
                     </div>
@@ -379,7 +379,7 @@
                 $("#datesFilter").css("display", "none");
                 $("#date_inicio").val("")
 
-                $("#date_fin").val("")
+                $("#date_fin").val("<?php echo date('Y-m-d'); ?>")
             }
         });
 
@@ -391,7 +391,7 @@
                 window.open(url.toString(), '_blank')
                 $("#datesFilter").css("display", "none");
                 $("#date_inicio").val("")
-                $("#date_fin").val("")
+                $("#date_fin").val("<?php echo date('Y-m-d'); ?>")
                 $('#tipoReporte').val("")
                 $('#reportsModal').modal('hide');
             } 
@@ -403,7 +403,7 @@
                 window.open(url.toString(), '_blank')
                 $("#datesFilter").css("display", "none");
                 $("#date_inicio").val("")
-                $("#date_fin").val("")
+                $("#date_fin").val("<?php echo date('Y-m-d'); ?>")
                 $('#tipoReporte').val("")
                 $('#reportsModal').modal('hide');
             } 

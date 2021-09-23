@@ -249,7 +249,7 @@
 
         });    
 
-            s
+            
  /*        $.ajax({
             url: "",
             type: 'POST',

@@ -79,7 +79,11 @@ if ($modal) {
                                       ?>
                                        <h2>***********  Crédito ***********</h2>
                                       <?php
-                                        }
+                                        } else if($inv->transaction_type == "apart"){
+                                    ?>
+                                        <h2>***********  Apartado ***********</h2>
+                                    <?php
+                                        } 
                                     ?>
                                 </div>
                                 <p>
@@ -131,23 +135,6 @@ if ($modal) {
                                             echo '<tr><th class="text-left" colspan="3">' . lang('tax') . '</th><th colspan="3" class="text-right">' . $this->tec->formatMoney($inv->total_tax) . '</th></tr>';
                                         }
 
-                                        if ($Settings->rounding) {
-                                            $round_total = $this->tec->roundNumber($inv->grand_total, $Settings->rounding);
-                                            $rounding    = $this->tec->formatDecimal($round_total - $inv->grand_total); ?>
-                                            
-                                            <tr>
-                                                <th class="text-left" colspan="2"><?= lang('grand_total'); ?></th>
-                                                <th colspan="3" class="text-right"><?= $this->tec->formatMoney($inv->grand_total + $rounding); ?></th>
-                                            </tr>
-                                            <?php
-                                        } else {
-                                            $round_total = $inv->grand_total; ?>
-                                            <tr>
-                                                <th class="text-left" colspan="2"><?= lang('grand_total'); ?></th>
-                                                <th colspan="3" class="text-right"><?= $this->tec->formatMoney($inv->grand_total); ?></th>
-                                            </tr>
-                                            <?php
-                                        }
                                       ?>
                                        
                                     <?php
@@ -168,8 +155,8 @@ if ($modal) {
                                             }
                                         ?>
                                         <tr>
-                                            <th class="text-left" colspan="2">Cambio</th>
-                                            <th colspan="3" class="text-right"><?= $this->tec->formatMoney($inv->paid); ?></th>
+                                            <th class="text-left" colspan="2">Su cambio</th>
+                                            <th colspan="3" class="text-right"><?= $this->tec->formatMoney( $inv->paid - $inv->grand_total ); ?></th>
                                         </tr>
                                       <?php
                                         } else if($inv->transaction_type == "apart"){
@@ -193,8 +180,20 @@ if ($modal) {
                                       <?php
                                         } else if($inv->transaction_type == "credit"){
                                       ?>
-                                            <th class="text-left" colspan="2"></th>
-                                            <th colspan="3" class="text-right">Crédito </th>
+                                            <?php
+                                            foreach ($payments as $payment) {
+                                        ?>
+                                        <tr>
+                                            <th class="text-left" colspan="2">Enganche</th>
+                                            <th colspan="3" class="text-right"></th>
+                                        </tr>
+                                            <tr>
+                                                <th class="text-left" colspan="2"></th>
+                                                <th colspan="3" class="text-right"><?= lang($payment->paid_by);?>  <?= $payment->banks;?> : <?= $this->tec->formatMoney($payment->amount);?></th>
+                                            </tr>
+                                        <?php
+                                            }
+                                        ?>
                                             <tr>
                                                 <th class="text-left" colspan="2">Abonos de:</th>
                                                 <th colspan="3" class="text-right"><?= $this->tec->formatMoney($inv->split_payments); ?> </th>
@@ -208,6 +207,47 @@ if ($modal) {
                                             <th colspan="3" class="text-right"><?= $this->tec->formatMoney($inv->paid - $inv->grand_total); ?></th>
                                         </tr>
                                         <?php endif; ?> -->
+                                        
+                                        <?php
+
+                                        if ($Settings->rounding) {
+                                            $round_total = $this->tec->roundNumber($inv->grand_total, $Settings->rounding);
+                                            $rounding    = $this->tec->formatDecimal($round_total - $inv->grand_total); ?>
+                                            
+                                            <tr>
+                                                <th class="text-left" colspan="2"><?= lang('grand_total'); ?></th>
+                                                <?php
+                                                    if($inv->transaction_type == "liquidate"){
+                                                    ?>
+                                                       <th colspan="3" class="text-right"><?= $this->tec->formatMoney($inv->grand_total)?></th>;
+                                                    <?php
+                                                    } else {
+                                                    ?>
+                                                        <th colspan="3" class="text-right"><?= $this->tec->formatMoney($inv->grand_total - $inv->paid); ?></th>;
+                                                     <?php
+                                                    }
+                                                ?>
+                                            </tr>
+                                            <?php
+                                        } else {
+                                            $round_total = $inv->grand_total; ?>
+                                            <tr>
+                                                <th class="text-left" colspan="2"><?= lang('grand_total'); ?></th>
+                                                <?php
+                                                    if($inv->transaction_type == "liquidate"){
+                                                    ?>
+                                                       <th colspan="3" class="text-right"><?= $this->tec->formatMoney($inv->grand_total)?></th>;
+                                                    <?php
+                                                    } else {
+                                                    ?>
+                                                        <th colspan="3" class="text-right"><?= $this->tec->formatMoney($inv->grand_total - $inv->paid); ?></th>;
+                                                     <?php
+                                                    }
+                                                ?>
+                                            </tr>
+                                            <?php
+                                        }
+                                      ?>
                                         
                                     </tfoot>
                                     
@@ -263,7 +303,7 @@ if ($modal) {
                                 }
                                 
                                 echo $inv->note 
-                                    ? '<p style="margin-top:10px; text-align: center;">' . replaceNote($this->tec->decode_html($inv->note), $this->tec, $Settings, $store, $round_total) . '</p>' 
+                                    ? '<p style="margin-top:10px; text-align: center;">' . replaceNote($this->tec->decode_html($inv->note), $this->tec, $Settings, $store, $round_total - $inv->paid) . '</p>' 
                                     : ''; 
                                 ?>
 

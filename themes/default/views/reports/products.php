@@ -333,7 +333,7 @@
                         <div class="col-xs-12">
                             <div class="form-group">
                                 <input id="date_inicio" type="text" class=" datepicker2" placeholder="Fecha de inicio">
-                                <input id="date_fin" type="text" class=" datepicker2" placeholder="Fecha fin">
+                                <input id="date_fin" type="text" class=" datepicker2" placeholder="Fecha fin" value="<?php echo date('Y-m-d'); ?>">
                             </div>
                         </div>
                     </div>
@@ -541,7 +541,7 @@
                 $("#linea").val("")
                 $("#codigo").val("")
                 $("#date_inicio").val("")
-                $("#date_fin").val("")
+                $("#date_fin").val("<?php echo date('Y-m-d'); ?>")
         
             }
 
@@ -605,7 +605,7 @@
             $("#linea").val("")
             $("#codigo").val("")
             $("#date_inicio").val("")
-            $("#date_fin").val("")
+            $("#date_fin").val("<?php echo date('Y-m-d'); ?>")
             $('#tipoReporte').val("")
             $('#reportsModal').modal('hide');
         }
@@ -615,7 +615,7 @@
             $("#linea").val("")
             $("#codigo").val("")
             $("#date_inicio").val("")
-            $("#date_fin").val("")
+            $("#date_fin").val("<?php echo date('Y-m-d'); ?>")
         }
     });
 </script>

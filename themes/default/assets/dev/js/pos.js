@@ -1137,7 +1137,8 @@ $(document).ready(function () {
     const option = $("#paymentModalApart select").find(`option[value=${selected_sale}]`)
     const sale_data = $(option).data('row')
 
-    const tablePayments = $("#paymentModalApart table");
+    const tablePayments = $("#paymentModalApart #payments_table");
+    const tableItems = $("#paymentModalApart #items_table");
 
     $.ajax({
       url: base_url + `sales/get_payments/${sale_data.id}`,
@@ -1156,6 +1157,27 @@ $(document).ready(function () {
         }
 
         tablePayments.find('tbody').html(rowsHtml.join(''))
+      }
+    })
+
+    $.ajax({
+      url: base_url + `sales/get_items_sales/${sale_data.id}`,
+      method: 'GET',
+      success: function (response) {
+        const items = JSON.parse(response || '[]')
+        const rowsHtml = [];
+
+        for (const row of items) {
+          rowsHtml.push(`
+            <tr>
+              <td>${row.product_code}</td>
+              <td>${row.product_name}</td>
+              <td>${row.quantity}</td>
+            </tr>
+          `)
+        }
+        console.log(items)
+        tableItems.find('tbody').html(rowsHtml.join(''))
       }
     })
   })
@@ -1193,9 +1215,13 @@ $(document).ready(function () {
   })
 
   $("#paymentModalCredit #makePaymentCredit").click(function () {
-    const selected_sale = $("#paymentModalCredit select").val()
+    const selected_sale = $("#paymentModalCredit #cliente_id").val()
     const amount = parseFloat($("#paymentModalCredit input").val()) || 0
+    const paid_by = $("#paymentModalCredit #paid_by_select").val()
 
+    /* console.log(selected_sale,amount,paid_by)
+    return
+ */
     if (!amount > 0) {
       alert('El monto no puede ser 0')
       return;
@@ -1214,7 +1240,7 @@ $(document).ready(function () {
       method: 'POST',
       data: {
         'amount-paid': amount,
-        paid_by: 'cash'
+        paid_by: paid_by
       },
       success: function () {
         //$("#paymentModal").modal('hide')
@@ -1224,7 +1250,7 @@ $(document).ready(function () {
     })
   })
 
-  $("#paymentModalCredit select").select2({
+  $("#paymentModalCredit #cliente_id").select2({
     dropdownParent: $('#paymentModalCredit')
   })
 
@@ -1303,11 +1329,8 @@ $(document).ready(function () {
 
     if (type === 'credit') {
       spositems = {}
-      $("#methods").hide()
       $(".no-methods").show()
-      $("#campos").empty()
     } else {
-      $("#methods").show()
       $(".no-methods").hide()
     }
   })
@@ -1649,7 +1672,7 @@ $(document).ready(function () {
     let edit = window.location.href.indexOf('edit=')
 
     let transaction_type = $("#transaction_type").val()
-    if (transaction_type === "liquidate" || transaction_type === "apart") {
+    if (transaction_type === "liquidate" || transaction_type === "apart" || transaction_type === "credit") {
       for (i = 0; i < nextinput; i++) {
         if (($('#metodo_' + i).val() === "cash" || $('#metodo_' + i).val() === "CC") && parseFloat($("#cantidad_" + i).val()) > 0) {
           if ($('#metodo_' + i).val() == "cash") {

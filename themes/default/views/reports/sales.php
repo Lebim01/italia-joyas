@@ -170,7 +170,7 @@ if ($this->input->post('end_date')) {
                         <div class="col-xs-12">
                             <div class="form-group">
                                 <input id="date_inicio" type="text" class=" datepicker2 col-xs-5" placeholder="Fecha de inicio">
-                                <input id="date_fin" type="text" class=" datepicker2 col-xs-5 col-xs-offset-1" placeholder="Fecha fin">
+                                <input id="date_fin" type="text" class=" datepicker2 col-xs-5 col-xs-offset-1" placeholder="Fecha fin" value="<?php echo date('Y-m-d'); ?>">
                             </div>
                         </div>
                     </div>
@@ -364,6 +364,8 @@ if ($this->input->post('end_date')) {
             },
         });
 
+        //$('#date_fin').datetimepicker('setDate', 'today')
+
         $("#tipoReporte").change(function() {
             if($(this).val() != "seleccione"){
                 $("#datesFilter").css("display", "inline-block");
@@ -371,7 +373,7 @@ if ($this->input->post('end_date')) {
                 $("#datesFilter").css("display", "none");
                 $("#date_inicio").val("")
 
-                $("#date_fin").val("")
+                $("#date_fin").val("<?php echo date('Y-m-d'); ?>")
             }
 
             if( $(this).val() != "seleccione" && $(this).val() != "byInvoice" && $(this).val() != "byComision"){
@@ -382,6 +384,7 @@ if ($this->input->post('end_date')) {
         });
 
         $("#print").click(function() {
+            
             if($("#tipoReporte").val() == "byProducts"){
                 if($('#date_inicio').val() && $('#date_fin').val()){
                     let data = ["Reporte de ventas por producto",$('#date_inicio').val(),$('#date_fin').val(),$('#store').val(),$("input[type='radio']:checked").val()]
@@ -437,7 +440,7 @@ if ($this->input->post('end_date')) {
             $("#datesFilter").css("display", "none");
             $("#paymentFilter").css("display", "none");
             $("#date_inicio").val("")
-            $("#date_fin").val("")
+            $("#date_fin").val("<?php echo date('Y-m-d'); ?>")
             $('#tipoReporte').val("")
             $('#reportsModal').modal('hide');
         }

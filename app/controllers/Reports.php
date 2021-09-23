@@ -457,6 +457,7 @@ class Reports extends MY_Controller
         $tableAP = "";
         $rango = "";
         $tablaExis = "";
+        $tienda = $this->site->getStoreByID(end($arrayfiltros));
         if ($arrayfiltros[0] == "Reporte de existencia de productos") {
             $productos = $this->reports_model->getProducts($arrayfiltros);
             //echo $productos;exit;
@@ -517,7 +518,7 @@ class Reports extends MY_Controller
             }
         }
 
-        if ($arrayfiltros[0] == "Reporte de movimientos de productos") {
+        if ($arrayfiltros[0] == " de productos") {
             $productos = $this->reports_model->movementsProducts($arrayfiltros);
             //echo $productos;exit;
             if($productos == "NA"){
@@ -617,7 +618,7 @@ class Reports extends MY_Controller
         }
 
         if ($arrayfiltros[0] == "Reporte de movimientos de productos") {
-            $rango = '<br><label>De la fecha "'.$arrayfiltros[1].'" a la fecha "'.$arrayfiltros[2].'"</label>';
+            $rango = '<br><label>De la fecha "'.$arrayfiltros[2].'" a la fecha "'.$arrayfiltros[3].'"</label>';
             if($tableIA){
                 $tablaExis .= '
                     <h3>E-INV</h3>
@@ -700,8 +701,8 @@ class Reports extends MY_Controller
 
 
         $html = '
-            <p>"ITALIA JOYAS"</p> 
-            <label>Reporte de existencias por producto</label>
+            <p>"ITALIA JOYAS" sucursal '.$tienda->name.'</p> 
+            <label>'.$arrayfiltros[0].'</label>
             '.$rango.'
             <label style="margin-left:30%">Fecha de impresión: '.date("d-m-Y").'</label>
             <br></br>          
@@ -746,6 +747,8 @@ class Reports extends MY_Controller
         $sales = [];
         $header = "";
         $table = "";
+        $tienda = $this->site->getStoreByID($arrayfiltros[3]);
+        $tipodeventa = "";
 
         if($arrayfiltros[0] == "Reporte de ventas por producto"){
             $sales = $this->reports_model->getallItemSales($arrayfiltros);
@@ -781,11 +784,19 @@ class Reports extends MY_Controller
                 ';
             }
         } else if($arrayfiltros[0] == "Reporte de ventas"){
+            $td = "";
+            $tdd = "";
             $sales = $this->reports_model->getallSales($arrayfiltros);
+
+            if($arrayfiltros[4] == "CC"){
+                $td = "<td style='text-align:center;'>Cliente</td>";
+                $tipodeventa = "a crédito";
+            }
             $header = '
                     <tr class="header" >
                         <td style="text-align:center;">#</td>
                         <td style="text-align:center;">Vendedor</td>
+                        '.$td.'
                         <td style="">Tipo de pago</td>
                         <td style="text-align:center;">Fecha</td>
                         <td style="text-align:center;">Descuento</td>
@@ -793,11 +804,15 @@ class Reports extends MY_Controller
                     </tr>
             ';
             for($i=0;$i<=count($sales)-1;$i++){
+                if($arrayfiltros[4] == "CC"){
+                    $tdd = "<td style='text-align:center;'>".$sales[$i]->customer_name."</td>";
+                }
                 $item = $i + 1;
                 $table.='
                     <tr>
                         <td style="text-align:center;">'.$item.'</td>
                         <td style="text-align:center;">'.$sales[$i]->first_name.' '.$sales[$i]->last_name.'</td>
+                        '.$tdd.'
                         <td style="text-align:center;">'.$sales[$i]->tipopago.'</td>
                         <td style="text-align:center;">'.$sales[$i]->date.'</td>
                         <td style="text-align:center;">'.$this->tec->formatMoney($sales[$i]->discount).'</td>
@@ -862,8 +877,8 @@ class Reports extends MY_Controller
         }
         
         $html='
-            <p>"ITALIA JOYAS"</p> 
-            <p>'.$arrayfiltros[0].'</p>
+            <p>"ITALIA JOYAS" sucursal '.$tienda->name.'</p>  
+            <p>'.$arrayfiltros[0]. ' '.$tipodeventa.'</p>
             <p>De la fecha "'.$arrayfiltros[1].'" a la fecha "'.$arrayfiltros[2].'"</p>
             <hr style="text-align:left;margin-left:0">
             <hr style="text-align:left;margin-left:0">
@@ -906,6 +921,7 @@ class Reports extends MY_Controller
         $purchase = [];
         $header = "";
         $table = "";
+        $tienda = $this->site->getStoreByID(end($arrayfiltros));
 
         if($arrayfiltros[0] == "Reporte de compras"){
             $purchase = $this->reports_model->getallPurchases($arrayfiltros);
@@ -939,7 +955,7 @@ class Reports extends MY_Controller
         }
         
         $html='
-            <p>"ITALIA JOYAS"</p> 
+            <p>"ITALIA JOYAS" sucursal '.$tienda->name.'</p> 
             <p>'.$arrayfiltros[0].'</p>
             <p>De la fecha "'.$arrayfiltros[1].'" a la fecha "'.$arrayfiltros[2].'"</p>
             <hr style="text-align:left;margin-left:0">
@@ -1068,7 +1084,7 @@ class Reports extends MY_Controller
         }
         
         $html='
-            <p>"ITALIA JOYAS"</p> 
+            <p>"ITALIA JOYAS" sucursal '.$tienda->name.'</p>  
             <p>'.$arrayfiltros[0].': '.$sales[0]->name.'</p>
             <hr style="text-align:left;margin-left:0">
             <hr style="text-align:left;margin-left:0">

@@ -200,7 +200,9 @@ $v = "?v=1";
                     <button class="btn btn-primary" id="btn-add">
                         Agregar productos
                     </button>
-
+                    <button class="btn btn-primary" id="apply" style="display: none">
+                        Aplicar
+                    </button>
                     <div class="table-responsive">
                         <table id="PayRData" class="table table-bordered table-hover table-striped table-condensed reports-table">
                             <thead>
@@ -219,11 +221,6 @@ $v = "?v=1";
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
-                    <div class="col-sm-12 text-right">
-                        <button class="btn btn-primary" id="apply" style="display: none">
-                            Aplicar
-                        </button>
                     </div>
                 </div>
             </div>

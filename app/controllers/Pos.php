@@ -1424,7 +1424,8 @@ class Pos extends MY_Controller
 
             $sales = $this->customers_model->getPartialSales($this->input->post('customer_id'));
             $total_paid = (float) $this->input->post('amount-paid');
-
+            $paid_by = $this->input->post('paid_by');
+            var_dump($paid_by);exit;
             $rest_paid = $total_paid;
             $debt = 0;
 
@@ -1443,7 +1444,7 @@ class Pos extends MY_Controller
                     'customer_id' => $this->input->post('customer_id'),
                     'reference'   => $this->input->post('reference'),
                     'amount'      => $paid,
-                    'paid_by'     => 'cash',
+                    'paid_by'     => $paid_by,
                     'cheque_no'   => $this->input->post('cheque_no'),
                     'gc_no'       => $this->input->post('gift_card_no'),
                     'cc_no'       => $this->input->post('pcc_no'),

@@ -18,7 +18,16 @@ class Pos_model extends CI_Model
         $discountInvetory = in_array($data['transaction_type'], ['liquidate', 'credit']);
         // add items apart
         $isApart = in_array($data['transaction_type'], ['apart']);
-
+        $paid = 0;
+        if (!empty($payment)) {
+            foreach ($payment as $item) {
+                $paid=$paid + floatval($item["amount"]);
+            }
+           
+        }
+        $data["paid"] = $paid;
+        var_dump($data);
+        //exit;
         if ($this->db->insert('sales', $data)) {
             $sale_id = $this->db->insert_id();
             foreach ($items as $item) {

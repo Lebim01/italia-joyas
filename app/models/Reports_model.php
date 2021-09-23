@@ -367,8 +367,7 @@ class Reports_model extends CI_Model
                                 tec_sales 
                                 LEFT JOIN tec_users 
                                     ON tec_sales.created_by = tec_users.id 
-                                WHERE tec_sales.store_id = ".$filtros[3]." 
-                                AND tec_sales.date >= '".$filtros[1]."  00:00:00' 
+                                WHERE tec_sales.date >= '".$filtros[1]."  00:00:00' 
                                 AND tec_sales.date <= '".$filtros[2]."  23:59:59'
                                 GROUP BY tec_sales.created_by
                                 ")->result();
@@ -381,11 +380,11 @@ class Reports_model extends CI_Model
     {
         $where = "";
         if($fechas[4] == "cash"){
-            $where = "AND tec_payments.paid_by = '".$fechas[4]."'";
+            $where = "AND tec_sales.transaction_type = 'liquidate'";
         }
 
         if($fechas[4] == "CC"){
-            $where = "AND tec_payments.paid_by = '".$fechas[4]."'";
+            $where = "AND tec_sales.transaction_type = 'credit'";
         }
         $data = $this->db->query("SELECT 
                                     tec_sales.id,
@@ -393,6 +392,7 @@ class Reports_model extends CI_Model
                                     tec_sales.invoice,
                                     tec_sales.grand_total,
                                     SUM(tec_sale_items.discount) AS discount ,
+                                    tec_sales.customer_name as customer_name,
                                     tec_users.first_name,
                                     tec_users.last_name,
                                     CASE
