@@ -646,14 +646,14 @@ $(document).ready(function () {
     //await $.requestAdminPermission()
 
     var ds = $('#get_ds').val() ? $('#get_ds').val() : '0';
-    var apply_to = $('input[name=apply_to]:checked').val();
+    var apply_to = 'order'//$('input[name=apply_to]:checked').val();
+    
     if (ds.length != 0) {
       if (apply_to == 'order') {
         $('#discount_val').val(ds);
         store('spos_discount', ds);
         if (ds.indexOf('%') !== -1) {
           var pds = ds.split('%');
-
           order_discount = (total * parseFloat(pds[0])) / 100;
           order_tax = calTax();
           var g_total = total + order_tax - order_discount;
@@ -1695,7 +1695,6 @@ $(document).ready(function () {
 
   //pagar
   $('#submit-sale').click(async function () {
-    console.log(extra_discount)
     if(extra_discount) await $.requestAdminPermission()
 
     let edit = window.location.href.indexOf('edit=')
@@ -1749,8 +1748,6 @@ $(document).ready(function () {
     $('#split_payments_val').val($('#split_payments').val());
     $('#submit').click();
     total_cantidad = 0
-
-
   });
 
   var hold_ref = $('#hold_ref').val();
