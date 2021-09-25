@@ -1,14 +1,12 @@
 <?php (defined('BASEPATH')) OR exit('No direct script access allowed'); ?>
 
 <section class="content">
-    <div class="row">
+<div class="row">
         <div class="col-xs-12">
             <button type="button" class="btn btn-primary" id="print_report"><i class='fa fa-print'></i> Imprimir reportes</button>
         </div>
     </div>
-
     <br>
-
     <div class="modal" data-easein="flipYIn" id="reportsModal" tabindex="-1" role="dialog" aria-labelledby="cModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -24,40 +22,8 @@
                     <div class="row">
                         <div class="col-xs-12">
                             <div class="form-group">
-                                Tipo de reporte: <br>
-                                <select id="tipoReporte" class="form-control paid_by bank" style="width:50%; display:inline-block">
-                                    <option value="seleccione" selected>Seleccione una opción</option>
-                                    <option value="statusAccount">Estado de cuenta</option>
-                                </select>
-                            </div>
-                            <div class="form-group" style="margin-bottom:5px;">
-                                <input type="text" name="code" id="add_item" class="form-control" placeholder="Nombre del cliente" />
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row" style="display:none" id="paymentFilter">
-                        <div class="col-xs-12">
-                            <div class="form-group">
-                                <div>
-                                    <input type="radio" id="huey" name="pay" value="todos" checked>
-                                    <label for="huey">Todos</label>
-                                </div>
-                                <div>
-                                    <input type="radio" id="dewey" name="pay" value="cash">
-                                    <label for="dewey">Contado</label>
-                                </div>
-                                <div>
-                                    <input type="radio" id="louie" name="pay" value="CC">
-                                    <label for="louie">Crédito</label>
-                                </div>
-                            </div>
-                        </div>
-                    </div> <br>
-                    <div class="row" style="display:none" id="datesFilter">
-                        <div class="col-xs-12">
-                            <div class="form-group">
-                                <input id="date_inicio" type="text" class=" datepicker2 col-xs-5" placeholder="Fecha de inicio">
-                                <input id="date_fin" type="text" class=" datepicker2 col-xs-5 col-xs-offset-1" placeholder="Fecha fin">
+                                <input id="date_inicio" type="text" class=" datepicker2" placeholder="Fecha de inicio">
+                                <input id="date_fin" type="text" class=" datepicker2" placeholder="Fecha fin" value="<?php echo date('Y-m-d'); ?>">
                             </div>
                         </div>
                     </div>
@@ -70,32 +36,33 @@
             </div>
         </div>
     </div>
-
     <div class="row">
         <div class="col-xs-12">
-            <select class="form-control input-md select2" name="customer_id" id="customer_id" required style="width: 100%;">
-                <option value="">Seleccionar cuenta cliente</option>
-                <?php foreach($creditsClients as $order): ?>
-                    <option data-row='<?= json_encode($order) ?>' value="<?= $order->customer_id ?>"><?= $order->customer ?></option>
-                <?php endforeach; ?>
-            </select>
-            <br />
-            <br />
-            <fieldset>
-                <div class="row">
-                    <div class="col-sm-3">
-                        <label class="label-control">Cuenta total:</label>
+            <div class="modal-body">
+                <select class="form-control input-md select2" name="customer_id" id="customer_id" required style="width: 100%;">
+                    <option value="">Seleccionar cuenta cliente</option>
+                    <?php foreach($creditsClients as $order): ?>
+                        <option data-row='<?= json_encode($order) ?>' value="<?= $order->customer_id ?>"><?= $order->customer ?></option>
+                    <?php endforeach; ?>
+                </select>
+                <br />
+                <br />
+                <fieldset>
+                    <div class="row">
+                        <div class="col-sm-3">
+                            <label class="label-control">Cuenta total:</label>
+                        </div>
+                        <div class="col-sm-9">
+                            <span id="grand_total"></span>
+                        </div>
                     </div>
-                    <div class="col-sm-9">
-                        <span id="grand_total"></span>
-                    </div>
-                </div>
-            </fieldset>
+                </fieldset>
 
-            <br />
-            <input type='number' name='amount-paid' id='amount-paid' class='form-control input-md' value='' placeholder="Monto" required>
-            <br>
-            <button id="makePaymentCredit" class="btn btn-primary btn-sm" style="float:right">Aceptar</button>
+                <br />
+                <input type='number' name='amount-paid' id='amount-paid' class='form-control input-md' value='' placeholder="Monto" required>
+                <br>
+                <button id="makePaymentCredit" class="btn btn-primary btn-sm" style="float:right">Aceptar</button>
+            </div>
         </div>
     </div>
 </section>
@@ -105,7 +72,7 @@
 <script type="text/javascript">
     $(document).ready(function() {
 
-        $("#customer_id").select2({})
+        $(".select2").select2()
 
         $('.datepicker').datetimepicker({
             format: 'YYYY-MM-DD',
@@ -123,9 +90,7 @@
 
         $('#customer_id').change(function (e) {
             const selected_value = $(this).val()
-            console.log(selected_value)
             if (selected_value) {
-                console.log(selected_value,"s")
                 const option = $(this).find(`option[value=${selected_value}]`)
                 const data = $(option).data('row')
 
@@ -138,34 +103,35 @@
         });
 
         $("#makePaymentCredit").click(function(){
-            if(confirm('¿Esta seguro de aplicar los cambios? Esta accion es irreversible')){
-                $("#makePaymentCredit").prop('disabled', true);
-                $("#makePaymentCredit").html('Aplicando...');
+            let selected_sale = $("#customer_id").val()
+            let amount = parseFloat($("#amount-paid").val()) || 0
 
-                const option = $('#customer_id').val()
-                const monto =  formatMoney(parseFloat($('#amount-paid').val()))
-
-                $("input.border-success").each(function(index){
-                    const code = $(this).parent().parent().find('> :first-child').html()
-                    const quantity = $(this).val()
-                    items.push({
-                        code,
-                        quantity
-                    })
-                })
-
-                $.ajax({
-                    url: '<?= site_url('reports/add_payment_credit/'); ?>',
-                    method: 'POST',
-                    data: {
-                        amountpaid : monto,
-                        customer_id : option
-                    },
-                    success: function(){
-                        window.location.reload()      
-                    }
-                })
+            if (!amount > 0) {
+            alert('El monto no puede ser 0')
+            return;
             }
+
+            if (!selected_sale) {
+            alert('Seleccione una cuenta')
+            return;
+            }
+
+            let option = $("#customer_id").find(`option[value=${selected_sale}]`)
+            let sale_data = $(option).data('row')
+
+            $.ajax({
+            url: base_url + `reports/add_payment_credit/${sale_data.customer_id}`,
+            method: 'POST',
+            data: {
+                'amount-paid': amount,
+                paid_by :"cash"
+            },
+            success: function () {
+                //$("#paymentModal").modal('hide')
+                alert('Abono hecho correctamente')
+                window.location.reload()
+            }
+            })
         })
 
         $('.datepicker2').datetimepicker({
@@ -200,18 +166,16 @@
 
 
         $("#print").click(function() {
-            let phone = $('#add_item').val().substring($('#add_item').val().indexOf("(") + 1, $('#add_item').val().lastIndexOf(")"))
-            if($("#tipoReporte").val() == "statusAccount"){
-                let data = ["Estado de cuenta",phone]
-                let url=  new URL(window.location.origin+"/reports/statusAccount/");
+            let data = ["Reporte de abonos a domicilio",$("#date_inicio").val(),$("#date_fin").val()]
+
+                let url=  new URL(window.location.origin+"/reports/getPaymmentsStreet/");
                 url.searchParams.append('filtros', data)
                 window.open(url.toString(), '_blank')
-                $("#add_item").val("")
+                $("#date_inicio").val("")
                 $('#reportsModal').modal('hide');
-            } 
+            
 
-        });    
-
+        });   
             
  /*        $.ajax({
             url: "",
@@ -232,7 +196,7 @@
 </script>
 
 <style>
-    .select2-search--hide {
-        display: unset !important;
+    .ui-autocomplete { 
+        z-index: 9999999 !important; 
     }
 </style>

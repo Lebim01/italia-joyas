@@ -578,27 +578,78 @@ class Reports_model extends CI_Model
     }
 
     public function getStatusAccount($phone)
-    {
+    {   
+        $payments = [];
+        $statusAccount = [];
+        $customer = $this->db->query("SELECT * FROM tec_customers WHERE phone =".$phone[1]."")->result();
+
         $data = $this->db->query("SELECT 
+                                    tec_sales.id,
                                     tec_customers.name,
                                     tec_sales.date,
                                     tec_sales.grand_total,
                                     tec_sales.paid,
                                     tec_sales.transaction_type,
                                     tec_sales.status,
-                                    tec_sales.id
+                                    tec_sales.id,
+                                    tec_stores.name AS store
                                 FROM
                                     tec_sales 
                                     LEFT JOIN tec_customers 
                                     ON tec_customers.id = tec_sales.customer_id 
-                                WHERE (tec_sales.status = 'partial')
+                                    LEFT JOIN tec_stores 
+                                    ON tec_sales.store_id = tec_stores.id 
+                                WHERE (tec_sales.status = 'partial') 
                                     AND (
-                                    tec_sales.transaction_type = 'credit' 
-                                    OR tec_sales.transaction_type = 'apart'
+                                    tec_sales.transaction_type = 'credit'
                                     ) 
                                     AND tec_customers.phone = ".$phone[1]." 
-        ")->result();
-        return $data;
+                                ")->result();
+
+        foreach ($data as $key => $row) {
+            $payments[$key] = $this->db->query("SELECT 
+                                                    tec_payments.*,
+                                                    tec_stores.name 
+                                                FROM
+                                                    tec_payments 
+                                                    LEFT JOIN tec_stores 
+                                                    ON tec_payments.store_id = tec_stores.id 
+                                                WHERE sale_id = ".$row->id."")->result();
+            $statusAccount [$key] = [
+                                        'compra' => $row,
+                                        'pagos'  => $payments[$key]
+                                    ];       
+        }
+        
+        return $statusAccount;
+        
+    }
+
+
+    public function getCustomerByPhone($phone)
+    {   
+        $customer = $this->db->query("SELECT * FROM tec_customers WHERE phone =".$phone[1]."")->result();
+        
+        return $customer;
+        
+    }
+
+    public function getPaymentsStreet($filtros)
+    {   
+        $payments = $this->db->query("SELECT 
+                                            tec_payments.*,
+                                            tec_customers.name 
+                                        FROM
+                                            tec_payments 
+                                            LEFT JOIN tec_customers 
+                                            ON tec_payments.customer_id = tec_customers.id 
+                                        WHERE date >= '" . $filtros[1] . " 00:00:00' 
+                                            AND date <= '" . $filtros[2] . " 23:59:59' 
+                                            AND tec_payments.store_id = 99
+                                    ")->result();
+        
+        return $payments;
+        
     }
 
     
