@@ -26,7 +26,6 @@ class Pos_model extends CI_Model
            
         }
         $data["paid"] = $paid;
-        var_dump($data);
         //exit;
         if ($this->db->insert('sales', $data)) {
             $sale_id = $this->db->insert_id();
@@ -80,11 +79,14 @@ class Pos_model extends CI_Model
                 $this->db->delete('suspended_items', ['suspend_id' => $did]);
             }
             $msg = [];
+            
             if (!empty($payment)) {
                 foreach ($payment as $item) {
-                    unset($item['cc_cvv2']);
-                    $item['sale_id'] = $sale_id;
-                    $this->db->insert('payments', $item);
+                    if($item["amount"] != ""){
+                        unset($item['cc_cvv2']);
+                        $item['sale_id'] = $sale_id;
+                        $this->db->insert('payments', $item);
+                    }
                 }
             }
             return ['sale_id' => $sale_id, 'message' => $msg];

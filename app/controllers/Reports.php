@@ -22,6 +22,8 @@ class Reports extends MY_Controller
         $this->load->model('reports_model');
         $this->load->model('customers_model');
         $this->load->model('sales_model');
+        $this->load->library('form_validation');
+
     }
 
     function daily_sales($year = NULL, $month = NULL)
@@ -1000,92 +1002,51 @@ class Reports extends MY_Controller
         $headerItem = "";
         $tableItem = "";
         $masterTable = "";
+        $sucursal = "";
         $itemItem=0;
-
+        $adeudo = 0.0;
+        $cliente = $this->reports_model->getCustomerByPhone($arrayfiltros);
         if($arrayfiltros[0] == "Estado de cuenta"){
             $sales = $this->reports_model->getStatusAccount($arrayfiltros);
-            
-            $header = '
-                <tr class="header" >
-                    <td style="">Fecha</td>
-                    <td style="">Total</td>
-                    <td style="">Pagado</td>
-                    <td style="">Tipo de transaccion</td>
-                </tr>
-            ';
-
-            $headerItem = '
-                <tr class="header" >
-                    <td style="">#</td>
-                    <td style="">Codigo</td>
-                    <td style="">Nombre</td>
-                    <td style="">Cantidad venta</td>
-                    <td style="">Precio</td>
-                    <td style="">Descuento</td>
-                </tr>
-            ';
-
-
             for($i=0;$i<=count($sales)-1;$i++){
-                $itemSales = $this->sales_model->getallItemSalesByID($sales[$i]->id);
-                //var_dump($itemSales);exit;
-                $item = $i + 1;
                 $table.='
                     <tr>
-                        <td style="text-align:center;">'.$sales[$i]->date.'</td>
-                        <td style="text-align:center;">'.$this->tec->formatMoney($sales[$i]->grand_total).'</td>
-                        <td style="text-align:center;">'.$this->tec->formatMoney($sales[$i]->paid).'</td>
-                        <td style="text-align:center;">'.$sales[$i]->transaction_type.'</td>
+                        <td style="text-align:center">Compra</td>
+                        <td style="text-align:center;">'.$sales[$i]["compra"]->date.'</td>
+                        <td style="text-align:center">Sucursal: '.$sales[$i]["compra"]->store.'</td>
+                        <td style="text-align:center;">total: $'.$this->tec->formatMoney($sales[$i]["compra"]->grand_total).'</td>
                     </tr>
                 ';
+                $adeudo= $adeudo + floatval( $sales[$i]["compra"]->grand_total - $sales[$i]["compra"]->paid );
 
-                $masterTable.='
-                    <table class="blueTable floatedTable" style="width:100%;text-align:center;">
-                        <caption><h3>Transaccion</h3></caption>
-                        <tbody style"">
-                            '.$header.'
-                            '.$table.'
-                        </tbody>
-                    </table>
-                    <br>
-                ';
-                for($j=0;$j<=count($itemSales)-1;$j++){
-                    $itemItem = $j + 1;
-                    $tableItem.='
+                
+            }
+
+            for($i=0;$i<=count($sales)-1;$i++){
+
+                for($j=0;$j<=count($sales[$i]["pagos"])-1;$j++){
+                    if($sales[$i]["pagos"][$j]->name == ""){
+                        $sucursal = '<td style="text-align:center;">Sucursal: Domicilio</td>';
+                    } else {
+                        $sucursal = '<td style="text-align:center;">Sucursal: '.$sales[$i]["pagos"][$j]->name.'</td>';
+                    }
+                    $table.='
                         <tr>
-                            <td style="text-align:center;">'.$itemItem.'</td>
-                            <td style="text-align:center;">'.$itemSales[$j]->product_code.'</td>
-                            <td style="text-align:center;">'.$itemSales[$j]->product_name.'</td>
-                            <td style="text-align:center;">'.$this->tec->formatMoney($itemSales[$j]->quantity).'</td>
-                            <td style="text-align:center;">'.$this->tec->formatMoney($itemSales[$j]->unit_price).'</td>
-                            <td style="text-align:center;">'.$this->tec->formatMoney($itemSales[$j]->discount).'</td>
+                            <td style="text-align:center;">Abono</td>
+                            <td style="text-align:center;">'.$sales[$i]["pagos"][$j]->date.'</td>
+                            '.$sucursal.'
+                            <td style="text-align:center;">pago de: $'.$this->tec->formatMoney($sales[$i]["pagos"][$j]->amount).'</td>
                         </tr>
                     ';
                 }
-                $masterTable.='
-                    <table class="blueTable floatedTable" style="width:100%;text-align:center;">
-                        <caption><h3>Detalle de transaccion</h3></caption>
-                        <tbody>
-                            '.$headerItem.'
-                            '.$tableItem.'
-                        </tbody>
-                    </table>
-                    <br><br><br>
-                    <hr>
-                ';
-                $itemItem=0;
-                $table = "";
-                $tableItem = "";
-                $itemsSales =[];
+                
             }
-            
-            
-
         }
         
         $html='
-            <p>"ITALIA JOYAS" sucursal '.$tienda->name.'</p>  
-            <p>'.$arrayfiltros[0].': '.$sales[0]->name.'</p>
+            <p>"ITALIA JOYAS"</p>  
+            <label>'.$arrayfiltros[0].': '.$cliente[0]->name.'</label>
+            <label style="margin-left:30%">Fecha de impresión: '.date("d-m-Y").'</label>
             <hr style="text-align:left;margin-left:0">
             <hr style="text-align:left;margin-left:0">
             <style>
@@ -1103,7 +1064,17 @@ class Reports extends MY_Controller
                 background-color: #D8D8D8;
                 }
             </style>
-                    '.$masterTable.'
+            <table class="blueTable floatedTable" style="width:100%;text-align:center;">
+            <tbody>
+                '.$table.'
+                <tr>
+                <td style="text-align:center;">Deuda actual</td>
+                <td style="text-align:center;"></td>
+                <td style="text-align:center;"></td>
+                <td style="text-align:center;">$'.$this->tec->formatMoney($adeudo).'</td>
+            </tr>
+            </tbody>
+            </table>
             
         ';
         //echo $html;exit;
@@ -1166,23 +1137,21 @@ class Reports extends MY_Controller
         }
     }
 
-    public function add_payment_credit($ticket = null)
+    public function add_payment_credit($customer_id = null)
     {
-        $this->load->helper('security');
-        if ($this->input->get('id')) {
-            $id = $this->input->get('id');
-        }
-        #$this->form_validation->set_rules('paid_by', lang('paid_by'), 'required');
-        #$this->form_validation->set_rules('userfile', lang('attachment'), 'xss_clean');
-
-            $date = date('Y-m-d H:i:s');
-            
+        $this->form_validation->set_rules('amount-paid', lang('amount'), 'required');
+        
+        if ($this->form_validation->run() == true) {
+            if ($this->Admin && $this->input->post('date')) {
+                $date = $this->input->post('date');
+            } else {
+                $date = date('Y-m-d H:i:s');
+            }
 
             $this->load->model('customers_model');
 
-            $sales = $this->customers_model->getPartialSales($this->input->post('customer_id'));
+            $sales = $this->customers_model->getPartialSales($customer_id);
             $total_paid = (float) $this->input->post('amount-paid');
-
             $rest_paid = $total_paid;
             $debt = 0;
 
@@ -1194,15 +1163,25 @@ class Reports extends MY_Controller
                 $isLiquidate = (float) $sale->grand_total <= $total_paid;
 
                 $paid = (float) $isLiquidate == true ? $sale->grand_total : $rest_paid;
+                $paid_by = $this->input->post('paid_by');
 
                 $payment = [
                     'date'        => $date,
                     'sale_id'     => $sale->id,
-                    'customer_id' => $this->input->post('customer_id'),
+                    'customer_id' => $customer_id,
                     'reference'   => $this->input->post('reference'),
                     'amount'      => $paid,
-                    'paid_by'     => 'cash',
+                    'paid_by'     =>  $paid_by,
+                    'cheque_no'   => $this->input->post('cheque_no'),
+                    'gc_no'       => $this->input->post('gift_card_no'),
+                    'cc_no'       => $this->input->post('pcc_no'),
+                    'cc_holder'   => $this->input->post('pcc_holder'),
+                    'cc_month'    => $this->input->post('pcc_month'),
+                    'cc_year'     => $this->input->post('pcc_year'),
+                    'cc_type'     => $this->input->post('pcc_type'),
+                    'note'        => $this->input->post('note'),
                     'created_by'  => $this->session->userdata('user_id'),
+                    'store_id'    => 99,
                 ];
     
                 $this->sales_model->addPayment($payment);
@@ -1214,11 +1193,95 @@ class Reports extends MY_Controller
 
             
             if($ticket){
-                $this->session->set_flashdata('message', 'Abono agregado');
-
+                $this->ticket_payment_credit(
+                    $this->input->post('customer_id'), 
+                    $date,
+                    $debt, // before payment
+                    $total_paid, // total payment
+                    $debt - $total_paid // after payment
+                );
             }else{
-                alert("error");
+                $this->session->set_flashdata('message', 'Abono agregado');
+                redirect('pos');
             }
+        } else {
+            $this->session->set_flashdata('error', 'Error al procesar el pago');
+            redirect('pos');
+        }
+    }
+
+
+    public function getPaymmentsStreet()
+    {
+        $filtros = $_GET['filtros'];
+        $arrayfiltros = explode(",", $filtros);
+        $payments = [];
+        $table = "";
+        $total = 0;
+
+        $payments = $this->reports_model->getPaymentsStreet($arrayfiltros);
+
+        for($i=0;$i<=count($payments)-1;$i++){
+            $table.='
+                <tr>
+                    <td style="text-align:center;">'.$payments[$i]->date.'</td>
+                    <td style="text-align:center;">'.$payments[$i]->name.'</td>
+                    <td style="text-align:center;">$'.$this->tec->formatMoney($payments[$i]->amount).'</td>
+                </tr>
+            ';
+            $total= $total + floatval($payments[$i]->amount );
+        }
+        
+        
+        $html='
+            <p>"ITALIA JOYAS"</p>  
+            <label>'.$arrayfiltros[0].'</label>
+            <label style="margin-left:30%">Fecha de impresión: '.date("d-m-Y").'</label>
+            <p>De la fecha "'.$arrayfiltros[1].'" a la fecha "'.$arrayfiltros[2].'"</p>
+            <hr style="text-align:left;margin-left:0">
+            <hr style="text-align:left;margin-left:0">
+            <style>
+                .floatedTable{
+                border-collapse: collapse;
+                width: 100%;
+                }
+
+                .floatedTable th, .floatedTable td {
+                text-align: left;
+                padding:4px;
+                }
+
+                .floatedTable tr:nth-child(even) {
+                background-color: #D8D8D8;
+                }
+            </style>
+            <table class="blueTable floatedTable" style="width:100%;text-align:center;">
+            <tbody>
+                <tr class="header">
+                    <td style="text-align:center">Fecha</td>
+                    <td style="text-align:center">Cliente</td>
+                    <td style="text-align:center">Monto</td>
+                </tr>
+
+                '.$table.'
+                <tr>
+                    <td style="text-align:center;">Total Abonos</td>
+                    <td style="text-align:center;"></td>
+                    <td style="text-align:center;">$'.$total.'</td>
+                </tr>
+            </tr>
+            </tbody>
+            </table>
+            
+        ';
+        //echo $html;exit;
+        $dompdf = new DOMPDF();
+        $dompdf->loadHtml($html);
+        if ($arrayfiltros[0] == "Reporte de ventas por producto") {
+            $dompdf->set_paper("A4", "landscape"); 
+        }
+        $dompdf->render();
+        $dompdf->stream($arrayfiltros[0].".pdf", array("Attachment"=>0)); 
     }
 
 }

@@ -184,7 +184,9 @@ if ($modal) {
                                         } else if($inv->transaction_type == "credit"){
                                       ?>
                                             <?php
-                                            foreach ($payments as $payment) {
+                                                if($payments)
+                                            {
+                                                foreach ($payments as $payment) {
                                         ?>
                                         <tr>
                                             <th class="text-left" colspan="2">Enganche</th>
@@ -195,6 +197,7 @@ if ($modal) {
                                                 <th colspan="3" class="text-right"><?= lang($payment->paid_by);?>  <?= $payment->banks;?> : <?= $this->tec->formatMoney($payment->amount);?></th>
                                             </tr>
                                         <?php
+                                                }
                                             }
                                         ?>
                                             <tr>
