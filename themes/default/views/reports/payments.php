@@ -165,6 +165,49 @@ if ($this->input->post('end_date')) {
     }
 </style>
 <section class="content">
+<div class="row">
+        <div class="col-xs-12">
+            <button type="button" class="btn btn-primary" id="print_report"><i class='fa fa-print'></i> Imprimir reportes</button>
+        </div>
+    </div>
+    <br>
+    <div class="modal" data-easein="flipYIn" id="reportsModal" tabindex="-1" role="dialog" aria-labelledby="cModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header modal-primary">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true"><i class="fa fa-times"></i></button>
+                    <h4 class="modal-title" id="cModalLabel">
+                       Imprimir reportes
+                    </h4>
+                </div>
+                
+                <div class="modal-body">
+                    <div id="c-alert" class="alert alert-danger" style="display:none;"></div>
+                    <div class="row">
+                    
+                        <div class="col-xs-12">
+                            <div class="form-group">
+                                <label><input type="checkbox" id="cbox1" value="cash"> Efectivo</label><br>
+                                <label><input type="checkbox" id="cbox2" value="CC">Tarjeta</label><br>
+                                <label><input type="checkbox" id="cbox3" value="transfer"> Transferencia</label><br>
+                            </div>
+                        </div>
+                        <div class="col-xs-12">
+                            <div class="form-group">
+                                <input id="date_inicio" type="text" class=" datepicker2" placeholder="Fecha de inicio">
+                                <input id="date_fin" type="text" class=" datepicker2" placeholder="Fecha fin" value="<?php echo date('Y-m-d'); ?>">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" style="margin-top:0;">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal"> Cerrar </button>
+                    <button type="submit" class="btn btn-primary" id="print">Imprimir </button>
+                </div>
+                <?= form_close(); ?>
+            </div>
+        </div>
+    </div>
     <div class="row">
         <div class="col-sm-12">
             <div class="box box-primary">
@@ -328,10 +371,10 @@ if ($this->input->post('end_date')) {
 <script src="<?= $assets ?>plugins/bootstrap-datetimepicker/js/moment.min.js" type="text/javascript"></script>
 <script src="<?= $assets ?>plugins/bootstrap-datetimepicker/js/bootstrap-datetimepicker.min.js" type="text/javascript"></script>
 <script type="text/javascript">
-    $(function() {
-        $('.datetimepicker').datetimepicker({
-            format: 'YYYY-MM-DD HH:mm'
-        });
+     $(document).ready(function() {
+
+        $(".select2").select2()
+
         $('.datepicker').datetimepicker({
             format: 'YYYY-MM-DD',
             showClear: true,
@@ -343,5 +386,123 @@ if ($this->input->post('end_date')) {
             },
             widgetParent: $('.dataTable tfoot')
         });
-    });
+
+
+
+        $('#customer_id').change(function (e) {
+            const selected_value = $(this).val()
+            if (selected_value) {
+                const option = $(this).find(`option[value=${selected_value}]`)
+                const data = $(option).data('row')
+
+                $("#grand_total").html(formatMoney(parseFloat(data.grand_total)))
+                $("#makePaymentCredit").attr('disabled', false)
+                } else {
+                $("#grand_total").html('')
+                $("#makePaymentCredit").attr('disabled', true)
+            }
+        });
+
+        $("#makePaymentCredit").click(function(){
+            let selected_sale = $("#customer_id").val()
+            let amount = parseFloat($("#amount-paid").val()) || 0
+
+            if (!amount > 0) {
+            alert('El monto no puede ser 0')
+            return;
+            }
+
+            if (!selected_sale) {
+            alert('Seleccione una cuenta')
+            return;
+            }
+
+            let option = $("#customer_id").find(`option[value=${selected_sale}]`)
+            let sale_data = $(option).data('row')
+
+            $.ajax({
+            url: base_url + `reports/add_payment_credit/${sale_data.customer_id}`,
+            method: 'POST',
+            data: {
+                'amount-paid': amount,
+                paid_by : $("#paid_by_select").val()
+
+            },
+            success: function () {
+                //$("#paymentModal").modal('hide')
+                alert('Abono hecho correctamente')
+                window.location.reload()
+            }
+            })
+        })
+
+        $('.datepicker2').datetimepicker({
+            format: 'YYYY-MM-DD',
+            showClear: true,
+            showClose: true,
+            useCurrent: false,
+            widgetPositioning: {
+                horizontal: 'auto',
+                vertical: 'bottom'
+            },
+        });
+
+        $('.datepicker').datetimepicker({format: 'YYYY-MM-DD', showClear: true, showClose: true, useCurrent: false, widgetPositioning: {horizontal: 'auto', vertical: 'bottom'}, widgetParent: $('.dataTable tfoot')});
+
+        var options = "";
+
+        $.ajax({
+            type: 'get',
+            url: base_url + 'reports/getStores',
+            dataType: 'json',
+            success: function (data) {
+                for(let i = 0; i < data.length; i ++){
+                options += '<option value="'+data[i].id+'">'+data[i].name+'</option>'
+                }
+                $('#selectStore select').html(options);
+            },
+        })
+        $(document).on('click', '#print_report', function() {
+            $('#reportsModal').modal({ backdrop: 'static' });
+        });
+
+
+        $("#print").click(function() {
+            let data = [$("#date_inicio").val(),$("#date_fin").val()]
+            if($('#cbox1').is(":checked")){
+                data.push($('#cbox1').val())
+            }
+            if($('#cbox2').is(":checked")){
+                data.push($('#cbox2').val())
+            }
+            if($('#cbox3').is(":checked")){
+                data.push($('#cbox3').val())
+            }
+
+            console.log(data)
+                let url=  new URL(window.location.origin+"/reports/getPaymentsReport/");
+                url.searchParams.append('filtros', data)
+                window.open(url.toString(), '_blank')
+                $("#date_inicio").val("")
+                $('#reportsModal').modal('hide');
+            
+
+        });   
+            
+        /*        $.ajax({
+            url: "",
+            type: 'POST',
+            data: data,
+            contentType: false,
+            processData: false,
+            success: function (data) {
+                $(window).trigger('camera_capture.save_success', [filename]);
+            },
+            error: function () {
+                $(window).trigger('camera_capture.save_failed');
+            }
+        });
+        */
+
+        });
 </script>

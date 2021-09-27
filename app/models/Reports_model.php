@@ -584,25 +584,29 @@ class Reports_model extends CI_Model
         $customer = $this->db->query("SELECT * FROM tec_customers WHERE phone =".$phone[1]."")->result();
 
         $data = $this->db->query("SELECT 
-                                    tec_sales.id,
+                                    ts.id,
                                     tec_customers.name,
-                                    tec_sales.date,
-                                    tec_sales.grand_total,
-                                    tec_sales.paid,
-                                    tec_sales.transaction_type,
-                                    tec_sales.status,
-                                    tec_sales.id,
-                                    tec_stores.name AS store
+                                    ts.date,
+                                    ts.grand_total,
+                                    ts.paid,
+                                    ts.transaction_type,
+                                    ts.status,
+                                    ts.id,
+                                    tec_stores.name AS store,
+                                    (SELECT 
+                                    GROUP_CONCAT(' ',tp.code) 
+                                    FROM
+                                    tec_sale_items tsi 
+                                    LEFT JOIN tec_products tp ON tp.id = tsi.product_id
+                                    WHERE tsi.sale_id = ts.id) AS products_sale
                                 FROM
-                                    tec_sales 
+                                    tec_sales ts 
                                     LEFT JOIN tec_customers 
-                                    ON tec_customers.id = tec_sales.customer_id 
+                                    ON tec_customers.id = ts.customer_id 
                                     LEFT JOIN tec_stores 
-                                    ON tec_sales.store_id = tec_stores.id 
-                                WHERE (tec_sales.status = 'partial') 
-                                    AND (
-                                    tec_sales.transaction_type = 'credit'
-                                    ) 
+                                    ON ts.store_id = tec_stores.id 
+                                WHERE (ts.status = 'partial') 
+                                    AND (ts.transaction_type = 'credit') 
                                     AND tec_customers.phone = ".$phone[1]." 
                                 ")->result();
 
@@ -646,6 +650,47 @@ class Reports_model extends CI_Model
                                         WHERE date >= '" . $filtros[1] . " 00:00:00' 
                                             AND date <= '" . $filtros[2] . " 23:59:59' 
                                             AND tec_payments.store_id = 99
+                                    ")->result();
+        
+        return $payments;
+        
+    }
+
+    public function getPaymentsReport($filtros)
+    {   
+        $where = "";
+
+        for($i=2;$i<=count($filtros)-1;$i++){
+            if($i == 2)
+            $where .= " tec_payments.paid_by = '".$filtros[$i]."'";
+            else 
+            $where .= " OR tec_payments.paid_by = '".$filtros[$i]."'";
+        }
+
+        
+        $payments = $this->db->query("SELECT 
+                                        tec_payments.amount,
+                                        tec_payments.date,
+                                        tec_stores.name AS store,
+                                        tec_users.first_name,
+                                        tec_customers.name AS customer,
+                                        tec_users.last_name,
+                                        CASE
+                                            WHEN tec_payments.paid_by = 'cash' THEN 'Efectivo'
+                                            WHEN tec_payments.paid_by = 'CC' THEN 'Tarjeta'
+                                            WHEN tec_payments.paid_by = 'transfer' THEN 'Transferencia'
+                                            ELSE 'NA'
+                                        END AS tipopago
+                                    FROM
+                                        tec_payments 
+                                        LEFT JOIN tec_customers 
+                                        ON tec_payments.customer_id = tec_customers.id 
+                                        LEFT JOIN tec_users 
+                                        ON tec_payments.created_by = tec_users.id 
+                                        LEFT JOIN tec_stores 
+                                        ON tec_stores.id = tec_payments.store_id
+                                        WHERE tec_payments.date >= '" . $filtros[0] . " 00:00:00' 
+                                            AND tec_payments.date <= '" . $filtros[1] . " 23:59:59' AND".$where." 
                                     ")->result();
         
         return $payments;

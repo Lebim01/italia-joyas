@@ -289,7 +289,7 @@ class Sales_model extends MY_Model
     }
 
     public function getAllCreditsClients(){
-        $sql = "SELECT customers.id as customer_id, customers.name as customer, SUM(sales.grand_total - sales.paid) as grand_total
+        $sql = "SELECT customers.id as customer_id, customers.name as customer, customers.phone as phone, SUM(sales.grand_total - sales.paid) as grand_total
                 FROM tec_sales sales
                 INNER JOIN tec_customers customers ON sales.customer_id = customers.id
                 WHERE sales.status = 'partial' AND sales.transaction_type = 'credit'

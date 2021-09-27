@@ -28,8 +28,6 @@ class Suppliers extends MY_Controller
             $data = ['name' => $this->input->post('name'),
                 'email'     => $this->input->post('email'),
                 'phone'     => $this->input->post('phone'),
-                'cf1'       => $this->input->post('cf1'),
-                'cf2'       => $this->input->post('cf2'),
             ];
         }
 
