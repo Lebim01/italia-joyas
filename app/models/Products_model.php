@@ -24,6 +24,9 @@ class Products_model extends CI_Model
             $product_id = $this->db->insert_id();
             if (!empty($store_quantities)) {
                 foreach ($store_quantities as $store_quantity) {
+                    if(!isset($store_quantity['quantity']) || $store_quantity['quantity'] == null){
+                        $store_quantity['quantity'] = 0;
+                    }
                     $store_quantity['product_id'] = $product_id;
                     $this->db->insert('product_store_qty', $store_quantity);
                 }
