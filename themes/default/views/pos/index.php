@@ -841,7 +841,7 @@
                         <select class="form-control input-md" name="customer_id" required style="width: 100%;" id="cliente_id">
                             <option value="">Seleccionar cuenta cliente</option>
                             <?php foreach($creditsClients as $order): ?>
-                                <option data-row='<?= json_encode($order) ?>' value="<?= $order->customer_id ?>"><?= $order->customer ?></option>
+                                <option data-row='<?= json_encode($order) ?>' value="<?= $order->customer_id ?>"><?= $order->customer ?> ( <?= $order->phone ?> )</option>
                             <?php endforeach; ?>
                         </select>
                         <br> <br> 

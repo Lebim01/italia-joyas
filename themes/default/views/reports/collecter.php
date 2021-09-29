@@ -1,7 +1,7 @@
 <?php (defined('BASEPATH')) OR exit('No direct script access allowed'); ?>
 
 <section class="content">
-<div class="row">
+    <div class="row">
         <div class="col-xs-12">
             <button type="button" class="btn btn-primary" id="print_report"><i class='fa fa-print'></i> Imprimir reportes</button>
         </div>
@@ -42,8 +42,13 @@
                 <select class="form-control input-md select2" name="customer_id" id="customer_id" required style="width: 100%;">
                     <option value="">Seleccionar cuenta cliente</option>
                     <?php foreach($creditsClients as $order): ?>
-                        <option data-row='<?= json_encode($order) ?>' value="<?= $order->customer_id ?>"><?= $order->customer ?></option>
+                        <option data-row='<?= json_encode($order) ?>' value="<?= $order->customer_id ?>"><?= $order->customer ?> ( <?= $order->phone ?> )</option>
                     <?php endforeach; ?>
+                </select>
+                <br><br>
+                <select id="paid_by_select" class="form-control paid_by bank" style="width: 100%">
+                    <option value="cash" selected="selected">Efectivo</option>
+                    <option value="transfer">Transferencia personal</option>
                 </select>
                 <br />
                 <br />
@@ -124,7 +129,8 @@
             method: 'POST',
             data: {
                 'amount-paid': amount,
-                paid_by :"cash"
+                paid_by : $("#paid_by_select").val()
+
             },
             success: function () {
                 //$("#paymentModal").modal('hide')
@@ -200,3 +206,8 @@
         z-index: 9999999 !important; 
     }
 </style>
+<style>
+        .select2-search--hide {
+            display: unset !important;
+        }
+    </style>

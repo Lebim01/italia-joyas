@@ -1005,15 +1005,18 @@ class Reports extends MY_Controller
         $sucursal = "";
         $itemItem=0;
         $adeudo = 0.0;
+        $fechas = [];
         $cliente = $this->reports_model->getCustomerByPhone($arrayfiltros);
+        $cont = 0;
         if($arrayfiltros[0] == "Estado de cuenta"){
             $sales = $this->reports_model->getStatusAccount($arrayfiltros);
+
             for($i=0;$i<=count($sales)-1;$i++){
                 $table.='
                     <tr>
-                        <td style="text-align:center">Compra</td>
                         <td style="text-align:center;">'.$sales[$i]["compra"]->date.'</td>
                         <td style="text-align:center">Sucursal: '.$sales[$i]["compra"]->store.'</td>
+                        <td style="text-align:center">'.$sales[$i]["compra"]->products_sale.'</td>
                         <td style="text-align:center;">total: $'.$this->tec->formatMoney($sales[$i]["compra"]->grand_total).'</td>
                     </tr>
                 ';
@@ -1032,9 +1035,10 @@ class Reports extends MY_Controller
                     }
                     $table.='
                         <tr>
-                            <td style="text-align:center;">Abono</td>
                             <td style="text-align:center;">'.$sales[$i]["pagos"][$j]->date.'</td>
                             '.$sucursal.'
+
+                            <td style="text-align:center;"></td>
                             <td style="text-align:center;">pago de: $'.$this->tec->formatMoney($sales[$i]["pagos"][$j]->amount).'</td>
                         </tr>
                     ';
@@ -1171,7 +1175,7 @@ class Reports extends MY_Controller
                     'customer_id' => $customer_id,
                     'reference'   => $this->input->post('reference'),
                     'amount'      => $paid,
-                    'paid_by'     =>  $paid_by,
+                    'paid_by'     => $paid_by,
                     'cheque_no'   => $this->input->post('cheque_no'),
                     'gc_no'       => $this->input->post('gift_card_no'),
                     'cc_no'       => $this->input->post('pcc_no'),
@@ -1217,19 +1221,29 @@ class Reports extends MY_Controller
         $arrayfiltros = explode(",", $filtros);
         $payments = [];
         $table = "";
-        $total = 0;
+        $totalEfectivo = 0;
+        $totalTransferencia = 0;
+        $paid_by = "";
 
         $payments = $this->reports_model->getPaymentsStreet($arrayfiltros);
 
         for($i=0;$i<=count($payments)-1;$i++){
+            if($payments[$i]->paid_by == "transfer"){
+                $paid_by = "<td style='text-align:center;'>Transferencia</td>";
+                $totalTransferencia= $totalTransferencia + floatval($payments[$i]->amount );
+            } else {
+                $paid_by = '<td style="text-align:center;">Efectivo</td>';
+                $totalEfectivo= $totalEfectivo + floatval($payments[$i]->amount );
+        }
             $table.='
                 <tr>
                     <td style="text-align:center;">'.$payments[$i]->date.'</td>
                     <td style="text-align:center;">'.$payments[$i]->name.'</td>
+                    '.$paid_by.'
                     <td style="text-align:center;">$'.$this->tec->formatMoney($payments[$i]->amount).'</td>
                 </tr>
             ';
-            $total= $total + floatval($payments[$i]->amount );
+            
         }
         
         
@@ -1260,14 +1274,22 @@ class Reports extends MY_Controller
                 <tr class="header">
                     <td style="text-align:center">Fecha</td>
                     <td style="text-align:center">Cliente</td>
+                    <td style="text-align:center">Tipo de pago</td>
                     <td style="text-align:center">Monto</td>
                 </tr>
 
                 '.$table.'
                 <tr>
-                    <td style="text-align:center;">Total Abonos</td>
+                    <td style="text-align:center;">Total efectivo</td>
                     <td style="text-align:center;"></td>
-                    <td style="text-align:center;">$'.$total.'</td>
+                    <td style="text-align:center;"></td>
+                    <td style="text-align:center;">$'.$totalEfectivo.'</td>
+                </tr>
+                <tr>
+                    <td style="text-align:center;">Total transferencia</td>
+                    <td style="text-align:center;"></td>
+                    <td style="text-align:center;"></td>
+                    <td style="text-align:center;">$'.$totalTransferencia.'</td>
                 </tr>
             </tr>
             </tbody>
@@ -1278,6 +1300,86 @@ class Reports extends MY_Controller
         $dompdf = new DOMPDF();
         $dompdf->loadHtml($html);
         if ($arrayfiltros[0] == "Reporte de ventas por producto") {
+            $dompdf->set_paper("A4", "landscape"); 
+        }
+        $dompdf->render();
+        $dompdf->stream($arrayfiltros[0].".pdf", array("Attachment"=>0)); 
+    }
+
+    public function getPaymentsReport()
+    {
+        $filtros = $_GET['filtros'];
+        $arrayfiltros = explode(",", $filtros);
+        $payments = [];
+        $total= 0;
+        $payments = $this->reports_model->getPaymentsReport($arrayfiltros);
+        
+        for($i=0;$i<=count($payments)-1;$i++){
+            $table.='
+                <tr>
+                    <td style="text-align:center;">'.$payments[$i]->date.'</td>
+                    <td style="text-align:center;">'.$payments[$i]->store.'</td>
+                    <td style="text-align:center;">'.$payments[$i]->first_name.' '.$payments[$i]->last_name.'</td>
+                    <td style="text-align:center;">'.$payments[$i]->customer.'</td>
+                    <td style="text-align:center;">'.$payments[$i]->tipopago.'</td>
+                    <td style="text-align:center;">$'.$this->tec->formatMoney($payments[$i]->amount).'</td>
+                </tr>
+            ';
+            $total= $total + floatval($payments[$i]->amount );
+        }
+        
+        
+        $html='
+            <p>"ITALIA JOYAS"</p>  
+            <label>Reporte de pagos</label>
+            <label style="margin-left:55%">Fecha de impresión: '.date("d-m-Y").'</label>
+            <p>De la fecha "'.$arrayfiltros[0].'" a la fecha "'.$arrayfiltros[1].'"</p>
+            <hr style="text-align:left;margin-left:0">
+            <hr style="text-align:left;margin-left:0">
+            <style>
+                .floatedTable{
+                border-collapse: collapse;
+                width: 100%;
+                }
+
+                .floatedTable th, .floatedTable td {
+                text-align: left;
+                padding:4px;
+                }
+
+                .floatedTable tr:nth-child(even) {
+                background-color: #D8D8D8;
+                }
+            </style>
+            <table class="blueTable floatedTable" style="width:100%;text-align:center;">
+            <tbody>
+                <tr class="header">
+                    <td style="text-align:center">Fecha</td>
+                    <td style="text-align:center;">Tienda</td>
+                    <td style="text-align:center;">Cajero</td>
+                    <td style="text-align:center;">Cliente</td>
+                    <td style="text-align:center;">Tipo de pago</td>
+                    <td style="text-align:center;">Monto</td>
+                </tr>
+
+                '.$table.'
+
+                <tr>
+                    <td style="text-align:center;"></td>
+                    <td style="text-align:center;"></td>
+                    <td style="text-align:center;"></td>
+                    <td style="text-align:center;"> </td>
+                    <td style="text-align:center">Total</td>
+                    <td style="text-align:center;">$'.$total.'</td>
+                </tr>
+            </tbody>
+            </table>
+            
+        ';
+        //echo $html;exit;
+        $dompdf = new DOMPDF();
+        $dompdf->loadHtml($html);
+        if ($arrayfiltros[0] == "Reporte de pagos") {
             $dompdf->set_paper("A4", "landscape"); 
         }
         $dompdf->render();
