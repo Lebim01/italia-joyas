@@ -26,8 +26,18 @@
                                     <?= form_input('model', set_value('model'), 'class="form-control tip" id="model"'); ?>
                                 </div>
                                 <div class="form-group">
-                                    <?= lang('code', 'code'); ?> <?= lang('can_use_barcode'); ?>
-                                    <?= form_input('code', set_value('code'), 'class="form-control tip" id="code"  required="required"'); ?>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <?= lang('code', 'seq_code'); ?> <?= lang('can_use_barcode'); ?>
+                                            <input id="seq_code" class="form-control" required="required" minlength="4" maxlength="4" />
+
+                                            <?= form_input('code', set_value('code'), 'class="form-control tip" id="code"  required="required" style="display: none"'); ?>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <label class="label-control">Consecutivo</label>
+                                            <input id="seq" class="form-control" readonly />
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="form-group all">
                                     <?= lang("barcode_symbology", "barcode_symbology") ?>
@@ -225,6 +235,24 @@
             items[item_id].row.price = (parseFloat($(this).val())).toFixed(2);
             add_product_item(null, 1);
         });
+
+        $(document).on('change', '#seq_code', async function(){
+            const code = $(this).val()
+            if(code.length === 4){
+                $.ajax({
+                    type: 'get',
+                    url: base_url + 'products/getSequence',
+                    data: { code },
+                    success: function (data) {
+                        $("#seq").val(data)
+                        $("#code").val(`${code}${data}`)
+                    },
+                })
+            }else{
+                $("#seq").val('')
+                $("#code").val('')
+            }
+        })
 
         function add_product_item(item, noitem) {
             if (item == null && noitem == null) {

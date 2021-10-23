@@ -27,7 +27,9 @@ class Sales extends MY_Controller
 
     public function add_payment($id = null, $cid = null)
     {
+        $ticket = $this->input->post('ticket');
         $this->load->helper('security');
+
         if ($this->input->get('id')) {
             $id = $this->input->get('id');
         }
@@ -48,6 +50,7 @@ class Sales extends MY_Controller
                 'reference'   => $this->input->post('reference'),
                 'amount'      => $this->input->post('amount-paid'),
                 'paid_by'     => $this->input->post('paid_by'),
+                'is_abono'    => $this->input->post('is_abono'),
                 'cheque_no'   => $this->input->post('cheque_no'),
                 'gc_no'       => $this->input->post('gift_card_no'),
                 'cc_no'       => $this->input->post('pcc_no'),
@@ -83,9 +86,13 @@ class Sales extends MY_Controller
             $this->tec->dd();
         }
 
-        if ($this->form_validation->run() == true && $this->sales_model->addPayment($payment)) {
-            $this->session->set_flashdata('message', lang('payment_added'));
-            redirect($_SERVER['HTTP_REFERER']);
+        if ($this->form_validation->run() == true && $id = $this->sales_model->addPayment($payment)) {
+            if($ticket){
+                echo json_encode([$id]);
+            }else{
+                $this->session->set_flashdata('message', lang('payment_added'));
+                redirect($_SERVER['HTTP_REFERER']);
+            }
         } else {
             $this->data['error'] = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
             $sale                = $this->sales_model->getSaleByID($id);

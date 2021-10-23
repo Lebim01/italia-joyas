@@ -1221,6 +1221,8 @@
     <div class="modal" data-easein="flipYIn" id="posModal2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true"></div>
 
     <script type="text/javascript">
+        var customers = JSON.parse(`<?= json_encode($customers) ?>`)
+
         var base_url = '<?= base_url(); ?>',
             assets = '<?= $assets ?>';
 
@@ -1331,8 +1333,7 @@
         lang['merchant_copy'] = '<?= lang('merchant_copy'); ?>';
 
         $(document).ready(function() {
-            console.log("jsdjsh")
-            
+        
             <?php if ($this->session->userdata('rmspos')) { ?>
                 if (get('spositems')) {
                     remove('spositems');

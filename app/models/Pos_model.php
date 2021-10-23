@@ -366,6 +366,8 @@ class Pos_model extends CI_Model
             ->join('sales', 'sales.id=payments.sale_id', 'left')
             ->where('sales.transaction_type', 'credit')
             ->where('payments.date >', $date)
+            ->where('payments.paid_by !=', 'transfer')
+            ->where('payments.is_abono', true)
             ->where('sales.date <', $date);
         $this->db->where('payments.created_by', $user_id);
 
@@ -549,6 +551,7 @@ class Pos_model extends CI_Model
         $this->db->select('SUM( COALESCE( grand_total, 0 ) ) AS total, SUM( COALESCE( amount, 0 ) ) AS paid', false)
             ->join('sales', 'sales.id=payments.sale_id', 'left')
             ->where('payments.date >', $date)
+            ->where('payments.is_abono', false)
             ->where('sales.transaction_type', 'credit');
         $this->db->where('payments.created_by', $user_id);
 

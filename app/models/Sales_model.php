@@ -14,12 +14,15 @@ class Sales_model extends MY_Model
     public function addPayment($data = [])
     {
         if ($this->db->insert('payments', $data)) {
+            $id = $this->db->insert_id();
+
             if ($data['paid_by'] == 'gift_card') {
                 $gc = $this->site->getGiftCard($data['gc_no']);
                 $this->db->update('gift_cards', ['balance' => ($gc->balance - $data['amount'])], ['card_no' => $data['gc_no']]);
             }
             $this->syncSalePayments($data['sale_id']);
-            return true;
+
+            return $id;
         }
         return false;
     }
@@ -297,5 +300,14 @@ class Sales_model extends MY_Model
         $data = $this->db->query($sql)->result();
 
         return $data;
+    }
+
+    public function getDebtBefore($payment_id){
+        $sql = "SELECT SUM(DISTINCT tec_sales.total) as total, SUM(tec_payments.amount) as paid
+                FROM tec_sales
+                INNER JOIN tec_payments ON tec_payments.sale_id = tec_sales.id
+                WHERE tec_sales.status = 'partial' AND tec_payments.id < {$payment_id}";
+
+        return $this->db->query($sql)->row();
     }
 }

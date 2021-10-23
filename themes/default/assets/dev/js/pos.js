@@ -647,7 +647,7 @@ $(document).ready(function () {
 
     var ds = $('#get_ds').val() ? $('#get_ds').val() : '0';
     var apply_to = 'order'//$('input[name=apply_to]:checked').val();
-    
+
     if (ds.length != 0) {
       if (apply_to == 'order') {
         $('#discount_val').val(ds);
@@ -1123,12 +1123,12 @@ $(document).ready(function () {
       method: 'POST',
       data: {
         'amount-paid': amount,
-        paid_by: 'cash'
+        paid_by: 'cash',
+        is_abono: 1,
+        ticket: true
       },
-      success: function () {
-        //$("#paymentModalApart").modal('hide')
-        alert('Abono hecho correctamente')
-        window.location.reload()
+      success: function (payments) {
+        window.location.href = '/pos/view_payment_apart/' + encodeURIComponent(payments)
       }
     })
   })
@@ -1238,12 +1238,11 @@ $(document).ready(function () {
       method: 'POST',
       data: {
         'amount-paid': amount,
-        paid_by: paid_by
+        paid_by: paid_by,
+        ticket: true
       },
-      success: function () {
-        //$("#paymentModal").modal('hide')
-        alert('Abono hecho correctamente')
-        window.location.reload()
+      success: function (payments) {
+        window.location.href = '/pos/view_payment_credit/' + encodeURIComponent(payments);
       }
     })
   })
@@ -1284,17 +1283,17 @@ $(document).ready(function () {
     }
   });
 
-  function applyTotalPay(){
+  function applyTotalPay() {
     const val_extra_discount = $("#extra_discount").val()
 
     gtotal = total - order_discount + order_tax;
     extra_discount = 0
 
-    if(val_extra_discount !== ''){
-      if(val_extra_discount.includes('%')){
-        extra_discount = gtotal * (parseFloat(val_extra_discount.replace('%', ''))/100)
-        gtotal = gtotal * (1 - (parseFloat(val_extra_discount.replace('%', ''))/100))
-      }else{
+    if (val_extra_discount !== '') {
+      if (val_extra_discount.includes('%')) {
+        extra_discount = gtotal * (parseFloat(val_extra_discount.replace('%', '')) / 100)
+        gtotal = gtotal * (1 - (parseFloat(val_extra_discount.replace('%', '')) / 100))
+      } else {
         extra_discount = parseFloat(val_extra_discount)
         gtotal = gtotal - parseFloat(val_extra_discount)
       }
@@ -1328,7 +1327,7 @@ $(document).ready(function () {
       $("#extra_discount").val('')
 
       applyTotalPay()
-      
+
       $('#item_count').text(an - 1 + ' (' + (count - 1) + ')');
       $('#order_quantity').val(count - 1);
       $('#order_items').val(an - 1);
@@ -1695,7 +1694,7 @@ $(document).ready(function () {
 
   //pagar
   $('#submit-sale').click(async function () {
-    if(extra_discount) await $.requestAdminPermission()
+    if (extra_discount) await $.requestAdminPermission()
 
     let edit = window.location.href.indexOf('edit=')
 

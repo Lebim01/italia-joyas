@@ -89,7 +89,7 @@ if ($modal) {
                                     </thead>
                                     <tbody>
                                         <tr>
-                                            <td>Abono en efectivo</td>
+                                            <td><?= $text ?> (<?= $paid_by ?>)</td>
                                             <td class="text-right"><?= $this->tec->formatMoney($payment) ?></td>
                                         </tr>
                                     </tbody>

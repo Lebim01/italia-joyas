@@ -83,7 +83,7 @@
                     <td style="border-bottom: 1px solid #DDD;"><h4>Ventas a crédito:</h4></td>
                     <td style="text-align:right;border-bottom: 1px solid #DDD;">
                         <h4>
-                            <span><?= $this->tec->formatMoney($creditsales->total ? $creditsales->total : '0.00') ?></span>
+                            <span><?= $this->tec->formatMoney($creditsales->paid ? $creditsales->paid : '0.00') ?></span>
                         </h4>
                     </td>
                 </tr>
@@ -135,7 +135,7 @@
                             <span><?= $this->tec->formatMoney($other_sales->paid ? $other_sales->paid : '0.00') . ' (' . $this->tec->formatMoney($other_sales->total ? $other_sales->total : '0.00') . ')'; ?></span>
                         </h4>
                     </td>
-                </tr> */ ?>
+                </tr> 
 
                 <tr>
                     <td width="300px;" style="font-weight:bold;"><h4><?= lang('total_sales'); ?>:</h4></td>
@@ -146,7 +146,7 @@
                             </span>
                         </h4>
                     </td>
-                </tr>
+                </tr>*/ ?>
 
                 <tr>
                     <td width="300px;" style="font-weight:bold;"><h4><?= lang('expenses'); ?>:

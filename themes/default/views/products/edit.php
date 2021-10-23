@@ -27,7 +27,7 @@
                                 </div>
                                 <div class="form-group">
                                     <?= lang('code', 'code'); ?> <?= lang('can_use_barcode'); ?>
-                                    <?= form_input('code', $product->code, 'class="form-control tip" id="code"  required="required"'); ?>
+                                    <?= form_input('code', $product->code, 'class="form-control tip" id="code"  required="required" readonly="readonly"'); ?>
                                 </div>
                                 <div class="form-group all">
                                     <?= lang("barcode_symbology", "barcode_symbology") ?>

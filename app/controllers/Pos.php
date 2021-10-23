@@ -1379,14 +1379,87 @@ class Pos extends MY_Controller
         }
     }
 
-    public function view_payment_credit(){
+    public function view_payment_credit($payments_ids){
+        $this->load->model('sales_model');
 
-        $this->data['payments'] = [];
+        $payments_ids = json_decode(urldecode($payments_ids));
+
+        $payments = [];
+        $total_amount = 0;
+
+        foreach($payments_ids as $payment_id){
+            $pay = $this->sales_model->getPaymentByID($payment_id);
+            $payments[] = $pay;
+            $total_amount += (float) $pay->amount;
+        }
+
+        $debt = $this->sales_model->getDebtBefore($payments[0]->id)->total - $this->sales_model->getDebtBefore($payments[0]->id)->paid;
+        $rest = $debt - $total_amount;
+
+        $store_id = $this->session->userdata('store_id');
+        $sale = $this->pos_model->getSaleFromPayment($payments[0]->id);
+        $customer = $this->pos_model->getCustomerByID($sale->customer_id);
+
+        #$this->tec->view_rights($inv->created_by);
+        $this->load->helper('text');
+        $this->data['customer']   = $customer;
+        $this->data['store']      = $this->site->getStoreByID($store_id);
+        #$this->data['inv']        = $inv;
+        $this->data['sid']        = $sale->id;
+        $this->data['noprint']    = $noprint;
+        $this->data['modal']      = $noprint ? true : false;
+        $this->data['created_by'] = $this->site->getUser($sale->created_by);
+        $this->data['printer']    = $this->site->getPrinterByID($this->Settings->printer);
+        $this->data['page_title'] = "Abono de crédito";
+
+        $this->data['debt'] = $debt;
+        $this->data['payment'] = $total_amount;
+        $this->data['paid_by'] = $payments[0]->paid_by == 'cash' ? 'Efectivo' : 'Transferencia';
+        $this->data['debt_rest'] = $rest;
+        $this->data['date'] = date("Y-m-d");
+        $this->data['text'] = 'Abono de crédito';
         
         $this->load->view($this->theme . 'pos/view_payment_credit', $this->data);
     }
 
-    public function ticket_payment_credit($customer_id, $date, $before_payment, $payment, $after_payment){
+    public function view_payment_apart($payments_ids){
+        $this->load->model('sales_model');
+
+        $array = json_decode(urldecode($payments_ids));
+        $payment_id = $array[0];
+        $payment = $this->sales_model->getPaymentByID($payment_id);
+
+        $sale = $this->pos_model->getSaleFromPayment($payment_id);
+
+        $debt = $sale->total - $sale->paid + $payment->amount;
+        $rest = $sale->total - $sale->paid;
+
+        $store_id = $this->session->userdata('store_id');
+        $customer = $this->pos_model->getCustomerByID($sale->customer_id);
+
+        #$this->tec->view_rights($inv->created_by);
+        $this->load->helper('text');
+        $this->data['customer']   = $customer;
+        $this->data['store']      = $this->site->getStoreByID($store_id);
+        #$this->data['inv']        = $inv;
+        $this->data['sid']        = $sale->id;
+        $this->data['noprint']    = $noprint;
+        $this->data['modal']      = $noprint ? true : false;
+        $this->data['created_by'] = $this->site->getUser($sale->created_by);
+        $this->data['printer']    = $this->site->getPrinterByID($this->Settings->printer);
+        $this->data['page_title'] = "Abono de apartado";
+
+        $this->data['debt'] = $debt;
+        $this->data['payment'] = $payment->amount;
+        $this->data['paid_by'] = $payment->paid_by == "cash" ? 'Efectivo' : 'Transferencia';
+        $this->data['debt_rest'] = $rest;
+        $this->data['date'] = date("Y-m-d");
+        $this->data['text'] = 'Abono de apartado';
+        
+        $this->load->view($this->theme . 'pos/view_payment_credit', $this->data);
+    }
+
+    public function ticket_payment_credit($customer_id, $date, $before_payment, $payment, $after_payment, $paid_by){
         $sale = $this->pos_model->getSaleFromPayment($payment_id);
         $customer = $this->pos_model->getCustomerByID($customer_id);
 
@@ -1415,6 +1488,7 @@ class Pos extends MY_Controller
 
         $this->data['debt'] = $before_payment;
         $this->data['payment'] = $payment;
+        $this->data['paid_by'] = $paid_by;
         $this->data['debt_rest'] = $after_payment;
         $this->data['date'] = $date;
 
@@ -1424,6 +1498,9 @@ class Pos extends MY_Controller
     public function add_payment_credit($customer_id = null)
     {
         $this->form_validation->set_rules('amount-paid', lang('amount'), 'required');
+        $this->form_validation->set_rules('paid_by', lang('paid_by'), 'required');
+
+        $ticket = $this->input->post('ticket');
         
         if ($this->form_validation->run() == true) {
             if ($this->Admin && $this->input->post('date')) {
@@ -1444,6 +1521,8 @@ class Pos extends MY_Controller
                 $debt += ((float) $sale->grand_total - (float) $sale->paid);
             }
 
+            $new_payments = [];
+
             foreach($sales as $sale){
                 $isLiquidate = (float) $sale->grand_total <= $total_paid;
 
@@ -1456,6 +1535,7 @@ class Pos extends MY_Controller
                     'reference'   => $this->input->post('reference'),
                     'amount'      => $paid,
                     'paid_by'     => $paid_by,
+                    'is_abono'    => true,
                     'cheque_no'   => $this->input->post('cheque_no'),
                     'gc_no'       => $this->input->post('gift_card_no'),
                     'cc_no'       => $this->input->post('pcc_no'),
@@ -1468,7 +1548,8 @@ class Pos extends MY_Controller
                     'store_id'    => $this->session->userdata('store_id'),
                 ];
     
-                $this->sales_model->addPayment($payment);
+                $id = $this->sales_model->addPayment($payment);
+                $new_payments[] = $id;
 
                 $rest_paid -= $paid;
 
@@ -1477,13 +1558,16 @@ class Pos extends MY_Controller
 
             
             if($ticket){
-                $this->ticket_payment_credit(
+                /*$this->ticket_payment_credit(
                     $this->input->post('customer_id'), 
                     $date,
                     $debt, // before payment
                     $total_paid, // total payment
-                    $debt - $total_paid // after payment
-                );
+                    $debt - $total_paid, // after payment
+                    $paid_by
+                );*/
+
+                echo json_encode($new_payments);
             }else{
                 $this->session->set_flashdata('message', 'Abono agregado');
                 redirect('pos');

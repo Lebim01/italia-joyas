@@ -238,4 +238,11 @@ class Products_model extends CI_Model
         $results = $this->db->get('products')->result();
         return count($results) > 0;
     }
+
+    public function getSequence($code){
+        $this->db->like('code', $code, 'after');
+        $this->db->order_by('code', 'desc');
+        $this->db->limit(1);
+        return $this->db->get('products')->row();
+    }
 }

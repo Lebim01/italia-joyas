@@ -735,4 +735,19 @@ class Products extends MY_Controller
             }
         }
     }
+
+    public function getSequence(){
+        $first_four_code_numbers = $this->input->get('code');
+        $last_code = $this->products_model->getSequence($first_four_code_numbers);
+
+        if($last_code->code){
+            $sec = (float) substr($last_code->code, 4, 4);
+            $sec++;
+            $sec = str_pad($sec, 4, '0', STR_PAD_LEFT);
+            echo $sec;
+        }else{
+            $sec = str_pad(1, 4, '0', STR_PAD_LEFT);
+            echo $sec;
+        }
+    }
 }
