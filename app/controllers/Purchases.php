@@ -266,7 +266,7 @@ class Purchases extends MY_Controller
                 'date'        => $this->input->post('date'),
                 'reference'   => $this->input->post('reference'),
                 'note'        => $this->input->post('note', true),
-                'supplier_id' => $this->input->post('supplier'),
+                //'supplier_id' => $this->input->post('supplier'),
                 'received'    => $this->input->post('received'),
                 'total'       => $total,
             ];

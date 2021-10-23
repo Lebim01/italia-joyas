@@ -172,32 +172,20 @@
 
 
         $("#print").click(function() {
+            /*
+            DOMPDF ya no se usa
+
             let data = ["Reporte de abonos a domicilio",$("#date_inicio").val(),$("#date_fin").val()]
+            let url=  new URL(window.location.origin+"/reports/getPaymmentsStreet/");
+            url.searchParams.append('filtros', data)
+            window.open(url.toString(), '_blank')
+            $("#date_inicio").val("")
+            $('#reportsModal').modal('hide');*/
 
-                let url=  new URL(window.location.origin+"/reports/getPaymmentsStreet/");
-                url.searchParams.append('filtros', data)
-                window.open(url.toString(), '_blank')
-                $("#date_inicio").val("")
-                $('#reportsModal').modal('hide');
-            
-
-        });   
-            
- /*        $.ajax({
-            url: "",
-            type: 'POST',
-            data: data,
-            contentType: false,
-            processData: false,
-            success: function (data) {
-                $(window).trigger('camera_capture.save_success', [filename]);
-            },
-            error: function () {
-                $(window).trigger('camera_capture.save_failed');
-            }
+            const start = $("#date_inicio").val()
+            const end = $("#date_fin").val()
+            window.location.href = `/reports/collecter_ticket/${encodeURIComponent(start)}/${encodeURIComponent(end)}`
         });
- */
-
     });
 </script>
 
@@ -207,7 +195,7 @@
     }
 </style>
 <style>
-        .select2-search--hide {
-            display: unset !important;
-        }
-    </style>
+    .select2-search--hide {
+        display: unset !important;
+    }
+</style>

@@ -49,6 +49,7 @@ class Products extends MY_Controller
                 'alert_quantity'    => $this->input->post('alert_quantity'),
                 'details'           => $this->input->post('details'),
                 'barcode_symbology' => $this->input->post('barcode_symbology'),
+                'supplier_id'       => $this->input->post('supplier_id')
             ];
 
             if ($this->Settings->multi_store) {
@@ -129,6 +130,7 @@ class Products extends MY_Controller
             $this->data['error']      = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
             $this->data['stores']     = $this->site->getAllStores();
             $this->data['categories'] = $this->site->getAllCategories();
+            $this->data['suppliers']  = $this->site->getAllSuppliers();
             $this->data['page_title'] = lang('add_product');
             $bc                       = [['link' => site_url('products'), 'page' => lang('products')], ['link' => '#', 'page' => lang('add_product')]];
             $meta                     = ['page_title' => lang('add_product'), 'bc' => $bc];
@@ -190,6 +192,7 @@ class Products extends MY_Controller
         $this->form_validation->set_rules('cost', lang('product_cost'), 'required|is_numeric');
         $this->form_validation->set_rules('product_tax', lang('product_tax'), 'required|is_numeric');
         $this->form_validation->set_rules('alert_quantity', lang('alert_quantity'), 'is_numeric');
+        $this->form_validation->set_rules('supplier_id', lang('supplier'), 'required');
 
         if ($this->form_validation->run() == true) {
             $data = [
@@ -205,6 +208,7 @@ class Products extends MY_Controller
                 'alert_quantity'    => $this->input->post('alert_quantity'),
                 'details'           => $this->input->post('details'),
                 'barcode_symbology' => $this->input->post('barcode_symbology'),
+                'supplier_id'       => $this->input->post('supplier_id')
             ];
 
             if ($this->Settings->multi_store) {
@@ -311,6 +315,7 @@ class Products extends MY_Controller
             }
             $this->data['product']           = $product;
             $this->data['stores']            = $this->site->getAllStores();
+            $this->data['suppliers']         = $this->site->getAllSuppliers();
             $this->data['stores_quantities'] = $this->Settings->multi_store ? $this->products_model->getStoresQuantity($id) : $this->products_model->getStoreQuantity($id);
             $this->data['categories']        = $this->site->getAllCategories();
             $this->data['page_title']        = lang('edit_product');

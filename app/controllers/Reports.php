@@ -183,6 +183,17 @@ class Reports extends MY_Controller
         $this->page_construct('reports/collecter', $this->data, $meta, $creditsClients);
     }
 
+    function collecter_ticket($start, $end)
+    {
+        $startDate = urldecode($start);
+        $endDate = urldecode($end);
+
+        $this->data['payments'] = $this->reports_model->getPaymentsReport($startDate, $endDate);
+        $this->data['date'] = date('Y-m-d H:m:i');
+
+        $this->load->view($this->theme . 'reports/collecter_ticket', $this->data);
+    }
+
     function get_sales()
     {
         $customer = $this->input->get('customer') ? $this->input->get('customer') : NULL;

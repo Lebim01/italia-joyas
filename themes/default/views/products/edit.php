@@ -48,6 +48,17 @@
                                     <?= form_dropdown('category', $cat, $product->category_id, 'class="form-control select2 tip" id="category"  required="required"'); ?>
                                 </div>
 
+                                <div class="form-group">
+                                    <?= lang('supplier', 'supplier'); ?>
+                                    <?php
+                                    $_suppliers[''] = lang("select") . " " . lang("supplier");
+                                    foreach ($suppliers as $supplier) {
+                                        $_suppliers[$supplier->id] = $supplier->name;
+                                    }
+                                    ?>
+                                    <?= form_dropdown('supplier_id', $_suppliers, $product->supplier_id, 'class="form-control select2 tip" id="supplier"  required="required"'); ?>
+                                </div>
+
                                 <div class="form-group st">
                                     <?= lang('cost', 'cost'); ?>
                                     <?= form_input('cost', $product->cost, 'class="form-control tip" id="cost"  required="required"'); ?>

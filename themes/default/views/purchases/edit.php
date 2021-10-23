@@ -56,7 +56,7 @@
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
+                            <?php /* <div class="col-md-6">
                                 <div class="form-group">
                                     <?= lang('supplier', 'supplier'); ?>
                                     <?php
@@ -67,7 +67,7 @@
                                     ?>
                                     <?= form_dropdown('supplier', $sp, set_value('supplier', $purchase->supplier_id), 'class="form-control select2 tip" id="supplier"  required="required" style="width:100%;"'); ?>
                                 </div>
-                            </div>
+                            </div> */ ?>
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <?= lang('received', 'received'); ?>

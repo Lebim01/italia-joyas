@@ -656,46 +656,32 @@ class Reports_model extends CI_Model
         
     }
 
-    public function getPaymentsReport($filtros)
+    public function getPaymentsReport($start, $end)
     {   
-        $where = "";
+        $sql = "SELECT 
+            tec_payments.amount,
+            tec_payments.date,
+            tec_stores.name AS store,
+            tec_users.first_name,
+            tec_customers.name AS customer,
+            tec_users.last_name,
+            CASE
+                WHEN tec_payments.paid_by = 'cash' THEN 'Efectivo'
+                WHEN tec_payments.paid_by = 'CC' THEN 'Tarjeta'
+                WHEN tec_payments.paid_by = 'transfer' THEN 'Transferencia'
+                ELSE 'NA'
+            END AS tipopago
+        FROM
+            tec_payments 
+            LEFT JOIN tec_customers 
+            ON tec_payments.customer_id = tec_customers.id 
+            LEFT JOIN tec_users 
+            ON tec_payments.created_by = tec_users.id 
+            LEFT JOIN tec_stores 
+            ON tec_stores.id = tec_payments.store_id
+            WHERE tec_payments.date BETWEEN '{$start}' AND '{$end} 23:59:59'
+        ";
 
-        for($i=2;$i<=count($filtros)-1;$i++){
-            if($i == 2)
-            $where .= " tec_payments.paid_by = '".$filtros[$i]."'";
-            else 
-            $where .= " OR tec_payments.paid_by = '".$filtros[$i]."'";
-        }
-
-        
-        $payments = $this->db->query("SELECT 
-                                        tec_payments.amount,
-                                        tec_payments.date,
-                                        tec_stores.name AS store,
-                                        tec_users.first_name,
-                                        tec_customers.name AS customer,
-                                        tec_users.last_name,
-                                        CASE
-                                            WHEN tec_payments.paid_by = 'cash' THEN 'Efectivo'
-                                            WHEN tec_payments.paid_by = 'CC' THEN 'Tarjeta'
-                                            WHEN tec_payments.paid_by = 'transfer' THEN 'Transferencia'
-                                            ELSE 'NA'
-                                        END AS tipopago
-                                    FROM
-                                        tec_payments 
-                                        LEFT JOIN tec_customers 
-                                        ON tec_payments.customer_id = tec_customers.id 
-                                        LEFT JOIN tec_users 
-                                        ON tec_payments.created_by = tec_users.id 
-                                        LEFT JOIN tec_stores 
-                                        ON tec_stores.id = tec_payments.store_id
-                                        WHERE tec_payments.date >= '" . $filtros[0] . " 00:00:00' 
-                                            AND tec_payments.date <= '" . $filtros[1] . " 23:59:59' AND".$where." 
-                                    ")->result();
-        
-        return $payments;
-        
+        return $this->db->query($sql)->result();
     }
-
-    
 }

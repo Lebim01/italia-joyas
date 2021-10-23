@@ -40,6 +40,7 @@ class Sales extends MY_Controller
         if ($this->form_validation->run() == true) {
             if ($this->Admin) {
                 $date = $this->input->post('date');
+                if(!$date) $date = date('Y-m-d H:i:s');
             } else {
                 $date = date('Y-m-d H:i:s');
             }
