@@ -665,6 +665,7 @@ class Reports_model extends CI_Model
             tec_users.first_name,
             tec_customers.name AS customer,
             tec_users.last_name,
+            tec_payments.paid_by,
             CASE
                 WHEN tec_payments.paid_by = 'cash' THEN 'Efectivo'
                 WHEN tec_payments.paid_by = 'CC' THEN 'Tarjeta'

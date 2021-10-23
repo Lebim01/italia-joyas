@@ -191,6 +191,15 @@ class Reports extends MY_Controller
         $this->data['payments'] = $this->reports_model->getPaymentsReport($startDate, $endDate);
         $this->data['date'] = date('Y-m-d H:m:i');
 
+        $total = (object)[
+            "transfer" => 0,
+            "cash" => 0
+        ];
+        foreach($this->data['payments'] as $payment){
+            $total->{$payment->paid_by} += $payment->amount;
+        }
+        $this->data['total'] = $total;
+
         $this->load->view($this->theme . 'reports/collecter_ticket', $this->data);
     }
 
