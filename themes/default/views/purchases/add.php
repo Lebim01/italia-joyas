@@ -11,6 +11,20 @@
                     <div class="col-lg-12">
                         <?php echo form_open_multipart("purchases/add", 'class="validation"'); ?>
                         <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <?= lang('store', 'store_id'); ?>
+                                    <?php
+                                    $_stores[''] = lang("select")." ".lang("store");
+                                    foreach($stores as $store) {
+                                        $_stores[$store->id] = $store->name;
+                                    }
+                                    ?>
+                                    <?= form_dropdown('store_id', $_stores, set_value('store_id'), 'class="form-control select2 tip" id="store_id"  required="required" style="width:100%;"'); ?>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
                             <div class="col-md-6">
                                 <div class="form-group">
                                     <?= lang('date', 'date'); ?>

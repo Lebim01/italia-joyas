@@ -21,15 +21,18 @@ class Purchases extends MY_Controller
 
     public function add()
     {
-        if (!$this->session->userdata('store_id')) {
+        /*if (!$this->session->userdata('store_id')) {
             $this->session->set_flashdata('warning', lang('please_select_store'));
             redirect('stores');
-        }
+        }*/
+
         if (!$this->Admin) {
             $this->session->set_flashdata('error', lang('access_denied'));
             redirect('pos');
         }
+
         $this->form_validation->set_rules('date', lang('date'), 'required');
+        $this->form_validation->set_rules('store_id', lang('store_id'), 'required');
 
         if ($this->form_validation->run() == true) {
             $total      = 0;
@@ -72,7 +75,7 @@ class Purchases extends MY_Controller
                 'received'    => $this->input->post('received'),
                 'total'       => $total,
                 'created_by'  => $this->session->userdata('user_id'),
-                'store_id'    => $this->session->userdata('store_id'),
+                'store_id'    => $this->input->post('store_id'),
             ];
 
             if ($_FILES['userfile']['size'] > 0) {
@@ -103,6 +106,7 @@ class Purchases extends MY_Controller
             $this->data['error']      = (validation_errors() ? validation_errors() : $this->session->flashdata('error'));
             $this->data['suppliers']  = $this->site->getAllSuppliers();
             $this->data['page_title'] = lang('add_purchase');
+            $this->data['stores']     = $this->site->getAllStores();
             $bc                       = [['link' => site_url('purchases'), 'page' => lang('purchases')], ['link' => '#', 'page' => lang('add_purchase')]];
             $meta                     = ['page_title' => lang('add_purchase'), 'bc' => $bc];
             $this->page_construct('purchases/add', $this->data, $meta);
