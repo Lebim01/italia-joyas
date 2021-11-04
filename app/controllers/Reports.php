@@ -1406,4 +1406,78 @@ class Reports extends MY_Controller
         $dompdf->stream($arrayfiltros[0].".pdf", array("Attachment"=>0)); 
     }
 
+    public function take_inventory(){
+        if (!$this->session->userdata('store_id')) {
+            $this->session->set_flashdata('warning', lang('please_select_store'));
+            redirect('stores');
+        }
+
+        $this->data['page_title'] = 'Levantar inventario';
+
+        $bc = array(array('link' => '#', 'page' => $this->data['page_title']));
+        $meta = array('page_title' => $this->data['page_title'], 'bc' => $bc);
+
+        $this->data['store'] = $this->site->getStoreByID($this->session->userdata('store_id'));
+        $this->data['take_inventory'] = $this->reports_model->getCurentTakeInventory($this->data['store']->id);
+
+        if($this->data['take_inventory']){
+            $this->load->model('products_model');
+
+            $this->data['items'] = $this->reports_model->getTakeInventory($this->data['take_inventory']->id, $this->session->userdata('user_id'));
+            $this->data['products'] = $this->products_model->getAllProducts();
+        }else{
+            $this->data['items'] = [];
+        }
+
+        $this->page_construct('reports/take_inventory', $this->data, $meta);
+    }
+
+    public function up_take_inventory(){
+        $this->reports_model->up_take_inventory($this->session->userdata('user_id'), $this->session->userdata('store_id'));
+    }
+
+    public function add_product_take_inventory(){
+        $product_id = $this->input->post('product_id');
+        $quantity = $this->input->post('quantity');
+        $description = $this->input->post('description');
+        $take_inventory = $this->reports_model->getCurentTakeInventory($this->session->userdata('store_id'));
+
+        $this->reports_model->add_product_take_inventory($take_inventory->id, $this->session->userdata('user_id'), $product_id, $quantity, $description);
+    }
+
+    public function remove_product_take_inventory(){
+        $id = $this->input->post('id');
+        $this->reports_model->remove_product_take_inventory($id);
+    }
+
+    public function cancel_take_inventory(){
+        $take_inventory = $this->reports_model->getCurentTakeInventory($this->session->userdata('store_id'));
+        $this->reports_model->cancel_take_inventory($take_inventory->id);
+    }
+
+    public function take_inventory_report(){
+        if (!$this->session->userdata('store_id')) {
+            $this->session->set_flashdata('warning', lang('please_select_store'));
+            redirect('stores');
+        }
+
+        $this->data['page_title'] = 'Reporte comparativo';
+
+        $bc = array(array('link' => '#', 'page' => $this->data['page_title']));
+        $meta = array('page_title' => $this->data['page_title'], 'bc' => $bc);
+
+        $this->data['store'] = $this->site->getStoreByID($this->session->userdata('store_id'));
+        $this->data['take_inventory'] = $this->reports_model->getCurentTakeInventory($this->data['store']->id);
+
+        if($this->data['take_inventory']){
+            $this->load->model('products_model');
+
+            $this->data['items'] = $this->reports_model->getProductsTakeInventoryReport($this->data['take_inventory']->id, $this->data['store']->id);
+        }else{
+            $this->data['items'] = [];
+        }
+
+        $this->page_construct('reports/take_inventory_report', $this->data, $meta);
+    }
+
 }

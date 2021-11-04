@@ -685,4 +685,71 @@ class Reports_model extends CI_Model
 
         return $this->db->query($sql)->result();
     }
+
+    public function getCurentTakeInventory($store_id){
+        $sql = "SELECT *
+                FROM tec_take_inventory
+                WHERE status = 'open' AND store_id = {$store_id}";
+        return $this->db->query($sql)->row();
+    }
+
+    public function getTakeInventory($id, $created_by){
+        $sql = "SELECT tec_take_inventory_items.*, tec_products.name, tec_products.code
+                FROM tec_take_inventory_items
+                INNER JOIN tec_products ON tec_products.id = tec_take_inventory_items.product_id
+                WHERE tec_take_inventory_items.id_take_inventory = {$id} AND tec_take_inventory_items.created_by = {$created_by}";
+        return $this->db->query($sql)->result();
+    }
+
+    public function up_take_inventory($created_by, $store_id){
+        $sql = "INSERT INTO tec_take_inventory SET store_id = {$store_id}, created_by = {$created_by}";
+        $this->db->query($sql);
+    }
+
+    public function add_product_take_inventory($id_take_inventory, $created_by, $product_id, $quantity, $description = ""){
+        $sql = "INSERT INTO tec_take_inventory_items SET 
+            id_take_inventory = {$id_take_inventory}, 
+            created_by = {$created_by},
+            product_id = {$product_id},
+            quantity = {$quantity},
+            description = '$description'";
+        $this->db->query($sql);
+    }
+
+    public function remove_product_take_inventory($id){
+        $sql = "DELETE FROM tec_take_inventory_items WHERE id = {$id}";
+        $this->db->query($sql);
+    }
+
+    public function cancel_take_inventory($id){
+        $sql = "UPDATE tec_take_inventory SET status = 'cancel' WHERE id = {$id}";
+        $this->db->query($sql);
+    }
+
+    public function getProductsTakeInventoryReport($id, $store_id){
+        $sql = "SELECT
+                    tbl.product_id,
+                    SUM(IF(source = 'inventory', tbl.quantity, 0)) AS inventory,
+                    SUM(IF(source = 'take_inventory', tbl.quantity, 0)) AS take_inventory,
+                    GROUP_CONCAT(DISTINCT description) as description,
+                    tec_products.code,
+                    tec_products.name
+                FROM (
+                    SELECT product_id, SUM(quantity) AS quantity, 'inventory' AS source, '' as description
+                    FROM tec_inventory
+                    WHERE store_id = {$store_id} AND quantity > 0
+                    GROUP BY product_id
+                
+                    UNION ALL
+                
+                    SELECT product_id, SUM(tec_take_inventory_items.quantity) AS quantity, 'take_inventory' AS source, description
+                    FROM `tec_take_inventory`
+                    INNER JOIN `tec_take_inventory_items` ON tec_take_inventory_items.`id_take_inventory` = tec_take_inventory.id
+                    WHERE tec_take_inventory.id = {$id}
+                    GROUP BY tec_take_inventory_items.`product_id`
+                ) AS tbl
+                INNER JOIN tec_products ON tec_products.id = tbl.product_id
+                GROUP BY tbl.product_id";
+        return $this->db->query($sql)->result();
+    }
 }

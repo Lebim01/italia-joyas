@@ -148,12 +148,6 @@ if ($modal) {
 
                                 ?>
 
-                                <?= $inv->note ? '<p style="margin-top:10px; text-align: center;">' . $this->tec->decode_html($inv->note) . '</p>' : ''; ?>
-                                <?php if (!empty($store->receipt_footer)) { ?>
-                                <div class="well well-sm"  style="margin-top:10px;">
-                                    <div style="text-align: center;"><?= nl2br($store->receipt_footer); ?></div>
-                                </div>
-                                <?php } ?>
                             </div>
                             <div style="clear:both;"></div>
                         </div>

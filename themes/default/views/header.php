@@ -261,6 +261,9 @@
                                 <li id="reports_top_products"><a href="<?= site_url('reports/top_products'); ?>"><i class="fa fa-circle-o"></i> <?= lang('top_products'); ?></a></li>
                                 <li id="reports_products"><a href="<?= site_url('reports/products'); ?>"><i class="fa fa-circle-o"></i> <?= lang('products_report'); ?></a></li>
                                 <li id="collecter_report"><a href="<?= site_url('reports/collecter'); ?>"><i class="fa fa-circle-o"></i> <?= lang('collecter_report'); ?></a></li>
+                                <li class="divider"></li>
+                                <li id="take_inventory"><a href="<?= site_url('reports/take_inventory'); ?>"><i class="fa fa-circle-o"></i> Levantar inventario</a></li>
+                                <li id="take_inventory_report"><a href="<?= site_url('reports/take_inventory_report'); ?>"><i class="fa fa-circle-o"></i> Reporte comparativo</a></li>
                             </ul>
                         </li>
                     <?php } else { ?>
