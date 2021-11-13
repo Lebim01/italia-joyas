@@ -769,6 +769,8 @@ class Pos extends MY_Controller
             $this->data['apartsOrders']    = $this->sales_model->getAllApartsSales();
             $this->data['creditsClients']  = $this->sales_model->getAllCreditsClients();
             $this->data['user_id']         = $this->session->userdata('user_id');
+            $this->data['store']           = $this->site->getStoreByID($this->session->userdata('store_id'));
+            $this->data['stores']          = $this->site->getAllStores();
 
             $this->data['printer'] = $this->site->getPrinterByID($this->Settings->printer);
             $printers              = [];
@@ -1598,5 +1600,10 @@ class Pos extends MY_Controller
 
         echo json_encode($payments);
         
+    }
+
+    public function store($id){
+        $this->session->set_userdata('store_id', $id);
+        redirect("/pos");
     }
 }

@@ -846,7 +846,7 @@ $(document).ready(function () {
     source: base_url + 'pos/suggestions',
     minLength: 1,
     autoFocus: false,
-    delay: 200,
+    delay: 500,
     response: function (event, ui) {
       if ($(this).val().length >= 16 && ui.content[0] && ui.content[0].id == 0) {
         bootbox.alert(lang.no_match_found, function () {
@@ -867,8 +867,14 @@ $(document).ready(function () {
     select: function (event, ui) {
       event.preventDefault();
       if (ui.item.id !== 0) {
-        var row = add_invoice_item(ui.item);
-        if (row) $(this).val('');
+        const inventory = Number(ui.item.row.quantity)
+        if(inventory > 0){
+          var row = add_invoice_item(ui.item);
+          if (row) $(this).val('');
+        }else{
+          bootbox.alert('Producto sin inventario');  
+          $(this).val('');
+        }
       } else {
         bootbox.alert(lang.no_match_found);
       }
@@ -1341,6 +1347,11 @@ $(document).ready(function () {
     $("#spos_note").val(input.val())
   })
 
+  $("body").delegate('#spos_customer_select', 'change', function () {
+    const input = $(this)
+    $("#spos_customer").val(input.val())
+  })
+
   $("#payModal").delegate('#transaction_type', 'change', function () {
     const type = $(this).val()
     $("input#transaction_type").val(type)
@@ -1351,8 +1362,10 @@ $(document).ready(function () {
     if (type === 'credit') {
       spositems = {}
       $(".no-methods").show()
+      $("#spos_customer_select").parent().show()
     } else {
       $(".no-methods").hide()
+      $("#spos_customer_select").parent().hide()
     }
   })
   $('#payModal').on('shown.bs.modal', function (e) {
@@ -1699,6 +1712,7 @@ $(document).ready(function () {
     let edit = window.location.href.indexOf('edit=')
 
     let transaction_type = $("#transaction_type").val()
+
     if (transaction_type === "liquidate" || transaction_type === "apart" || transaction_type === "credit") {
       for (i = 0; i < nextinput; i++) {
         if (($('#metodo_' + i).val() === "cash" || $('#metodo_' + i).val() === "CC") && parseFloat($("#cantidad_" + i).val()) > 0) {
@@ -1721,6 +1735,13 @@ $(document).ready(function () {
           return;
         }
       }
+    }
+
+    const customer_id = $("#spos_customer").val()
+
+    if (transaction_type === 'credit' && !customer_id) {
+      alert('El cliente no puede estar vacio')
+      return
     }
 
     if (transaction_type === 'liquidate' && edit < 0) {

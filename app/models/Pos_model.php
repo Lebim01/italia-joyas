@@ -582,7 +582,7 @@ class Pos_model extends CI_Model
         return false;
     }
 
-    public function getRegisterAparts($date = null, $user_id = null){
+    public function getRegisterAparts($user_id = null, $date = null){
         if (!$date) {
             $date = $this->session->userdata('register_open_time');
         }

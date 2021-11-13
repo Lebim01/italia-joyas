@@ -37,6 +37,14 @@
                             <?php } ?>
                         </ul>
                     </li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Tienda: <?= $store->name ?></a>
+                        <ul class="dropdown-menu">
+                            <?php foreach ($stores as $str) : ?>
+                                <li><a href="<?= site_url('pos/store/' . $str->id); ?>"><?= ucwords($str->name); ?></a></li>
+                            <?php endforeach; ?>
+                        </ul>
+                    </li>
                 </ul>
                 <div class="navbar-custom-menu">
                     <ul class="nav navbar-nav">
@@ -342,10 +350,7 @@
                                 <div id="lefttop" style="margin-bottom:5px;">
                                     <div class="form-group" style="margin-bottom:5px;">
                                         <div class="input-group">
-                                            <?php foreach ($customers as $customer) {
-                                                $cus[$customer->id] = $customer->name;
-                                            } ?>
-                                            <?= form_dropdown('customer_id', $cus, set_value('customer_id', $Settings->default_customer), 'id="spos_customer" data-placeholder="' . lang('select') . ' ' . lang('customer') . '" required="required" class="form-control select2" style="width:150%"'); ?>
+                                            <input type="hidden" id="spos_customer" name="spos_customer" />
                                             <!-- <div class="input-group-addon no-print" style="padding: 2px 5px;">
                                                 <a href="#" id="add-customer" class="external" data-toggle="modal" data-target="#myModal"><i class="fa fa-2x fa-plus-circle" id="addIcon"></i></a>
                                             </div> -->
@@ -1020,7 +1025,8 @@
                 <div class="modal-body">
                     <div class="form-group" style="align-items: center;">
                         <label>Cajero</label>
-                        <select id="created_by" class="form-control paid_by select2" style="width:100%;">
+                        <select id="created_by" class="form-control paid_by select2" style="width:100%;" value="">
+                            <option value="">Seleccionar cajero</option>
                             <?php
                             foreach ($cashiers as $cashier) {
                                 echo '<option value="' . $cashier->id . '">' . $cashier->first_name . ' '. $cashier->last_name. ' </option>">';
@@ -1140,6 +1146,17 @@
                             </tbody>
                         </table>
                         <div class="clearfix"></div>
+                    </div>
+
+                    <div class="font16" style="margin-top: 10px; display: none;">
+                        <?php 
+                        $cus = [];
+                        $cus[''] = "Seleccionar";
+                        foreach ($customers as $customer) {
+                            $cus[$customer->id] = $customer->name;
+                        } ?>
+                        <label>Cliente:</label>
+                        <?= form_dropdown('customer_id', $cus, set_value('customer_id', ""), 'id="spos_customer_select" data-placeholder="' . lang('select') . ' ' . lang('customer') . '" required="required" class="form-control select2" style="width:100%"'); ?>
                     </div>
                 </div>
                 
