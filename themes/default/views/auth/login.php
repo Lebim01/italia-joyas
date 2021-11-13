@@ -39,8 +39,20 @@
             <p class="login-box-msg"><?= lang('login_to_your_account'); ?></p>
             <?= form_open("auth/login"); ?>
             <div class="form-group has-feedback">
-                <input type="text" name="identity" value="<?= set_value('identity', (DEMO ? 'admin@tecdiary.com' : '')); ?>" class="form-control" placeholder="<?= lang('email'); ?>" />
-                <span class="glyphicon glyphicon-envelope form-control-feedback"></span>
+                <!--<input type="text" name="identity" value="<?= set_value('identity', (DEMO ? 'admin@tecdiary.com' : '')); ?>" class="form-control" placeholder="<?= lang('email'); ?>" />-->
+                <div>
+                    <input type="radio" id="admin" name="identity" value="admin@tecdiary.com" checked>
+                    <label for="admin">Admin</label>
+                </div>
+                <div>
+                    <input type="radio" id="gp" name="identity" value="gp">
+                    <label for="gp">Gran plaza</label>
+                </div>
+                <div>
+                    <input type="radio" id="gl" name="identity" value="gl">
+                    <label for="gl">Galerias</label>
+                </div>
+                <!--<span class="glyphicon glyphicon-envelope form-control-feedback"></span>-->
             </div>
             <div class="form-group has-feedback">
                 <input type="password" name="password" value="<?= DEMO ? '12345678' : ''; ?>" class="form-control" placeholder="<?= lang('password'); ?>" />
