@@ -15,7 +15,7 @@
                                 echo form_open_multipart("pos/open_register", $attrib); ?>
                                 <div class="form-group">
                                     <?= lang('cash_in_hand', 'cash_in_hand') ?>
-                                    <?= form_input('cash_in_hand', '', 'id="cash_in_hand" class="form-control"'); ?>
+                                    <?= form_input('cash_in_hand', '1000', 'id="cash_in_hand" class="form-control"'); ?>
                                 </div>
                                 <?php echo form_submit('open_register', lang('open_register'), 'class="btn btn-primary"'); ?>
                                 <?php echo form_close(); ?>
