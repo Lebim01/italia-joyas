@@ -14,6 +14,9 @@ class Pos_model extends CI_Model
 
     public function addSale($data, $items, $payment = [], $did = null)
     {
+        if(!$data['customer_id']) unset($data['customer_id']);
+        if(!$data['customer_name']) $data['customer_name'] = 'MOSTRADOR';
+
         // boolean flag
         $discountInvetory = in_array($data['transaction_type'], ['liquidate', 'credit']);
         // add items apart

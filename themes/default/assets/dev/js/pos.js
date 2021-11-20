@@ -868,11 +868,11 @@ $(document).ready(function () {
       event.preventDefault();
       if (ui.item.id !== 0) {
         const inventory = Number(ui.item.row.quantity)
-        if(inventory > 0){
+        if (inventory > 0) {
           var row = add_invoice_item(ui.item);
           if (row) $(this).val('');
-        }else{
-          bootbox.alert('Producto sin inventario');  
+        } else {
+          bootbox.alert('Producto sin inventario');
           $(this).val('');
         }
       } else {
@@ -1350,6 +1350,7 @@ $(document).ready(function () {
   $("body").delegate('#spos_customer_select', 'change', function () {
     const input = $(this)
     $("#spos_customer").val(input.val())
+    $("#customer_id").val(input.val())
   })
 
   $("#payModal").delegate('#transaction_type', 'change', function () {
@@ -1359,7 +1360,7 @@ $(document).ready(function () {
     $("#payment_note").val(ticket_notes[type])
     $("#spos_note").val(ticket_notes[type])
 
-    if (type === 'credit') {
+    if (type === 'credit' || type === 'apart') {
       spositems = {}
       $(".no-methods").show()
       $("#spos_customer_select").parent().show()
@@ -1739,7 +1740,7 @@ $(document).ready(function () {
 
     const customer_id = $("#spos_customer").val()
 
-    if (transaction_type === 'credit' && !customer_id) {
+    if ((transaction_type === 'credit' || transaction_type === 'apart') && !customer_id) {
       alert('El cliente no puede estar vacio')
       return
     }

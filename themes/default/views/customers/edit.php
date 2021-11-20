@@ -36,7 +36,7 @@
               <h3>Crédito</h3>
               <div class="form-group st">
                 <label for="credit_limit">Limite</label>
-                <input type="text" name="credit_limit" value="0.00" class="form-control tip" id="credit_limit" <?= !$is_admin ? 'readonly' : '' ?>>
+                <input type="text" name="credit_limit" value="<?= $customer->credit_limit ?>" class="form-control tip" id="credit_limit" <?= !$is_admin ? 'readonly' : '' ?>>
               </div>
             </div>
           </div>

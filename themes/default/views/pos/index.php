@@ -350,7 +350,7 @@
                                 <div id="lefttop" style="margin-bottom:5px;">
                                     <div class="form-group" style="margin-bottom:5px;">
                                         <div class="input-group">
-                                            <input type="hidden" id="spos_customer" name="spos_customer" />
+                                            <input type="hidden" id="spos_customer" name="customer_id" />
                                             <!-- <div class="input-group-addon no-print" style="padding: 2px 5px;">
                                                 <a href="#" id="add-customer" class="external" data-toggle="modal" data-target="#myModal"><i class="fa fa-2x fa-plus-circle" id="addIcon"></i></a>
                                             </div> -->

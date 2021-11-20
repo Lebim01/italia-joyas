@@ -41,7 +41,7 @@
             <div class="form-group has-feedback">
                 <!--<input type="text" name="identity" value="<?= set_value('identity', (DEMO ? 'admin@tecdiary.com' : '')); ?>" class="form-control" placeholder="<?= lang('email'); ?>" />-->
                 <div>
-                    <input type="radio" id="admin" name="identity" value="admin@tecdiary.com" checked>
+                    <input type="radio" id="admin" name="identity" value="admin" checked>
                     <label for="admin">Admin</label>
                 </div>
                 <div>
