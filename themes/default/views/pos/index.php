@@ -13,6 +13,7 @@
 </head>
 
 <body class="skin-<?= $Settings->theme_style; ?> sidebar-collapse sidebar-mini pos">
+
     <div class="wrapper rtl rtl-inv">
         <header class="main-header">
             <a href="<?= site_url(); ?>" class="logo">
@@ -349,7 +350,7 @@
                             <div class="well well-sm" id="leftdiv">
                                 <div id="lefttop" style="margin-bottom:5px;">
                                     <div class="form-group" style="margin-bottom:5px;">
-                                        <div class="input-group">
+                                        <div class="input-group" style="display: none;">
                                             <input type="hidden" id="spos_customer" name="customer_id" />
                                             <!-- <div class="input-group-addon no-print" style="padding: 2px 5px;">
                                                 <a href="#" id="add-customer" class="external" data-toggle="modal" data-target="#myModal"><i class="fa fa-2x fa-plus-circle" id="addIcon"></i></a>
@@ -508,6 +509,7 @@
                                     <input type="hidden" name="split_payments" id="split_payments_val" value="0" />
                                     <input type="hidden" name="extra_discount" id="extra_discount_val" value="" />
                                 </div>
+                                <input type="hidden" name="devolution" value="<?= $_GET['devolution'] ?>" />
                                 <input type="hidden" name="customer" id="customer" value="<?= $Settings->default_customer ?>" />
                                 <input type="hidden" name="order_tax" id="tax_val" value="" />
                                 <input type="hidden" name="order_discount" id="discount_val" value="" />

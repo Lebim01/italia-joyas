@@ -1670,6 +1670,7 @@ $(document).ready(function () {
   $('#spos_customer').change(function (e) {
     store('spos_customer', $(this).val());
   });
+
   if ((spos_customer = get('spos_customer'))) {
     $('#spos_customer').select2('val', spos_customer);
   }

@@ -889,7 +889,7 @@ class Pos_model extends CI_Model
         return false;
     }
 
-    public function updateSale($id, $data, $items)
+    public function updateSale($id, $data, $items, $devolution = false)
     {
         // boolean flag
         $discountInvetory = in_array($data['transaction_type'], ['liquidate', 'credit']);
@@ -909,7 +909,7 @@ class Pos_model extends CI_Model
                 if($isApart){
                     $dataUpdate = ['apart' => ($product->apart - $oitem->quantity)];
                 }
-                // Registrar moviemitno de producto devuelto
+                // Registrar movimiento de producto devuelto
                 $this->movements_model->returnSale($product->id, $id);
                 $this->db->update('product_store_qty', $dataUpdate, ['product_id' => $product->id, 'store_id' => $data['store_id']]);
             } elseif ($product->type == 'combo') {
@@ -918,7 +918,7 @@ class Pos_model extends CI_Model
                     $cpr = $this->site->getProductByID($combo_item->id, $osale->store_id);
                     if ($cpr->type == 'standard') {
                         $qty = $combo_item->qty * $oitem->quantity;
-                        // Registrar moviemitno de producto devuelto
+                        // Registrar movimiento de producto devuelto
                         $this->movements_model->returnSale($cpr->id, $id);
                         $this->db->update('product_store_qty', ['quantity' => ($cpr->quantity + $qty)], ['product_id' => $cpr->id, 'store_id' => $osale->store_id]);
                     }
@@ -1056,5 +1056,10 @@ class Pos_model extends CI_Model
                                 LIMIT 1      
         ")->result();
         return $data;
+    }
+
+    public function getProductSale($sale_id, $product_id){
+        $sql = "SELECT si.* FROM tec_sales INNER JOIN tec_sale_items si ON si.sale_id = tec_sales.id WHERE tec_sales.id = {$sale_id} AND si.product_id = {$product_id}";
+        return $this->db->query($sql)->row();
     }
 }

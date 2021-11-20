@@ -288,6 +288,9 @@ class Sales extends MY_Controller
                     <a href='" . site_url('sales/add_payment/$1') . "' title='" . lang('add_payment') . "' class='tip btn btn-primary btn-xs status-$2' data-toggle='ajax'>
                         <i class='fa fa-briefcase'></i>
                     </a>
+                    <a href='" . site_url('pos/?edit=$1&devolution=1') . "' title='Devolución' class='tip btn btn-warning btn-xs'>
+                        <i class='fa fa-undo'></i>
+                    </a>
                     <a href='" . site_url('pos/?edit=$1') . "' title='" . lang('edit_invoice') . "' class='tip btn btn-warning btn-xs'>
                         <i class='fa fa-edit'></i>
                     </a>
@@ -305,6 +308,9 @@ class Sales extends MY_Controller
                     </a>
                     <a href='" . site_url('sales/payments/$1') . "' title='" . lang('view_payments') . "' class='tip btn btn-primary btn-xs' data-toggle='ajax'>
                         <i class='fa fa-money'></i>
+                    </a>
+                    <a href='" . site_url('pos/?edit=$1&devolution=1') . "' title='Devolución' class='tip btn btn-warning btn-xs'>
+                        <i class='fa fa-undo'></i>
                     </a>
                     <a href='" . site_url('sales/add_payment/$1') . "' title='" . lang('add_payment') . "' class='tip btn btn-primary btn-xs status-$2' data-toggle='ajax'>
                         <i class='fa fa-briefcase'></i>

@@ -268,14 +268,19 @@ class Pos extends MY_Controller
             $this->session->set_flashdata('warning', lang('please_select_store'));
             redirect($this->Settings->multi_store ? 'stores' : 'welcome');
         }
+        if ($this->input->post('devolution') && $this->input->post('devolution') == 1){
+            $devolution = true;
+        }
         if ($this->input->get('hold')) {
             $sid = $this->input->get('hold');
         }
         if ($this->input->get('edit')) {
             $eid = $this->input->get('edit');
+            $eSale = $this->pos_model->getSaleByID($eid);
         }
         if ($this->input->post('eid')) {
             $eid = $this->input->post('eid');
+            $eSale = $this->pos_model->getSaleByID($eid);
         }
         if ($this->input->post('did')) {
             $did = $this->input->post('did');
@@ -341,10 +346,36 @@ class Pos extends MY_Controller
 
                 /**
                  * Validación de stock disponible (excepto concepto)
+                 * Cuando estas editando solo hay que validar si existe la diferencia
                  */
-                if ($item_code !== 'Concepto' && intval($stock->available) < intval($item_quantity)) {
-                    $this->session->set_flashdata('error', lang('No hay stock suficiente pata el producto ' . $_POST['product_name'][$r]));
-                    redirect($_SERVER['HTTP_REFERER']);
+
+                if ($item_code !== 'Concepto') {
+                    if($eid){
+                        $productSale = $this->pos_model->getProductSale($eid, $item_id);
+                        if($productSale){
+                            /**
+                             * Este producto se esta editando
+                             */
+                            $diff = $item_quantity - $productSale->quantity;
+                            if($diff > 0){
+                                if(intval($stock->available) < intval($diff)){
+                                    $this->session->set_flashdata('error', lang('No hay stock suficiente pata el producto ' . $_POST['product_name'][$r]));
+                                    redirect($_SERVER['HTTP_REFERER']);
+                                }
+                            }
+                        }else{
+                            /**
+                             * Este producto se acaba de agregar
+                             */
+                            if(intval($stock->available) < intval($item_quantity)){
+                                $this->session->set_flashdata('error', lang('No hay stock suficiente pata el producto ' . $_POST['product_name'][$r]));
+                                redirect($_SERVER['HTTP_REFERER']);
+                            }
+                        }
+                    } else if(intval($stock->available) < intval($item_quantity)){
+                        $this->session->set_flashdata('error', lang('No hay stock suficiente pata el producto ' . $_POST['product_name'][$r]));
+                        redirect($_SERVER['HTTP_REFERER']);
+                    }
                 }
 
                 if (isset($item_id) && isset($real_unit_price) && isset($item_quantity)) {
@@ -439,8 +470,6 @@ class Pos extends MY_Controller
 
                     $total += $this->tec->formatDecimal(($item_net_price * $item_quantity), 4);
                 }
-
-
             }
 
             /**
@@ -452,6 +481,16 @@ class Pos extends MY_Controller
 
                 if($total > $available){
                     $this->session->set_flashdata('error', "El cliente <b>$customer</b> no cuenta con el crédito disponible suficiente para realizar esta compra, disponible: $ {$available}");
+                    redirect($_SERVER['HTTP_REFERER']);
+                }
+            }
+
+            /**
+             * Validar que en la validación solo se pueden devolver productos que cuesten lo mismo o mas
+             */
+            if(isset($devolution) && $devolution){
+                if($total < $eSale->grand_total){
+                    $this->session->set_flashdata('error', "La devolución solo puede ser un articulo del mismo o mayor precio");
                     redirect($_SERVER['HTTP_REFERER']);
                 }
             }
@@ -568,7 +607,10 @@ class Pos extends MY_Controller
                 'delivered'         => $this->input->post('transaction_type') == 'apart' ? 0 : 1
             ];
 
-            //var_dump($data['created_by']);exit;
+            if($eid){
+                $data['transaction_type'] = $eSale->transaction_type;
+                $data['created_by'] = $eSale->created_by;
+            }
 
             if (!$eid) {
                 $data['store_id'] = $this->session->userdata('store_id');
@@ -632,7 +674,7 @@ class Pos extends MY_Controller
                 }
                 $data['updated_at'] = date('Y-m-d H:i:s');
                 $data['updated_by'] = $this->session->userdata('user_id');
-                if ($this->pos_model->updateSale($eid, $data, $products)) {
+                if ($this->pos_model->updateSale($eid, $data, $products, $devolution)) {
                     $this->session->set_userdata('rmspos', 1);
                     $this->session->set_flashdata('message', lang('sale_updated'));
                     redirect('sales');

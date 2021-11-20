@@ -253,7 +253,7 @@
                                     <th class="col-xs-1"><?= lang("grand_total"); ?></th>
                                     <th class="col-xs-1"><?= lang("paid"); ?></th>
                                     <th class="col-xs-1"><?= lang("status"); ?></th>
-                                    <th style="min-width:115px; max-width:115px; text-align:center;"><?= lang("actions"); ?></th>
+                                    <th style="min-width:125px; max-width:125px; text-align:center;"><?= lang("actions"); ?></th>
                                 </tr>
                             </thead>
                             <tbody>
