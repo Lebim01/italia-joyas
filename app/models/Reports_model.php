@@ -391,6 +391,8 @@ class Reports_model extends CI_Model
                                     tec_sales.date,
                                     tec_sales.invoice,
                                     tec_sales.grand_total,
+                                    tec_sales.order_discount_id,
+                                        tec_sales.extra_discount,
                                     SUM(tec_sale_items.discount) AS discount ,
                                     tec_sales.customer_name as customer_name,
                                     tec_users.first_name,
@@ -511,6 +513,8 @@ class Reports_model extends CI_Model
                                         product_name,
                                         unit_price,
                                         discount,
+                                        tec_sales.order_discount_id,
+                                        tec_sales.extra_discount,
                                         tec_sales.date,
                                         tec_sales.created_by,
                                         quantity,
@@ -520,7 +524,7 @@ class Reports_model extends CI_Model
                                         CASE
                                         WHEN tec_payments.paid_by = 'cash' THEN 'Efectivo'
                                         WHEN tec_payments.paid_by = 'CC' THEN 'Pago con tarjeta'
-                                        ELSE 'Credito/Pago con Tarjeta'
+                                        ELSE 'Credito'
                                         END AS tipopago
                                     FROM
                                     tec_sale_items 

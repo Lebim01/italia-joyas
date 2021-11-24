@@ -506,7 +506,7 @@
                                     <input type="hidden" name="cantidad" id="cantidad" value="0" />
                                     <input type="hidden" name="created_by" id="created_by_val" value="0" />
                                     <input type="hidden" name="transaction_type" id="transaction_type" value="liquidate" />
-                                    <input type="hidden" name="split_payments" id="split_payments_val" value="0" />
+                                    <input type="hidden" name="split_payments" id="split_payments_val" value="" />
                                     <input type="hidden" name="extra_discount" id="extra_discount_val" value="" />
                                 </div>
                                 <input type="hidden" name="devolution" value="<?= $_GET['devolution'] ?>" />
@@ -1038,7 +1038,7 @@
                     </div>
                     <div class="form-group" style="align-items: center;">
                         <label>Descuento adicional:</label>
-                        <input id="extra_discount" name="extra_discount" class="form-control" placeholder="5 o 5% (require permiso)" />
+                        <input id="extra_discount" name="extra_discount" class="form-control" placeholder="(require permiso)" />
                     </div>
                     <div class="row">
                         <div class="col-xs-12">
@@ -1048,8 +1048,11 @@
                                         <tr>
                                             <td width="25%" style="border-right-color: #FFF !important;"><?= lang('total_items'); ?></td>
                                             <td width="25%" class="text-right"><span id="item_count">0.00</span></td>
+                                            <td width="10%" style="border-right-color: #FFF !important; color: red">Descuento:</td>
+                                            <td width="10%" class="text-right"><span id="dtwt">0.00</span></td>
                                             <td width="25%" style="border-right-color: #FFF !important;"><?= lang('total_payable'); ?></td>
                                             <td width="25%" class="text-right"><span id="twt">0.00</span></td>
+                                            
                                         </tr>
                                         <!--  <tr>
                                         <td style="border-right-color: #FFF !important;"><?= lang('total_paying'); ?></td>
@@ -1102,7 +1105,7 @@
                                     <div class="col-xs-6">
                                         <div class="form-group no-methods" style="display: none;">
                                             Abonos de:
-                                            <input name="split_payments" type="number" id="split_payments" class="pa form-control kb-pad"/>
+                                            <input name="split_payments" type="text" id="split_payments" class="pa form-control kb-pad"/>
                                         </div>
                                     </div>
                                 </div>

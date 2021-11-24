@@ -603,7 +603,7 @@ class Pos extends MY_Controller
                 'note'              => $note,
                 'hold_ref'          => $this->input->post('hold_ref'),
                 'transaction_type'  => $this->input->post('transaction_type'),
-                'split_payments'    => $this->tec->formatDecimal($split_payments, 4),
+                'split_payments'    => $split_payments,
                 'delivered'         => $this->input->post('transaction_type') == 'apart' ? 0 : 1
             ];
 

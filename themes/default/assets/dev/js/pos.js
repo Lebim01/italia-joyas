@@ -1311,9 +1311,11 @@ $(document).ready(function () {
     if (Settings.rounding != 0) {
       round_total = roundNumber(gtotal, parseInt(Settings.rounding));
       var rounding = formatDecimal(round_total - gtotal);
+      $('#dtwt').text(Math.round(((order_discount+extra_discount)*100)/total) + '%');
       $('#twt').text(formatMoney(round_total) + ' (' + formatMoney(rounding) + ')');
       $('#quick-payable').text(round_total);
     } else {
+      $('#dtwt').text((order_discount*100)/total + '%');
       $('#twt').text(formatMoney(gtotal));
       $('#quick-payable').text(gtotal);
     }
@@ -1740,9 +1742,21 @@ $(document).ready(function () {
     }
 
     const customer_id = $("#spos_customer").val()
+    const created_by_id = $("#created_by").val()
+    const split_payments = $("#split_payments").val()
+
+    if (!created_by_id) {
+      alert('Seleccione un cajero, por favor')
+      return
+    }
 
     if ((transaction_type === 'credit' || transaction_type === 'apart') && !customer_id) {
       alert('El cliente no puede estar vacio')
+      return
+    }
+
+    if ((transaction_type === 'credit' || transaction_type === 'apart') && split_payments==="") {
+      alert('Por favor, escriba los pagos del cliente')
       return
     }
 

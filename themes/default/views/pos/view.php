@@ -128,14 +128,18 @@ if ($modal) {
                                             echo '<tr><th class="text-left" colspan="3">' . lang('order_tax') . '</th><th colspan="3" class="text-right">' . $this->tec->formatMoney($inv->order_tax) . '</th></tr>';
                                         }
                                         if ($inv->order_discount != 0) {
-                                            echo '<tr><th class="text-left" colspan="3">' . lang('order_discount') . '</th><th colspan="3" class="text-right">' . $this->tec->formatMoney($inv->order_discount) . '</th></tr>';
+                                            if($inv->extra_discount){
+                                                echo '<tr><th class="text-left" colspan="2">' . lang('order_discount') . '</th><th colspan="3" class="text-right">' . $this->tec->formatMoney(round((($inv->order_discount+$inv->extra_discount)*100)/$inv->total)).'%' . '</th></tr>';
+                                            } else {
+                                                echo '<tr><th class="text-left" colspan="2">' . lang('order_discount') . '</th><th colspan="3" class="text-right">' . $this->tec->formatMoney($inv->order_discount) . '</th></tr>';
+                                            }
                                         }
-                                        if ($inv->extra_discount) {
+                                        /* if ($inv->extra_discount) {
                                             if(strpos($inv->extra_discount, '%') !== false)
                                                 echo '<tr><th class="text-left" colspan="3">Descuento extra</th><th colspan="3" class="text-right"> (' . $inv->extra_discount . ') ' . $this->tec->formatMoney($inv->total_discount - $inv->order_discount). '</th></tr>';                                                
                                             else
                                                 echo '<tr><th class="text-left" colspan="3">Descuento extra</th><th colspan="3" class="text-right">' . $this->tec->formatMoney($inv->total_discount - $inv->order_discount) . '</th></tr>';
-                                        }
+                                        } */
                                         if ($inv->total_tax != 0) {
                                             echo '<tr><th class="text-left" colspan="3">' . lang('tax') . '</th><th colspan="3" class="text-right">' . $this->tec->formatMoney($inv->total_tax) . '</th></tr>';
                                         }
@@ -202,7 +206,7 @@ if ($modal) {
                                         ?>
                                             <tr>
                                                 <th class="text-left" colspan="2">Abonos de:</th>
-                                                <th colspan="3" class="text-right"><?= $this->tec->formatMoney($inv->split_payments); ?> </th>
+                                                <th colspan="3" class="text-right"><?= $inv->split_payments ?> </th>
                                             </tr>
                                       <?php
                                         } 
@@ -319,7 +323,7 @@ if ($modal) {
                                         <div style="text-align:center; margin-top 10px">
                                             <br><br><br>
                                             <hr style="width:50%;border-bottom: 2px solid #ddd;">
-                                            <span >Firma del cliente</span>
+                                            <span ><?= $inv->customer_name; ?></span>
                                         </div>
                                     <?php
                                     }

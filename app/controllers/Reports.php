@@ -808,6 +808,7 @@ class Reports extends MY_Controller
         } else if($arrayfiltros[0] == "Reporte de ventas"){
             $td = "";
             $tdd = "";
+            $discount_id = "";
             $sales = $this->reports_model->getallSales($arrayfiltros);
 
             if($arrayfiltros[4] == "CC"){
@@ -822,6 +823,7 @@ class Reports extends MY_Controller
                         <td style="">Tipo de pago</td>
                         <td style="text-align:center;">Fecha</td>
                         <td style="text-align:center;">Descuento</td>
+                        <td style="text-align:center;">Descuento Extra</td>
                         <td style="text-align:center;">Total</td>
                     </tr>
             ';
@@ -830,6 +832,11 @@ class Reports extends MY_Controller
                     $tdd = "<td style='text-align:center;'>".$sales[$i]->customer_name."</td>";
                 }
                 $item = $i + 1;
+                if($sales[$i]->order_discount_id){
+                    $discount_id = '<td style="text-align:center;">'.$sales[$i]->order_discount_id.'</td>';
+                } else {
+                    $discount_id = '<td style="text-align:center;">0%</td>';
+                }
                 $table.='
                     <tr>
                         <td style="text-align:center;">'.$item.'</td>
@@ -837,7 +844,8 @@ class Reports extends MY_Controller
                         '.$tdd.'
                         <td style="text-align:center;">'.$sales[$i]->tipopago.'</td>
                         <td style="text-align:center;">'.$sales[$i]->date.'</td>
-                        <td style="text-align:center;">'.$this->tec->formatMoney($sales[$i]->discount).'</td>
+                        '.$discount_id.'
+                        <td style="text-align:center;">'.$this->tec->formatMoney($sales[$i]->extra_discount).'</td>
                         <td style="text-align:center;">'.$this->tec->formatMoney($sales[$i]->grand_total).'</td>
                     </tr>
                 ';
