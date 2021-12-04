@@ -698,7 +698,7 @@ class Reports_model extends CI_Model
     }
 
     public function getTakeInventory($id, $created_by){
-        $sql = "SELECT tec_take_inventory_items.*, tec_products.name, tec_products.code
+        $sql = "SELECT tec_take_inventory_items.*, tec_products.name, tec_products.code, tec_products.image
                 FROM tec_take_inventory_items
                 INNER JOIN tec_products ON tec_products.id = tec_take_inventory_items.product_id
                 WHERE tec_take_inventory_items.id_take_inventory = {$id} AND tec_take_inventory_items.created_by = {$created_by}";

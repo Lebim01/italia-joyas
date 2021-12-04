@@ -1,5 +1,15 @@
 <?php (defined('BASEPATH')) OR exit('No direct script access allowed'); ?>
 
+<style>
+    @media print
+    {    
+        .no-print, .no-print *
+        {
+            display: none !important;
+        }
+    }
+</style>
+
 <div class="modal-dialog">
     <div class="modal-content">
         <div class="modal-header">
@@ -176,7 +186,7 @@
                 <?php
 
                 if ($suspended_bills) {
-                    echo '<hr><h4>' . lang('opened_bills') . '</h4><table class="table table-hovered table-bordered"><thead><tr><th>' . lang('customer') . '</th><th>' . lang('date') . '</th><th>' . lang('reference') . '</th><th>' . lang('amount') . '</th><th><i class="fa fa-trash-o"></i></th></tr></thead><tbody>';
+                    echo '<hr class="no-print"><h4 class="no-print">' . lang('opened_bills') . '</h4><table class="no-print table table-hovered table-bordered"><thead><tr><th>' . lang('customer') . '</th><th>' . lang('date') . '</th><th>' . lang('reference') . '</th><th>' . lang('amount') . '</th><th><i class="fa fa-trash-o"></i></th></tr></thead><tbody>';
                     foreach ($suspended_bills as $bill) {
                         echo '<tr><td>' . $bill->customer_name . '</td><td>' . $this->tec->hrld($bill->date) . '</td><td class="col-xs-4">' . $bill->hold_ref . '</td><td class="text-right">' . $bill->grand_total . '</td><td class="text-center">'.($Admin ? '<a class="tip" title="' . lang("delete_bill") . '" href="' . site_url('sales/delete_holded/' . $bill->id) . '" onclick="return confirm(\''.lang('alert_x_holded').'\')"><i class="fa fa-trash-o"></i></a>' : '<i class="fa fa-trash-o"></i>').'</td></tr>';
                     }
@@ -184,7 +194,7 @@
                 }
 
                 if ($aparts) {
-                    echo '<hr><h4>Apartados</h4><table class="table table-hovered table-bordered"><thead><tr><th>' . lang('customer') . '</th><th>' . lang('date') . '</th><th>' . lang('reference') . '</th><th>' . lang('amount') . '</th></tr></thead><tbody>';
+                    echo '<hr class="no-print"><h4 class="no-print">Apartados</h4><table class="no-print table table-hovered table-bordered"><thead><tr><th>' . lang('customer') . '</th><th>' . lang('date') . '</th><th>' . lang('reference') . '</th><th>' . lang('amount') . '</th></tr></thead><tbody>';
                     foreach ($aparts as $apart) {
                         echo '<tr><td>' . $apart->customer_name . '</td><td>' . $this->tec->hrld($apart->date) . '</td><td class="col-xs-4">' . $apart->id . '</td><td class="text-right">' . $apart->total . '</td></tr>';
                     }
@@ -195,7 +205,7 @@
                 <hr>
 
                 <?php /** NO COMENTAR PORQUE FALLA EL CERRAR CAJA, esta oculto con d-none */ ?>
-                <div class="row d-none">
+                <div class="row d-none no-print">
                     <div class="col-sm-6">
                         <div class="form-group">
                             <?= lang("total_cash", "total_cash_submitted"); ?>
@@ -233,13 +243,13 @@
                     </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group no-print">
                     <label for="note"><?= lang("note"); ?></label>
                     <?= form_textarea('note', (isset($_POST['note']) ? $_POST['note'] : ""), 'class="form-control redactor" id="note" style="margin-top: 10px; height: 100px;"'); ?>
                 </div>
 
             </div>
-            <div class="modal-footer">
+            <div class="modal-footer no-print">
                 <button type="button" class="btn btn-default pull-left" data-dismiss="modal"><?=lang('close')?></button>
                 <?php
                 if ( ! $Settings->remote_printing) {

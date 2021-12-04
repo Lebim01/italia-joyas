@@ -77,6 +77,7 @@
                           <tbody>
                             <?php foreach($items as $item): ?>
                               <tr>
+                                <td><img height="100" width="100" src="<?= $item->image ?>" alt="imagen" /></td>
                                 <td class="text-center"><?= $item->code ?></td>
                                 <td class="text-center"><?= $item->name ?></td>
                                 <td class="text-center"><?= $item->description ?></td>
