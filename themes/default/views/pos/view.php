@@ -97,10 +97,11 @@ if ($modal) {
                                     <thead>
                                         <tr>
                                             <th class="text-center" style="width: 50%; border-bottom: 2px solid #ddd;"><?=lang('description');?></th>
-                                            <th class="text-center" style="width: 50%; border-bottom: 2px solid #ddd;">Código</th>
-                                            <th class="text-center" style="width: 12%; border-bottom: 2px solid #ddd;"><?=lang('quantity');?></th>
-                                            <th class="text-center" style="width: 24%; border-bottom: 2px solid #ddd;"><?=lang('price');?></th>
-                                            <th class="text-center" style="width: 26%; border-bottom: 2px solid #ddd;"><?=lang('subtotal');?></th>
+                                            <th class="text-center" style="border-bottom: 2px solid #ddd;">Código</th>
+                                            <th class="text-center" style="border-bottom: 2px solid #ddd;"><?=lang('quantity');?></th>
+                                            <th class="text-center" style="border-bottom: 2px solid #ddd;"><?=lang('price');?></th>
+                                            <th class="text-center" style="border-bottom: 2px solid #ddd;"><?=lang('discount');?></th>
+                                            <th class="text-center" style="border-bottom: 2px solid #ddd;"><?=lang('subtotal');?></th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -113,25 +114,26 @@ if ($modal) {
                                             echo '</td>';
                                             echo '<td style="text-align:center;">' . $row->product_code . '</td>';
                                             echo '<td style="text-align:center;">' . $this->tec->formatQuantity($row->quantity) . '</td>';
-                                            echo '<td class="text-right">';
-                                            echo $this->tec->formatMoney($row->net_unit_price + ($row->item_tax / $row->quantity)) . '</td><td class="text-right">' . $this->tec->formatMoney($row->subtotal) . '</td></tr>';
+                                            echo '<td class="text-right">'.$this->tec->formatMoney(($row->net_unit_price + $row->item_discount) + ($row->item_tax / $row->quantity)) . '</td>';
+                                            echo '<td class="text-right">'. $this->tec->formatMoney($row->item_discount) .'</td>';
+                                            echo '<td class="text-right">' . $this->tec->formatMoney($row->subtotal) . '</td></tr>';
                                         }
                                         ?>
                                     </tbody>
                                     <tfoot>
                                         <tr>
-                                            <th class="text-left" colspan="2"><?= lang('total'); ?></th>
+                                            <th class="text-left" colspan="3"><?= lang('total'); ?></th>
                                             <th colspan="3" class="text-right"><?= $this->tec->formatMoney($inv->total + $inv->product_tax); ?></th>
                                         </tr>
                                         <?php
                                         if ($inv->order_tax != 0) {
-                                            echo '<tr><th class="text-left" colspan="3">' . lang('order_tax') . '</th><th colspan="3" class="text-right">' . $this->tec->formatMoney($inv->order_tax) . '</th></tr>';
+                                            echo '<tr><th class="text-left" colspan="4">' . lang('order_tax') . '</th><th colspan="3" class="text-right">' . $this->tec->formatMoney($inv->order_tax) . '</th></tr>';
                                         }
                                         if ($inv->order_discount != 0) {
                                             if($inv->extra_discount){
-                                                echo '<tr><th class="text-left" colspan="2">' . lang('order_discount') . '</th><th colspan="3" class="text-right">' . $this->tec->formatMoney(round((($inv->order_discount+$inv->extra_discount)*100)/$inv->total)).'%' . '</th></tr>';
+                                                echo '<tr><th class="text-left" colspan="3">' . lang('order_discount') . '</th><th colspan="3" class="text-right">' . $this->tec->formatMoney(round((($inv->order_discount+$inv->extra_discount)*100)/$inv->total)).'%' . '</th></tr>';
                                             } else {
-                                                echo '<tr><th class="text-left" colspan="2">' . lang('order_discount') . '</th><th colspan="3" class="text-right">' . $this->tec->formatMoney($inv->order_discount) . '</th></tr>';
+                                                echo '<tr><th class="text-left" colspan="3">' . lang('order_discount') . '</th><th colspan="3" class="text-right">' . $this->tec->formatMoney($inv->order_discount) . '</th></tr>';
                                             }
                                         }
                                         /* if ($inv->extra_discount) {
@@ -148,41 +150,41 @@ if ($modal) {
                                        
                                     <?php if ($inv->transaction_type == "liquidate") { ?>
                                         <tr>
-                                            <th class="text-left" colspan="2">Métodos de pago </th>
+                                            <th class="text-left" colspan="3">Métodos de pago </th>
                                             <th colspan="3" class="text-right"></th>
                                         </tr>
                                         <?php
                                             foreach ($payments as $payment) {
                                         ?>
                                             <tr>
-                                                <th class="text-left" colspan="2"></th>
+                                                <th class="text-left" colspan="3"></th>
                                                 <th colspan="3" class="text-right"><?= lang($payment->paid_by);?>  <?= $payment->banks;?> : <?= $this->tec->formatMoney($payment->amount);?></th>
                                             </tr>
                                         <?php
                                             }
                                         ?>
                                         <tr>
-                                            <th class="text-left" colspan="2">Su cambio</th>
+                                            <th class="text-left" colspan="3">Su cambio</th>
                                             <th colspan="3" class="text-right"><?= $this->tec->formatMoney( $inv->paid - $inv->grand_total ); ?></th>
                                         </tr>
                                       <?php
                                         } else if($inv->transaction_type == "apart"){
                                       ?>
                                         <tr>
-                                            <th class="text-left" colspan="2">Adelanto de apartado</th>
+                                            <th class="text-left" colspan="3">Adelanto de apartado</th>
                                             <th colspan="3" class="text-right"></th>
                                         </tr>
                                       <?php
                                             foreach ($payments as $payment) {
                                         ?>
                                             <tr>
-                                                <th class="text-left" colspan="2"></th>
+                                                <th class="text-left" colspan="3"></th>
                                                 <th colspan="3" class="text-right"><?= lang($payment->paid_by);?>  <?= $payment->banks;?> : <?= $this->tec->formatMoney($payment->amount);?></th>
                                             </tr>
                                         <?php
                                             }
                                         ?>
-                                             <th class="text-left" colspan="2"></th>
+                                             <th class="text-left" colspan="3"></th>
                                             <th colspan="3" class="text-right">Apartado</th>
                                       <?php
                                         } else if($inv->transaction_type == "credit"){
@@ -193,11 +195,11 @@ if ($modal) {
                                                 foreach ($payments as $payment) {
                                         ?>
                                         <tr>
-                                            <th class="text-left" colspan="2">Enganche</th>
+                                            <th class="text-left" colspan="3">Enganche</th>
                                             <th colspan="3" class="text-right"></th>
                                         </tr>
                                             <tr>
-                                                <th class="text-left" colspan="2"></th>
+                                                <th class="text-left" colspan="3"></th>
                                                 <th colspan="3" class="text-right"><?= lang($payment->paid_by);?>  <?= $payment->banks;?> : <?= $this->tec->formatMoney($payment->amount);?></th>
                                             </tr>
                                         <?php
@@ -205,7 +207,7 @@ if ($modal) {
                                             }
                                         ?>
                                             <tr>
-                                                <th class="text-left" colspan="2">Abonos de:</th>
+                                                <th class="text-left" colspan="3">Abonos de:</th>
                                                 <th colspan="3" class="text-right"><?= $inv->split_payments ?> </th>
                                             </tr>
                                       <?php
@@ -225,7 +227,7 @@ if ($modal) {
                                             $rounding    = $this->tec->formatDecimal($round_total - $inv->grand_total); ?>
                                             
                                             <tr>
-                                                <th class="text-left" colspan="2"><?= lang('grand_total'); ?></th>
+                                                <th class="text-left" colspan="3"><?= lang('grand_total'); ?></th>
                                                 <?php
                                                     if($inv->transaction_type == "liquidate"){
                                                     ?>
@@ -242,7 +244,7 @@ if ($modal) {
                                         } else {
                                             $round_total = $inv->grand_total; ?>
                                             <tr>
-                                                <th class="text-left" colspan="2"><?= lang('grand_total'); ?></th>
+                                                <th class="text-left" colspan="3"><?= lang('grand_total'); ?></th>
                                                 <?php
                                                     if($inv->transaction_type == "liquidate"){
                                                     ?>

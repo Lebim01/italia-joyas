@@ -114,7 +114,7 @@ function loadItems() {
       var newTr = $('<tr id="' + row_no + '" class="' + item_id + '" data-item-id="' + item_id + '" data-id="' + item.row.id + '"></tr>');
       tr_html = `
         <td>
-          <img class="img-open-modal" width="100" height="100" src="/uploads/thumbs/${item.row.image}" />
+          <img class="img-open-modal" width="100" height="${item_code === 'Concepto' ? 10 : 100}" src="/uploads/thumbs/${item.row.image}" />
         </td>
       `
       tr_html +=
@@ -1311,11 +1311,11 @@ $(document).ready(function () {
     if (Settings.rounding != 0) {
       round_total = roundNumber(gtotal, parseInt(Settings.rounding));
       var rounding = formatDecimal(round_total - gtotal);
-      $('#dtwt').text(Math.round(((order_discount+extra_discount)*100)/total) + '%');
+      $('#dtwt').text(Math.round(((order_discount + extra_discount) * 100) / total) + '%');
       $('#twt').text(formatMoney(round_total) + ' (' + formatMoney(rounding) + ')');
       $('#quick-payable').text(round_total);
     } else {
-      $('#dtwt').text((order_discount*100)/total + '%');
+      $('#dtwt').text((order_discount * 100) / total + '%');
       $('#twt').text(formatMoney(gtotal));
       $('#quick-payable').text(gtotal);
     }
@@ -1714,6 +1714,7 @@ $(document).ready(function () {
     if (extra_discount) await $.requestAdminPermission()
 
     let edit = window.location.href.indexOf('edit=')
+    let is_devolution = window.location.href.indexOf('devolution=')
 
     let transaction_type = $("#transaction_type").val()
 
@@ -1745,32 +1746,34 @@ $(document).ready(function () {
     const created_by_id = $("#created_by").val()
     const split_payments = $("#split_payments").val()
 
-    if (!created_by_id) {
-      alert('Seleccione un cajero, por favor')
-      return
-    }
-
-    if ((transaction_type === 'credit' || transaction_type === 'apart') && !customer_id) {
-      alert('El cliente no puede estar vacio')
-      return
-    }
-
-    if ((transaction_type === 'credit' || transaction_type === 'apart') && split_payments==="") {
-      alert('Por favor, escriba los pagos del cliente')
-      return
-    }
-
-    if (transaction_type === 'liquidate' && edit < 0) {
-      if (total_cantidad < g_total) {
-        alert('El monto no puede ser menor que el total a pagar')
-        return;
+    if (!is_devolution) {
+      if (!created_by_id) {
+        alert('Seleccione un cajero, por favor')
+        return
       }
-    }
 
-    if (transaction_type === 'apart') {
-      if (total_cantidad === 0) {
-        alert('La cantidad no puede ser 0')
-        return;
+      if ((transaction_type === 'credit' || transaction_type === 'apart') && !customer_id) {
+        alert('El cliente no puede estar vacio')
+        return
+      }
+
+      if ((transaction_type === 'credit' || transaction_type === 'apart') && split_payments === "") {
+        alert('Por favor, escriba los pagos del cliente')
+        return
+      }
+
+      if (transaction_type === 'liquidate' && edit < 0) {
+        if (total_cantidad < g_total) {
+          alert('El monto no puede ser menor que el total a pagar')
+          return;
+        }
+      }
+
+      if (transaction_type === 'apart') {
+        if (total_cantidad === 0) {
+          alert('La cantidad no puede ser 0')
+          return;
+        }
       }
     }
 
